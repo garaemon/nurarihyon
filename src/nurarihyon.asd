@@ -5,6 +5,7 @@
     :depends-on (chimi)
     :components ((:file "nurarihyon")
 		 (:file "base" :depends-on ("nurarihyon"))
+		 (:file "array" :depends-on ("nurarihyon" "base"))
 		 ;;(:file "base" :depends-on ("math"))
                  ;;(:file "array" :depends-on ("base" "math"))
 		 ))
