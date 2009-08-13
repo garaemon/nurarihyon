@@ -26,7 +26,6 @@
   (assert-true (eps= 10.0 10.9 1.0))
   (assert-false (eps= 10.0 11.1 1.0)))
 
-
 (define-test random-range-test
   ;; float
   (dotimes (i 100)
@@ -68,8 +67,7 @@
 (define-test deg2rad-and-rad2deg-test
   (dotimes (i 10)
     (let ((theta (random-range -350.0 350.0)))
-      (assert-true (eps= (rad2deg (deg2rad theta)) theta))
-      )))
+      (assert-true (eps= (rad2deg (deg2rad theta)) theta)))))
 
 (define-test make-integer-vector-test
   (let ((dim 10)
@@ -223,6 +221,20 @@
   (let ((a (list 2.0 3.0 4.0))
 	(b (float-vector 2 3 4)))
     (assert-true (eps-vector= (list->vector a) b))))
+
+(define-test vector->list-test
+  (let ((a (list 1.0 2.0 3.0))
+	(b (float-vector 1 2 3)))
+    ;;(assert-true ((vector->list a) b))
+    (mapcar #'(lambda (aa bb)
+		(assert-float-equal aa bb))
+	    a (vector->list b))
+    )
+  (let ((a (list 2.0 3.0 4.0))
+	(b (float-vector 2 3 4)))
+    (mapcar #'(lambda (aa bb)
+		(assert-float-equal aa bb))
+	    a (vector->list b))))
 
 (define-test list->matrix-test
   (let ((a (list->matrix '((1.0 2.0 3.0) (1.0 2.0 3.0))))
@@ -380,8 +392,7 @@
 	   (f (random-range -100.0 100.0))
 	   (mat (list->matrix (list (list a b c)
 				    (list b d e)
-				    (list c e f)
-				    ))))
+				    (list c e f)))))
       (assert-true (eps-matrix= (flip mat) mat))))
   )
 
@@ -407,6 +418,7 @@
 	   norm-test
 	   distance-test
 	   list->vector-test
+	   vector->list-test
 	   list->matrix-test
 	   m+-test
 	   m--test

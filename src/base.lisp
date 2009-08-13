@@ -269,13 +269,14 @@
 
 (declaim (inline distance))
 (defun distance (a b)
-  "calulate uqlid distance between a and b"
+  "calulate Euqlid distance between a and b"
   (declare (type simple-array a b))
   (norm (v- a b)))
 
 ;; matrix operators
 (defun m+ (a b &optional (c nil))
-  "calculate addition of two matrices."
+  "calculate addition of two matrices.
+   You can give the 3rd argument as a buffer"
   (with-array-dimension-check (a b)
     (let ((dims (array-dimensions a)))
       (if (null c)
@@ -289,7 +290,8 @@
       c)))
 
 (defun m- (a b &optional (c nil))
-  "calculate sub"
+  "calculate sub
+   You can give the 3rd argument as a buffer"
   (with-array-dimension-check (a b)
     (let ((dims (array-dimensions a)))
       (if (null c)
@@ -350,6 +352,8 @@
       c)))
 
 (defun flip (mat &optional (result nil))
+  "transpose matrix.
+   You can give the 2nd argument as a buffer."
   ;;(declare (type (array single-float) mat))
   (let ((dims (array-dimensions mat)))
     (declare (list dims))
@@ -539,11 +543,11 @@
 
 ;; あほい
 (defun list->matrix (list)
+  "convert list to matrix."
   (let ((mat (make-float-matrix (length list) (length (car list)))))
     (dotimes (i (length list))
       (dotimes (j (length (car list)))
-        (setf (aref mat i j) (coerce (elt (elt list i) j) 'single-float))
-        ))
+        (setf (aref mat i j) (coerce (elt (elt list i) j) 'single-float))))
     mat))
 
 (defun print-matrix (mat)
@@ -557,6 +561,7 @@
     ))
 
 (defun random-range (min max)
+  "return random value between min and max."
   (declare (type number min max))
   (let ((d (- max min)))
     (declare (type number d))

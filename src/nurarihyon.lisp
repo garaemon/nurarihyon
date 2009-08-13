@@ -33,6 +33,7 @@
    #:+pi+ #:+pi/2+ #:+pi/4+ #:+2pi+
    #:+e+
    #:list->vector #:list->matrix
+   #:vector->list
    #:print-matrix
    #:rotation-matrix #:rotate-matrix
    #:euler-matrix #:rpy-matrix
