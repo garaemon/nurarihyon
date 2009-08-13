@@ -3,7 +3,8 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(declaim (optimize (speed 3) (safety 0) (debug 0) (space 0)))
+;;(declaim (optimize (speed 3) (safety 0) (debug 0) (space 0)))
+(declaim (optimize (speed 0) (safety 3) (debug 3) (space 0)))
 
 (in-package :nurarihyon)
 
@@ -304,15 +305,14 @@
 (defun m* (a b &optional (c nil))
   "calculate product of two matricies.
    You can give the third parameter as a buffer."
-  (declare (type (simple-array single-float) a b))
-  ;;(type (or nil (simple-array single-float)) c))
+  (declare (type simple-array a b))
   (with-array-dimension-check-trans (a b)
     (let ((dims-a (array-dimensions a))
           (dims-b (array-dimensions b)))
-      (declare (list dims-a dims-b))
+      (declare (type list dims-a dims-b))
       (if (null c)
           (setf c (make-float-matrix (car dims-a) (cadr dims-b))))
-      (declare (type (simple-array single-float) c))
+      ;;(declare (type (simple-array single-float) c))
       (if (not (eq b c))
           (let ((tmpv (make-float-vector (cadr dims-b))))
             (declare (type (simple-array single-float) tmpv))
@@ -413,7 +413,7 @@
 ;; matをLU分解する
 ;; destructive function!!
 (defun lu-decompose (result pivot)
-  (declare (type (simple-array single-float) result)
+  (declare (type simple-array result)
            (type (simple-array fixnum) pivot))
   (let ((dimension (car (array-dimensions result))))
     (let ((weight (make-float-vector dimension))) ;weight = new_vector(n);
@@ -530,7 +530,12 @@
   (* deg (/ +2pi+ 360)))
 
 (defun list->vector (list)
+  "convert list to float vector"
   (coerce list '(array single-float 1)))
+
+(defun vector->list (vec)
+  "convert vector to list"
+  (coerce vec 'cons))
 
 ;; あほい
 (defun list->matrix (list)
@@ -550,3 +555,9 @@
       (format t "~%")
       )
     ))
+
+(defun random-range (min max)
+  (declare (type number min max))
+  (let ((d (- max min)))
+    (declare (type number d))
+    (+ (random d) min)))

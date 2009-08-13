@@ -26,6 +26,19 @@
   (assert-true (eps= 10.0 10.9 1.0))
   (assert-false (eps= 10.0 11.1 1.0)))
 
+
+(define-test random-range-test
+  ;; float
+  (dotimes (i 100)
+    (let ((min -100.0)
+	  (max 100.0))
+      (assert-true (<= min (random-range min max) max))))
+  ;; integer
+  (dotimes (i 100)
+    (let ((min -100)
+	  (max 100))
+      (assert-true (<= min (random-range min max) max)))))
+
 (define-test deg2rad-test
   ;; 0[deg] -> 0[rad]
   (assert-float-equal (deg2rad 0.0) 0.0)
@@ -54,7 +67,7 @@
 
 (define-test deg2rad-and-rad2deg-test
   (dotimes (i 10)
-    (let ((theta (random 350.0)))
+    (let ((theta (random-range -350.0 350.0)))
       (assert-true (eps= (rad2deg (deg2rad theta)) theta))
       )))
 
@@ -103,7 +116,9 @@
 
 (define-test copy-vector-test
   (dotimes (i 3)
-    (let ((vec (float-vector (random 100.0) (random 100.0) (random 100.0)))
+    (let ((vec (float-vector (random-range -100.0 100.0)
+			     (random-range -100.0 100.0)
+			     (random-range -100.0 100.0)))
 	  (buf (make-float-vector 3)))
       (copy-vector vec buf)
       (assert-true (eps-vector= vec buf)))))
@@ -111,7 +126,7 @@
 (define-test copy-matrix-test
   (dotimes (i 3)
     (let ((dim 10))
-      (let ((mat (make-float-matrix dim dim :initial-element (random 100.0)))
+      (let ((mat (make-float-matrix dim dim :initial-element (random-range -100.0 100.0)))
 	    (tmp (make-float-matrix dim dim)))
 	(copy-matrix mat tmp)
 	(assert-true (eps-matrix= mat tmp))))))
@@ -189,11 +204,15 @@
   (let ((a (float-vector 1 0 0)))
     (assert-float-equal (distance a a) 0.0))
   (dotimes (i 10)
-    (let ((a (float-vector (random 100.0) (random 100.0) (random 100.0))))
+    (let ((a (float-vector (random-range -100.0 100.0)
+			   (random-range -100.0 100.0)
+			   (random-range -100.0 100.0))))
       (assert-float-equal (distance a a) 0.0)))
   (dotimes (i 10)
     (let ((c (float-vector 0 0 0))
-	  (a (float-vector (random 100.0) (random 100.0) (random 100.0))))
+	  (a (float-vector (random-range -100.0 100.0)
+			   (random-range -100.0 100.0)
+			   (random-range -100.0 100.0))))
       (assert-float-equal (distance a c) (norm a))))
   )
 
@@ -238,42 +257,139 @@
 
 (define-test matrix-addsub-test
   (dotimes (i 10)
-    (let ((a (list->matrix (list (list (random 100.0)
-				       (random 100.0)
-				       (random 100.0))
-				 (list (random 100.0)
-				       (random 100.0)
-				       (random 100.0))
-				 (list (random 100.0)
-				       (random 100.0)
-				       (random 100.0)))))
-	  (b (list->matrix (list (list (random 100.0)
-				       (random 100.0)
-				       (random 100.0))
-				 (list (random 100.0)
-				       (random 100.0)
-				       (random 100.0))
-				 (list (random 100.0)
-				       (random 100.0)
-				       (random 100.0))))))
+    (let ((a (list->matrix (list (list (random-range -100.0 100.0)
+				       (random-range -100.0 100.0)
+				       (random-range -100.0 100.0))
+				 (list (random-range -100.0 100.0)
+				       (random-range -100.0 100.0)
+				       (random-range -100.0 100.0))
+				 (list (random-range -100.0 100.0)
+				       (random-range -100.0 100.0)
+				       (random-range -100.0 100.0)))))
+	  (b (list->matrix (list (list (random-range -100.0 100.0)
+				       (random-range -100.0 100.0)
+				       (random-range -100.0 100.0))
+				 (list (random-range -100.0 100.0)
+				       (random-range -100.0 100.0)
+				       (random-range -100.0 100.0))
+				 (list (random-range -100.0 100.0)
+				       (random-range -100.0 100.0)
+				       (random-range -100.0 100.0))))))
       (assert-true (eps-matrix= (m- (m+ a b) b) a))
       (assert-true (eps-matrix= (m- (m+ a b) a) b))
       )))
 
 (define-test m*-test
   ;; 2x2 x 2x2
-  
-  ;; 2x3 x 3x2
-  (let ((a #2A((1.0 1.0 1.0) (1.0 1.0 1.0) (1.0 1.0 1.0)))
-	(b nil))
-    )
+  (let ((a #2A((1.0 2.0) (3.0 4.0)))
+	(b #2A((5.0 6.0) (7.0 8.0)))
+	(c #2A((19.0 22.0) (43.0 50.0))))
+    (assert-true (eps-matrix= (m* a b) c)))
+  ;; 3x2 x 2x3 = 3x3
+  ;; 2x3 x 3x2 = 2x2
+  (let ((a #2A((1.0 2.0) (3.0 4.0) (5.0 6.0)))
+	(b #2A((-7.0 -8.0 -9.0) (-10.0 -11.0 -12.0)))
+	(c #2A((-27.0 -30.0 -33.0) (-61.0 -68.0 -75.0) (-95.0 -106.0 -117.0)))
+	(d #2A((-76.0 -100.0) (-103.0 -136.0))))
+    (assert-true (eps-matrix= (m* a b) c))
+    (assert-true (eps-matrix= (m* b a) d)))
   ;; 3x3 x 3x3
-  
+  (let ((a #2A((1.0 2.0 3.0) (4.0 5.0 6.0) (7.0 8.0 9.0)))
+	(b #2A((4.0 5.0 6.0) (1.0 2.0 3.0) (7.0 8.0 9.0)))
+	(c #2A((27.0 33.0 39.0) (63.0 78.0 93.0) (99.0 123.0 147.0))))
+    (assert-true (eps-matrix= (m* a b) c))
+    )
+  ;; use identity matrix
+  ;; identity-matrix x any-matrix = any-matrix
+  ;; any-matrix x identity-matrix= any-matrix
+  ;; 2x2
+  (let ((ident (make-identity-matrix 2)))
+    (dotimes (i 20)
+      (let ((m (list->matrix (list (list (random-range -100.0 100.0)
+					 (random-range -100.0 100.0))
+				   (list (random-range -100.0 100.0)
+					 (random-range -100.0 100.0))))))
+	(assert-true (eps-matrix= (m* m ident m) m))
+	(assert-true (eps-matrix= (m* ident m) m))
+	)))
+  ;; 3x3
+  (let ((ident (make-identity-matrix 3)))
+    (dotimes (i 20)
+      (let ((m (list->matrix (list (list (random-range -100.0 100.0)
+					 (random-range -100.0 100.0)
+					 (random-range -100.0 100.0))
+				   (list (random-range -100.0 100.0)
+					 (random-range -100.0 100.0)
+					 (random-range -100.0 100.0))
+				   (list (random-range -100.0 100.0)
+					 (random-range -100.0 100.0)
+					 (random-range -100.0 100.0))))))
+	(assert-true (eps-matrix= (m* m ident) m))
+	(assert-true (eps-matrix= (m* ident m) m))
+	)))
   )
 
+(define-test m-1-test
+  ;; 2x2
+  (let ((identity (make-identity-matrix 2)))
+    (dotimes (i 100)
+      (let ((mat (list->matrix (list (list (random-range -100.0 100.0)
+					   (random-range -100.0 100.0))
+				     (list (random-range -100.0 100.0)
+					   (random-range -100.0 100.0))))))
+	(let ((inv-mat (m-1 mat)))
+	  (when inv-mat
+	    (assert-true (eps-matrix= (m* inv-mat mat) identity))
+	    (assert-true (eps-matrix= (m* mat inv-mat) identity)))
+	  ))))
+  ;; 3x3
+  (let ((identity (make-identity-matrix 3)))
+    (dotimes (i 100)
+      (let ((mat (list->matrix (list (list (random-range -100.0 100.0)
+					   (random-range -100.0 100.0)
+					   (random-range -100.0 100.0))
+				     (list (random-range -100.0 100.0)
+					   (random-range -100.0 100.0)
+					   (random-range -100.0 100.0))
+				     (list (random-range -100.0 100.0)
+					   (random-range -100.0 100.0)
+					   (random-range -100.0 100.0))))))
+	(let ((inv-mat (m-1 mat)))
+	  (when inv-mat
+	    (assert-true (eps-matrix= (m* inv-mat mat) identity))
+	    (assert-true (eps-matrix= (m* mat inv-mat) identity)))
+	  ))))
+  )
+
+(define-test flip-test
+  ;; 2x2
+  (dotimes (i 100)
+    (let* ((a (random-range -100.0 100.0))
+	   (b (random-range -100.0 100.0))
+	   (mat (list->matrix (list (list a b)
+				    (list b a)))))
+      (assert-true (eps-matrix= (flip mat) mat))
+      ))
+  ;; 3x3
+  (dotimes (i 100)
+    (let* ((a (random-range -100.0 100.0))
+	   (b (random-range -100.0 100.0))
+	   (c (random-range -100.0 100.0))
+	   (d (random-range -100.0 100.0))
+	   (e (random-range -100.0 100.0))
+	   (f (random-range -100.0 100.0))
+	   (mat (list->matrix (list (list a b c)
+				    (list b d e)
+				    (list c e f)
+				    ))))
+      (assert-true (eps-matrix= (flip mat) mat))))
+  )
+
+;; mv*
 
 (run-tests constants-test
 	   eps=-test
+	   random-range-test
 	   deg2rad-test
 	   rad2deg-test
 	   deg2rad-and-rad2deg-test
@@ -294,6 +410,9 @@
 	   list->matrix-test
 	   m+-test
 	   m--test
-	   matrix-addsub-test)
+	   matrix-addsub-test
+	   m*-test
+	   m-1-test
+	   flip-test)
 
 (force-output)

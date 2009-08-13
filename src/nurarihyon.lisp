@@ -29,6 +29,7 @@
    #:eps-matrix=
    #:rad2deg
    #:deg2rad
+   #:random-range
    #:+pi+ #:+pi/2+ #:+pi/4+ #:+2pi+
    #:+e+
    #:list->vector #:list->matrix
