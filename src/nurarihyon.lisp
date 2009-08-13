@@ -14,6 +14,7 @@
   (:use
    #:common-lisp)
   (:export
+   ;; base.lisp
    #:make-integer-vector #:make-float-vector
    #:make-float-matrix
    #:make-identity-matrix
@@ -35,6 +36,7 @@
    #:list->vector #:list->matrix
    #:vector->list
    #:print-matrix
+   ;; array.lisp
    #:rotation-matrix #:rotate-matrix
    #:euler-matrix #:rpy-matrix
    #:+x-axis+ #:+y-axis+ #:+z-axis+

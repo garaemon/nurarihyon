@@ -25,5 +25,5 @@ clean:
 	$(RM) $(NURARIHYON_ASD_PATH) $(NURARIHYON_TARGET_DIR)
 	$(RM) src/*fasl
 
-test:
+test: install-src install-asd
 	$(LISP) $(LISP_OPTIONS) $(PWD)/tests/test-base.lisp 2>/dev/null

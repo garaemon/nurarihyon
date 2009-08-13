@@ -1,6 +1,9 @@
 ;;================================================
 ;; array.lisp
 ;;
+;; many functions in array.lisp is reffering EusLisp's
+;; implementation.
+;; 
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
@@ -8,15 +11,14 @@
 
 (in-package :nurarihyon)
 
-;; x軸
-(defconstant +x-axis+ (make-array 3 :element-type 'single-float
-				  :initial-contents '(1.0 0.0 0.0)))
-;; y軸
-(defconstant +y-axis+ (make-array 3 :element-type 'single-float
-				  :initial-contents '(0.0 1.0 0.0)))
-;; z軸
-(defconstant +z-axis+ (make-array 3 :element-type 'single-float
-				  :initial-contents '(0.0 0.0 1.0)))
+(eval-when (:compile-toplevel)
+  (defconstant +x-axis+ (make-array 3 :element-type 'single-float
+				    :initial-contents '(1.0 0.0 0.0)))
+  (defconstant +y-axis+ (make-array 3 :element-type 'single-float
+				    :initial-contents '(0.0 1.0 0.0)))
+  (defconstant +z-axis+ (make-array 3 :element-type 'single-float
+				    :initial-contents '(0.0 0.0 1.0)))
+  )
 
 (defun rotation-matrix (ang vec &optional (result (make-float-matrix 3 3)))
   "returns a matrix which rotates ang[rad] around vec."
@@ -51,14 +53,14 @@
                       (worldp nil)
                       (result (make-float-matrix 3 3)))
   "This is a destructive function.
-   matをaxis周りにangだけ回転する.
+   rotate mat ang[rad] around axis.
    mat    ... 3x3 float matrix.
    axis   ... one of :x,:y or :z
    worldp ... nil -> local, multiple rot from the right
               t   -> world, multiple rot from the left"
   (declare (type (simple-array single-float (3 3)) mat result)
            (type single-float ang)
-           (symbol worldp axis))
+           (type symbol worldp axis))
   (let ((cos (cos ang))
         (sin (sin ang)))
     (declare (type single-float cos sin))
@@ -131,9 +133,10 @@
 
 (declaim (inline axis->vec))
 (defun axis->vec (axis)
+  "returns vector appropriate to axis.
+   axis must be a :x, :y or :z."
   (case axis
     (:x +x-axis+)
     (:y +y-axis+)
     (:z +z-axis+))
   )
-
