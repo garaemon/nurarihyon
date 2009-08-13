@@ -397,6 +397,29 @@
   )
 
 ;; mv*
+(define-test mv*-test
+  ;; 2x2 x 2x1
+  (let ((a #2A((1.0 2.0) (3.0 4.0)))
+	(b #(5.0 6.0))
+	(c #(17.0 39.0)))
+    (assert-true (eps-vector= (mv* a b) c)))
+  ;; 3x3 x 3x1
+  (let ((a #2A((1.0 2.0 3.0) (3.0 4.0 5.0) (6.0 7.0 8.0)))
+	(b #(9.0 10.0 11.0))
+	(c #(62.0 122.0 212.0)))
+    (assert-true (eps-vector= (mv* a b) c)))
+  (dotimes (i 100)
+    (let ((mat (make-identity-matrix 2))
+	  (vec (list->vector (list (random-range -100.0 100.0)
+				   (random-range -100.0 100.0)))))
+      (assert-true (eps-vector= (mv* mat vec) vec))))
+  (dotimes (i 100)
+    (let ((mat (make-identity-matrix 3))
+	  (vec (list->vector (list (random-range -100.0 100.0)
+				   (random-range -100.0 100.0)
+				   (random-range -100.0 100.0)))))
+      (assert-true (eps-vector= (mv* mat vec) vec))))
+  )
 
 (run-tests constants-test
 	   eps=-test
@@ -425,6 +448,8 @@
 	   matrix-addsub-test
 	   m*-test
 	   m-1-test
-	   flip-test)
+	   flip-test
+	   mv*-test)
 
 (force-output)
+(sb-ext:quit)

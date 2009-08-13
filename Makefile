@@ -26,4 +26,4 @@ clean:
 	$(RM) src/*fasl
 
 test:
-	$(LISP) $(LISP_OPTIONS) $(PWD)/tests/test-nurarihyon.lisp 2>/dev/null
+	$(LISP) $(LISP_OPTIONS) $(PWD)/tests/test-base.lisp 2>/dev/null
