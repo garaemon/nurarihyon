@@ -3,14 +3,14 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-
 (require :asdf)
 (require :sb-posix)
 (asdf:operate 'asdf:load-op 'lisp-unit)
 (asdf:operate 'asdf:load-op 'nurarihyon)
-
+ 
 (use-package :lisp-unit)
 (use-package :nurarihyon)
+;;(use-package :chimi)
 
 (define-test axis->vec-test
   (assert-true (eps-vector= (axis->vec :x) +x-axis+))
@@ -28,7 +28,7 @@
   (let ((identity (make-identity-matrix 3)))
     (dotimes (i 200)
       (let ((theta (random-range -360.0 360.0))
-	    (axis (random-select '(:x :y :z))))
+	    (axis (chimi:random-select '(:x :y :z))))
 	(let ((mat+ (rotation-matrix (deg2rad theta) (axis->vec axis)))
 	      (mat- (rotation-matrix (deg2rad (- theta)) (axis->vec axis))))
 	  (assert-true (eps-matrix= (m* mat+ mat-) identity))
@@ -38,7 +38,7 @@
 (define-test rotate-matrix-test
   (let ((identity (make-identity-matrix 3)))
     (dotimes (i 100)
-      (let* ((axis (random-select '(:x :y :z)))
+      (let* ((axis (chimi:random-select '(:x :y :z)))
 	     (theta (random-range -360.0 360.0))
 	     (inv-axis (case axis
 			 (:x :-x)
@@ -51,12 +51,11 @@
 	))
     ;; worldpについてのものがほしい
     ))
-  
 
-
+(format t "<<<<< test-array.lisp >>>>>~%")
+(format t "-----------------------------------------------~%")
 (run-tests axis->vec-test
 	   rotation-matrix-test
 	   rotate-matrix-test)
+(format t "~%-----------------------------------------------~%~%")
 
-(force-output)
-;;(sb-ext:quit)

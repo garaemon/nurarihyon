@@ -3,7 +3,6 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-
 (require :asdf)
 (require :sb-posix)
 (asdf:operate 'asdf:load-op 'lisp-unit)
@@ -421,6 +420,8 @@
       (assert-true (eps-vector= (mv* mat vec) vec))))
   )
 
+(format t "<<<<< test-base.lisp >>>>>~%")
+(format t "-----------------------------------------------~%")
 (run-tests constants-test
 	   eps=-test
 	   random-range-test
@@ -450,6 +451,4 @@
 	   m-1-test
 	   flip-test
 	   mv*-test)
-
-(force-output)
-(sb-ext:quit)
+(format t "~%-----------------------------------------------~%~%")
