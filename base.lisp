@@ -4,17 +4,22 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 ;;(declaim (optimize (speed 3) (safety 0) (debug 0) (space 0)))
-(declaim (optimize (speed 0) (safety 3) (debug 3) (space 0)))
+(declaim (optimize (speed 0)
+		   (safety 3)
+		   (debug 3)
+		   (space 0)))
 
 (in-package :nurarihyon)
 
 ;; constant
-(defconstant +e+ (exp 1.0))
-(defconstant +pi+ (coerce pi 'single-float))
-(defconstant +2pi+ (* 2.0 +pi+))
-(defconstant +pi/2+ (/ +pi+ 2.0))
-(defconstant +pi/4+ (/ +pi+ 4.0))
-(defconstant +eps+ 0.0001)
+(eval-when (:compile-toplevel :load-toplevel)
+  (defconstant +e+ (exp 1.0))
+  (defconstant +pi+ (coerce pi 'single-float))
+  (defconstant +2pi+ (* 2.0 +pi+))
+  (defconstant +pi/2+ (/ +pi+ 2.0))
+  (defconstant +pi/4+ (/ +pi+ 4.0))
+  (defconstant +eps+ 0.0001))
+
 
 ;;==================================
 ;; in-package utility
@@ -261,6 +266,17 @@
                   (x b))))
       c))
 
+(defun scale (k vec &optional (buf))
+  (declare (type number k)
+           (type (simple-array single-float) vec))
+  (let ((dim (car (array-dimensions buf))))
+    (declare (type fixnum dim))
+    (if (null buf)
+        (setf buf (make-float-vector dim)))
+    (dotimes (i dim)
+      (setf (aref buf i) (* k (aref vec i))))
+    buf))
+
 (declaim (inline norm))
 (defun norm (a)
   "a is vector. returns length of a"
@@ -354,7 +370,7 @@
 (defun flip (mat &optional (result nil))
   "transpose matrix.
    You can give the 2nd argument as a buffer."
-  ;;(declare (type (array single-float) mat))
+  (declare (type (simple-array single-float) mat))
   (let ((dims (array-dimensions mat)))
     (declare (list dims))
     (if (null result)
@@ -491,7 +507,8 @@
         )
       det))))                           ;return determination
 
-(defun mv* (mat vec)
+
+(defun mv* (mat vec &optional (result nil))
   "return vector.
    mat = n x m  vec = 1 x m
    +---------+     +-+
@@ -500,27 +517,28 @@
    |         |     | |
    +---------+     +-+
   "
+  (declare (type (simple-array single-float) mat vec))
   (let ((mat-dimensions (array-dimensions mat))
         (vec-dimension (car (array-dimensions vec))))
-    (declare (type fixnum vec-dimension)
-             (list mat-dimensions))
-    ;; error check
+     (declare (type fixnum vec-dimension)
+              (type list mat-dimensions))
+    ;; error check for dimension
     (when (not (= vec-dimension (cadr mat-dimensions)))
       (error "dimension mismatch"))
     (let ((column-dimension (cadr mat-dimensions)))
       (declare (type fixnum column-dimension))
-      (let ((result (make-float-vector column-dimension)))
-        (declare (type (simple-array single-float) result))
+      (let ((fv (make-float-vector column-dimension)))
+        (declare (type (simple-array single-float) fv))
         (dotimes (n column-dimension)
           (let ((element 0.0))
             (declare (type single-float element))
             (dotimes (m vec-dimension)
               (declare (type fixnum m))
-              (setf element (+ element (* (aref mat n m) (aref vec m))))
-              )
-            (setf (aref result n) element))
-          )
-        result))))
+              (setf element (+ element (* (aref mat n m) (aref vec m)))))
+            (setf (aref fv n) element)))
+        (if result
+            (copy-vector fv result)     ; copy fv -> result
+            fv)))))
 
 ;; utility
 (defun rad2deg (rad)
@@ -566,3 +584,24 @@
   (let ((d (- max min)))
     (declare (type number d))
     (+ (random d) min)))
+
+;; x x x x x
+;; x x x x x
+;; x x x x x
+(defun matrix-row (mat id)
+  (declare (type (simple-array single-float) mat)
+           (type fixnum id))
+  (let ((size (cadr (array-dimensions mat))))
+    (let ((ret (make-float-vector size)))
+      (dotimes (i size)
+        (setf (aref ret i) (aref mat id i)))
+      ret)))
+
+(defun matrix-column (mat id)
+  (declare (type (simple-array single-float) mat)
+           (type fixnum id))
+  (let ((size (car (array-dimensions mat))))
+    (let ((ret (make-float-vector size)))
+      (dotimes (i size)
+        (setf (aref ret i) (aref mat i id)))
+      ret)))
