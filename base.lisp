@@ -3,11 +3,14 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-;;(declaim (optimize (speed 3) (safety 0) (debug 0) (space 0)))
-(declaim (optimize (speed 0)
-		   (safety 3)
-		   (debug 3)
-		   (space 0)))
+;; (declaim (optimize (speed 0)
+;; 		   (safety 3)
+;; 		   (debug 3)
+;; 		   (space 0)))
+
+(declaim (optimize (safety 3)
+                 (debug 3)))
+
 
 (in-package :nurarihyon)
 
@@ -53,7 +56,7 @@
 
 (defun eps-matrix= (a b &optional (diff +eps+))
   "returns t if matrix a and b is near enough."
-  (declare (type simple-array a b)
+  (declare (type (simple-array single-float) a b)
 	   (type single-float diff))
   (let ((a-dims (array-dimensions a))
 	(b-dims (array-dimensions b)))

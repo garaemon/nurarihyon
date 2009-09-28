@@ -7,13 +7,13 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(declaim (optimize (speed 3)
-		   (safety 0)
-		   (debug 0)
-		   (space 0)))
+;; (declaim (optimize (speed 3)
+;; 		   (safety 0)
+;; 		   (debug 0)
+;; 		   (space 0)))
 ;; for debugging
-;; (declaim (optimize (safety 3)
-;;                   (debug 3)))
+(declaim (optimize (safety 3)
+                  (debug 3)))
 
 (in-package :nurarihyon)
 
@@ -190,5 +190,5 @@
   (case axis
     (:x +x-axis+)
     (:y +y-axis+)
-    (:z +z-axis+))
-  )
+    (:z +z-axis+)
+    (t axis)))
