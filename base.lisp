@@ -68,7 +68,7 @@
 	    (dotimes (j (cadr a-dims))
 	      (declare (type fixnum j))
 	      (if (not (eps= (aref a i j) (aref b i j) diff))
-		  (return nil))
+		  (return-from eps-matrix= nil))
 	      ))
 	  t)				;if passed
 	nil)))
@@ -272,7 +272,7 @@
 (defun scale (k vec &optional (buf))
   (declare (type number k)
            (type (simple-array single-float) vec))
-  (let ((dim (car (array-dimensions buf))))
+  (let ((dim (car (array-dimensions vec))))
     (declare (type fixnum dim))
     (if (null buf)
         (setf buf (make-float-vector dim)))
@@ -571,6 +571,17 @@
         (setf (aref mat i j) (coerce (elt (elt list i) j) 'single-float))))
     mat))
 
+;; あほい
+(defun matrix->list (mat)
+  (let* ((dims (array-dimensions mat))
+         (row (car dims))
+         (col (cadr dims)))
+    (let ((ret nil))
+    (dotimes (i row)
+      (push (coerce (matrix-row mat i) 'cons) ret))
+    (nreverse ret))))
+    
+
 (defun print-matrix (mat)
   (let ((dims (array-dimensions mat)))
     (dotimes (i (car dims))
@@ -608,3 +619,10 @@
       (dotimes (i size)
         (setf (aref ret i) (aref mat i id)))
       ret)))
+
+(defun normalize-vector (v)
+  (declare (type (simple-array single-float) v))
+  (let ((k (/ 1.0 (norm v))))
+    (scale k v)))
+
+

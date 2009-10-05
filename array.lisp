@@ -17,14 +17,12 @@
 
 (in-package :nurarihyon)
 
-(eval-when (:compile-toplevel)
-  (defconstant +x-axis+ (make-array 3 :element-type 'single-float
-				    :initial-contents '(1.0 0.0 0.0)))
-  (defconstant +y-axis+ (make-array 3 :element-type 'single-float
-				    :initial-contents '(0.0 1.0 0.0)))
-  (defconstant +z-axis+ (make-array 3 :element-type 'single-float
-				    :initial-contents '(0.0 0.0 1.0)))
-  )
+(defvar *x-axis* (make-array 3 :element-type 'single-float
+                             :initial-contents '(1.0 0.0 0.0)))
+(defvar *y-axis* (make-array 3 :element-type 'single-float
+                             :initial-contents '(0.0 1.0 0.0)))
+(defvar *z-axis* (make-array 3 :element-type 'single-float
+                             :initial-contents '(0.0 0.0 1.0)))
 
 (defun rotation-matrix (ang vec &optional (result (make-float-matrix 3 3)))
   "returns a matrix which rotates ang[rad] around vec."
@@ -124,10 +122,10 @@
 ;; その回転を表現する3x3の行列を返す
 (defun euler-matrix (az ay az2)
   (declare (type single-float az ay az2))
-  (let ((r (rotation-matrix az +z-axis+)))
+  (let ((r (rotation-matrix az *z-axis*)))
     (declare (type (simple-array single-float (3 3)) r))
     (rotate-matrix r ay :y nil r)
-    (rotate-matrix r az2 :y nil r)
+    (rotate-matrix r az2 :z nil r)
     r))
 
 ;; function: rpy-matrix
@@ -135,7 +133,7 @@
 ;; 3x3の行列を返す.
 (defun rpy-matrix (az ay ax)
   (declare (type single-float ax ay az))
-  (let ((r (rotation-matrix ax +x-axis+)))
+  (let ((r (rotation-matrix ax *x-axis*)))
     (declare (type (simple-array single-float (3 3)) r))
     (rotate-matrix r ay :y t r)
     (rotate-matrix r az :z t r)
@@ -188,7 +186,7 @@
   "returns vector appropriate to axis.
    axis must be a :x, :y or :z."
   (case axis
-    (:x +x-axis+)
-    (:y +y-axis+)
-    (:z +z-axis+)
+    (:x *x-axis*)
+    (:y *y-axis*)
+    (:z *z-axis*)
     (t axis)))

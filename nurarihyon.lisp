@@ -34,15 +34,16 @@
    #:+pi+ #:+pi/2+ #:+pi/4+ #:+2pi+
    #:+e+
    #:list->vector #:list->matrix
-   #:vector->list
+   #:vector->list #:matrix->list
    #:print-matrix
    #:random-range
    #:matrix-row #:matrix-column
+   #:normalize-vector
    ;; array.lisp
    #:rotation-matrix #:rotate-matrix
    #:euler-matrix #:rpy-matrix
    #:rpy-angle
-   #:+x-axis+ #:+y-axis+ #:+z-axis+
+   #:*x-axis* #:*y-axis* #:*z-axis*
    #:axis->vec
    )
   )
