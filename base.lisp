@@ -611,10 +611,21 @@
         (setf (aref ret i) (aref mat id i)))
       ret)))
 
+(defun (setf matrix-row) (mat id val)
+  (declare (type (simple-array single-float) mat val)
+           (type fixnum id))
+  (let ((size (cadr (array-dimensions mat))))
+    (declare (type fixnum size))
+    (dotimes (i size)
+      (declare (type fixnum i))
+      (setf (aref mat id i) (aref val i)))
+    mat))
+
 (defun matrix-column (mat id)
   (declare (type (simple-array single-float) mat)
            (type fixnum id))
   (let ((size (car (array-dimensions mat))))
+    (declare (type fixnum size))
     (let ((ret (make-float-vector size)))
       (dotimes (i size)
         (setf (aref ret i) (aref mat i id)))
@@ -625,4 +636,11 @@
   (let ((k (/ 1.0 (norm v))))
     (scale k v)))
 
+(declaim (inline ->double-float))
+(defun ->double-float (val)
+  (coerce val 'double-float))
+
+(declaim (inline ->single-float))
+(defun ->single-float (val)
+  (coerce val 'single-float))
 

@@ -39,6 +39,8 @@
    #:random-range
    #:matrix-row #:matrix-column
    #:normalize-vector
+   #:->double-float
+   #:->single-float
    ;; array.lisp
    #:rotation-matrix #:rotate-matrix
    #:euler-matrix #:rpy-matrix
