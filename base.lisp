@@ -23,7 +23,6 @@
   (defconstant +pi/4+ (/ +pi+ 4.0))
   (defconstant +eps+ 0.0001))
 
-
 ;;==================================
 ;; in-package utility
 (declaim (inline x))
@@ -643,4 +642,9 @@
 (declaim (inline ->single-float))
 (defun ->single-float (val)
   (coerce val 'single-float))
+
+;; not fast implementation
+(defun vector-mean (vecs)
+  (scale (/ 1.0 (length vecs)) (reduce #'v+ vecs)))
+
 

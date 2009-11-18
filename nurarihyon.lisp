@@ -41,6 +41,7 @@
    #:normalize-vector
    #:->double-float
    #:->single-float
+   #:vector-mean
    ;; array.lisp
    #:rotation-matrix #:rotate-matrix
    #:euler-matrix #:rpy-matrix
