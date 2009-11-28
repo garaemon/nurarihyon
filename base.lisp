@@ -610,7 +610,7 @@
         (setf (aref ret i) (aref mat id i)))
       ret)))
 
-(defun (setf matrix-row) (mat id val)
+(defun (setf matrix-row) (val mat id)
   (declare (type (simple-array single-float) mat val)
            (type fixnum id))
   (let ((size (cadr (array-dimensions mat))))

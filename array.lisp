@@ -49,7 +49,7 @@
         (setf (aref result 2 1) (+ (* vy vz 1-cos) (* vx sin)))
         (setf (aref result 2 2) (+ (* vz vz 1-cos) cos))
         )))
-  result)
+  (the (simple-array single-float (3 3)) result))
 
 ;; matをang, axis, worldpにしたがって回転させる
 ;; 結果はresultに入れる.
