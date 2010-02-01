@@ -3,14 +3,10 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-;; (declaim (optimize (speed 0)
-;; 		   (safety 3)
-;; 		   (debug 3)
-;; 		   (space 0)))
-
-(declaim (optimize (safety 3)
-                 (debug 3)))
-
+(declaim (optimize (speed 3)
+		   (safety 0)
+		   (debug 0)
+		   (space 0)))
 
 (in-package :nurarihyon)
 
@@ -42,45 +38,16 @@
 ;;
 ;;==================================
 
-(defun eps= (a b &optional (diff +eps+))
-  "returns t if a is nearly equal to b."
-  (declare (type single-float a b diff))
-  (< (abs (- a b)) diff))
-
-(defun eps-vector= (a b &optional (diff +eps+))
-  "returns t if vector a and b is near enough."
-  (declare (type simple-array a b)
-	   (type single-float diff))
-  (eps= (distance a b) 0.0 diff))
-
-(defun eps-matrix= (a b &optional (diff +eps+))
-  "returns t if matrix a and b is near enough."
-  (declare (type (simple-array single-float) a b)
-	   (type single-float diff))
-  (let ((a-dims (array-dimensions a))
-	(b-dims (array-dimensions b)))
-    (declare (type list a-dims b-dims))
-    (if (equal a-dims b-dims)
-	(progn
-	  (dotimes (i (car a-dims))
-	    (declare (type fixnum i))
-	    (dotimes (j (cadr a-dims))
-	      (declare (type fixnum j))
-	      (if (not (eps= (aref a i j) (aref b i j) diff))
-		  (return-from eps-matrix= nil))
-	      ))
-	  t)				;if passed
-	nil)))
-
 (defun make-integer-vector (dim &key (initial-element 0))
   "allocate integer vector.
    You have to set dimension, dimension must be a fixnum.
    You can also give :initial-element, to fill vector as initial value."
   (declare (type fixnum dim)
            (type fixnum initial-element))
-  (make-array dim
-              :element-type 'fixnum
-              :initial-element initial-element))
+  (the (simple-array fixnum)
+    (make-array dim
+                :element-type 'fixnum
+                :initial-element initial-element)))
 
 (defun make-float-vector (dim &key (initial-element 0.0))
   "allocate float vector.
@@ -88,40 +55,44 @@
    You can also give :initial-element, to fill vector as initial value."
   (declare (type fixnum dim)
            (type single-float initial-element))
-  (make-array dim
-              :element-type 'single-float
-              :initial-element initial-element))
+  (the (simple-array single-float)
+    (make-array dim
+                :element-type 'single-float
+                :initial-element initial-element)))
 
 (defun make-float-matrix (row column &key (initial-element 0.0))
   "allocate float matrix.
    You have to set row and column, fixnum."
   (declare (type fixnum row column)
            (type single-float initial-element))
-  (make-array (list row column)
-              :element-type 'single-float
-              :initial-element initial-element))
+  (the (simple-array single-float)
+    (make-array (list row column)
+                :element-type 'single-float
+                :initial-element initial-element)))
 
 (defun make-identity-matrix (dim)
-  "allocate identity matrix (double matrix)."
+  "allocate identity matrix (float matrix)."
   (declare (type fixnum dim))
   (let ((mat (make-float-matrix dim dim)))
     (declare (type (simple-array single-float) mat))
     (dotimes (i dim)
       (declare (type fixnum i))
       (setf (aref mat i i) 1.0))
-    mat))
+    (the (simple-array single-float)
+      mat)))
 
 (defun float-vector (&rest args)
-  (make-array (length args) :element-type 'single-float
-              :initial-contents (mapcar #'(lambda (x) (coerce x 'single-float)) args)))
+  (the (simple-array single-float)
+    (make-array (length args) :element-type 'single-float
+                :initial-contents
+                (mapcar #'(lambda (x) (coerce x 'single-float)) args))))
 
 ;; operator utility
-(defmacro with-array-dimension-check (vecs &rest args)
+(defmacro with-array-dimension-check ((a b) &rest args)
   "check dimensions of vecs are equal or not"
-   `(if (equal (array-dimensions ,(car vecs))
-               (array-dimensions ,(cadr vecs)))
-        (progn
-          ,@args)
+   `(if (equal (array-dimensions ,a)
+               (array-dimensions ,b))
+        (progn ,@args)
         (error "vector dimension mismatch")))
 
 (defmacro with-array-dimension-check* ((vecs dim) &rest args)
@@ -155,24 +126,35 @@
 (defmacro with-square-matrix-check (mat &rest args)
   (let ((dims (gensym)))
     `(let ((,dims (array-dimensions ,mat)))
-       (if (= (car ,dims)
-              (cadr ,dims))
-           (progn
-             ,@args)
-           (error "array is not identity matrix")
-           ))))
+       (declare (type list ,dims))
+       (if (= (car ,dims) (cadr ,dims))
+           (progn ,@args)
+           (error "array is not identity matrix")))))
 
 (defun copy-vector (a b)
   "copy elements from vector a to vector b.
    this is a destructive function."
   (declare (type (simple-array single-float) a b))
   (with-array-dimension-check (a b)
-    (let ((dims (array-dimensions a)))
-      (dotimes (i (car dims))
-        (setf (aref b i)
-              (aref a i))
-        )
-      b)))
+    (let ((dim (car (array-dimensions a))))
+      (declare (type fixnum dim))
+      (dotimes (i dim)
+        (declare (type fixnum i))
+        (setf (aref b i) (aref a i)))
+      (the (simple-array single-float) b))))
+
+(defun copy-float-vector (a b)
+  "copy elements from vector a to vector b.
+   this is a destructive function."
+  (declare (type (simple-array single-float) a b))
+  (with-array-dimension-check (a b)
+    (let ((dim (car (array-dimensions a))))
+      (declare (type fixnum dim))
+      (dotimes (i dim)
+        (declare (type fixnum i))
+        (setf (aref b i) (aref a i)))
+      (the (simple-array single-float) b))))
+
 
 (defun copy-matrix (a b)
   "copy elements from matrix a to matrix b.
@@ -180,12 +162,16 @@
   (declare (type (simple-array single-float) a b))
   (with-array-dimension-check (a b)
     (let ((dims (array-dimensions a)))
-      (dotimes (i (car dims))
-        (dotimes (j (cadr dims))
-          (setf (aref b i j)
-                (aref a i j))
-          ))
-      b)))
+      (declare (type list dims))
+      (let ((dima (car dims))
+            (dimb (cadr dims)))
+        (declare (type fixnum dima dimb))
+        (dotimes (i dima)
+          (declare (type fixnum i))
+          (dotimes (j dimb)
+            (declare (type fixnum j))
+            (setf (aref b i j) (aref a i j))))))
+      (the (simple-array single-float) b)))
 
 ;; for utility functions
 (defmacro -== (a b)
@@ -213,7 +199,20 @@
       (dotimes (i dim)
         (setf (aref c i)
               (+ (aref a i) (aref b i))))
-      c)))
+      (the simple-array c))))
+
+(defun fv+ (a b &optional (c nil))
+  "calculate addition of vector a and b.
+   You can give vector c as a buffer."
+  (declare (type (simple-array single-float) a b))
+  (with-array-dimension-check (a b)
+    (let ((dim (car (array-dimensions a))))
+      (declare (type fixnum dim))
+      (if (null c) (setf c (make-float-vector dim)))
+      (dotimes (i dim)
+        (declare (type fixnum i))
+        (setf (aref c i) (+ (aref a i) (aref b i))))
+      (the (simple-array single-float) c))))
 
 ;; sub
 (defun v- (a b &optional (c nil))
@@ -227,6 +226,17 @@
       (dotimes (i dim)
         (setf (aref c i)
               (- (aref a i) (aref b i))))
+      c)))
+
+(defun fv- (a b &optional (c nil))
+  "calculate subtraction of vector a and b.
+   You can give vector c as a buffer."
+  (declare (type (simple-array single-float) a b))
+  (with-array-dimension-check (a b)
+    (let ((dim (length a)))
+      (if (null c) (setf c (make-float-vector dim)))
+      (dotimes (i dim)
+        (setf (aref c i) (- (aref a i) (aref b i))))
       c)))
 
 ;; dot product
@@ -283,13 +293,13 @@
 (defun norm (a)
   "a is vector. returns length of a"
   (declare (type simple-array a))
-  (sqrt (v. a a)))
+  (the single-float (sqrt (v. a a))))
 
 (declaim (inline distance))
 (defun distance (a b)
   "calulate Euqlid distance between a and b"
   (declare (type simple-array a b))
-  (norm (v- a b)))
+  (the single-float (norm (v- a b))))
 
 ;; matrix operators
 (defun m+ (a b &optional (c nil))
@@ -647,4 +657,33 @@
 (defun vector-mean (vecs)
   (scale (/ 1.0 (length vecs)) (reduce #'v+ vecs)))
 
+(defun eps= (a b &optional (diff +eps+))
+  "returns t if a is nearly equal to b."
+  (declare (type single-float a b diff))
+  (< (abs (- a b)) diff))
+
+(defun eps-vector= (a b &optional (diff +eps+))
+  "returns t if vector a and b is near enough."
+  (declare (type simple-array a b)
+	   (type single-float diff))
+  (eps= (distance a b) 0.0 diff))
+
+(defun eps-matrix= (a b &optional (diff +eps+))
+  "returns t if matrix a and b is near enough."
+  (declare (type (simple-array single-float) a b)
+	   (type single-float diff))
+  (let ((a-dims (array-dimensions a))
+	(b-dims (array-dimensions b)))
+    (declare (type list a-dims b-dims))
+    (if (equal a-dims b-dims)
+	(progn
+	  (dotimes (i (car a-dims))
+	    (declare (type fixnum i))
+	    (dotimes (j (cadr a-dims))
+	      (declare (type fixnum j))
+	      (if (not (eps= (aref a i j) (aref b i j) diff))
+		  (return-from eps-matrix= nil))
+	      ))
+	  t)				;if passed
+	nil)))
 
