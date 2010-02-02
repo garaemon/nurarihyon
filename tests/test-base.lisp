@@ -13,7 +13,7 @@
 
 (define-test constants-test
   (assert-float-equal +e+ (exp 1.0))
-  (assert-float-equal +pi+ (coerce pi 'single-float))
+  (assert-float-equal +pi+ pi)
   (assert-float-equal +2pi+ (* 2.0 +pi+))
   (assert-float-equal +pi/2+ (/ +pi+ 2.0))
   (assert-float-equal +pi/4+ (/ +pi+ 4.0)))

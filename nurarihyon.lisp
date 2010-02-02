@@ -11,42 +11,18 @@
 		   (space 0)))
 
 (defpackage :nurarihyon
-  (:use
-   #:common-lisp)
+  (:use #:common-lisp)
   (:export
    ;; base.lisp
-   #:make-integer-vector #:make-float-vector
-   #:make-float-matrix
-   #:make-identity-matrix
-   #:float-vector
-   #:v+ #:v- #:v* #:v.
-   #:scale
-   #:norm #:distance
-   #:copy-vector
-   #:m+ #:m- #:m* #:m-1
-   #:copy-matrix
-   #:flip
-   #:mv*
-   #:eps= #:eps-vector=
-   #:eps-matrix=
-   #:rad2deg
-   #:deg2rad
-   #:+pi+ #:+pi/2+ #:+pi/4+ #:+2pi+
-   #:+e+
-   #:list->vector #:list->matrix
-   #:vector->list #:matrix->list
-   #:print-matrix
-   #:random-range
-   #:matrix-row #:matrix-column
-   #:normalize-vector
-   #:->double-float
-   #:->single-float
-   #:vector-mean
-   ;; array.lisp
-   #:rotation-matrix #:rotate-matrix
-   #:euler-matrix #:rpy-matrix
-   #:rpy-angle
-   #:*x-axis* #:*y-axis* #:*z-axis*
-   #:axis->vec
+   #:make-vector #:make-integer-vector #:make-float-vector #:make-double-vector
+   #:make-matrix #:make-integer-matrix #:make-float-matrix #:make-double-matrix
+   #:make-identity-matrix #:make-integer-identity-matrix
+   #:make-float-identity-matrix #:make-double-identity-matrix
+   #:real-vector #:integer-vector #:float-vector #:double-vector
+   #:copy-vector #:copy-integer-vector #:copy-float-vector #:copy-double-vector
+
+   #:v+ #:iv+ #:fv+ #:dv+
+   #:v- #:iv- #:fv- #:dv-
+   #:eps-vector= #:feps-vector= #:deps-vector= #:ieps-vector=
    )
   )

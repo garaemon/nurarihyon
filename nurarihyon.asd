@@ -4,8 +4,12 @@
     :licence "New BSD"
     :depends-on (chimi alexandria)
     :components ((:file "nurarihyon")
-		 (:file "base" :depends-on ("nurarihyon"))
-		 (:file "array" :depends-on ("nurarihyon" "base"))
+                 (:file "syntax" :depends-on ("nurarihyon"))
+		 (:file "base" :depends-on ("nurarihyon" "syntax"))
+                 (:file "vector" :depends-on ("nurarihyon" "syntax" "base"))
+                 (:file "matrix" :depends-on ("nurarihyon" "syntax"
+                                              "base" "vector"))
+		 ;;(:file "array" :depends-on ("nurarihyon" "base"))
 		 ;;(:file "base" :depends-on ("math"))
                  ;;(:file "array" :depends-on ("base" "math"))
 		 ))
