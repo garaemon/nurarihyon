@@ -12,17 +12,35 @@
 
 (defpackage :nurarihyon
   (:use #:common-lisp)
+  (:shadow #:norm)
   (:export
+   ;; syntax.lisp
+   #:enable-aref-reader-syntax #:disable-aref-reader-syntax
    ;; base.lisp
-   #:make-vector #:make-integer-vector #:make-float-vector #:make-double-vector
-   #:make-matrix #:make-integer-matrix #:make-float-matrix #:make-double-matrix
-   #:make-identity-matrix #:make-integer-identity-matrix
-   #:make-float-identity-matrix #:make-double-identity-matrix
-   #:real-vector #:integer-vector #:float-vector #:double-vector
-   #:copy-vector #:copy-integer-vector #:copy-float-vector #:copy-double-vector
-
-   #:v+ #:iv+ #:fv+ #:dv+
-   #:v- #:iv- #:fv- #:dv-
-   #:eps-vector= #:feps-vector= #:deps-vector= #:ieps-vector=
+   #:+e+ #:+pi+ #:+2pi+ #:+pi/2+ #:+pi/4+ #:+eps+
+   #:rad2deg #:deg2rad
+   #:random-range
+   #:->double-float #:->single-float
+   #:eps=
+   ;; vector.lisp
+   #:vector-dimension
+   #:make-vector
+   #:real-vector
+   #:copy-vector
+   #:v+ #:v- #:v. #:v*
+   #:scale
+   #:norm
+   #:distance
+   #:vector-mean
+   #:eps-vector=
+   ;; matrix.lisp
+   #:make-matrix
+   #:make-identity-matrix
+   #:copy-matrix
+   #:m+ #:m- #:m* #:mv*
+   #:transpose
+   #:lu-decompose
+   #:inverse-matrix #:m-1
+   #:matrix-column #:matrix-row
    )
   )

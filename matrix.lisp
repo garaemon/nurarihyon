@@ -34,14 +34,16 @@
          
 (defmacro with-square-matrix-bind-and-check ((dim mat) &rest args)
   ;; checking mat is square matrix or not
-  (let ((dims (gensym)))
-    `(let ((,dims (array-dimensions ,mat)))
-       (declare (type list ,dims))
-       (let ((,dim (car ,dims)))
-         (declare (type fixnum ,dim))
-         (if (= ,dim (cadr ,dims))
-           (progn ,@args)
-           (error "array is not identity matrix"))))))
+  (let ((dim2 (gensym)))
+    (let ((dims (gensym)))
+      `(let ((,dims (array-dimensions ,mat)))
+         (declare (type list ,dims))
+         (let ((,dim (car ,dims))
+               (,dim2 (cadr ,dims)))
+           (declare (type fixnum ,dim ,dim2))
+           (if (= ,dim ,dim2)
+               (progn ,@args)
+               (error "array is not identity matrix")))))))
 
 (defmacro with-matrix-dimension-bind-and-check ((row column a b) &rest args)
   (let ((a-dims (gensym))
@@ -76,147 +78,170 @@
   (declare (type simple-array a))
   (the fixnum (cadr (array-dimensions a))))
 
-;; template for make-**-matrix
-(defmacro defmake-matrix (name type initial-element)
-  `(defun ,name (row column &key (initial-element ,initial-element))
-     (declare (type fixnum row column)
-              (type ,type initial-element))
-     (the (simple-array ,type)
-       (make-array (list row column) :element-type ',type
-                   :initial-element initial-element))))
+(defun make-matrix (row column &key (initial-element 0.0d0))
+  (declare (type unsigned-byte row column)
+           (type double-float initial-element))
+  (the (simple-array double-float)
+       (make-array (list row column) :element-type 'double-float
+                   :initial-element initial-element)))
 
-;; template for  make-**-identity-matrix
-(defmacro defmake-identity-matrix (name type matrix-constructor element)
-  `(defun ,name (dim)
-     (declare (type fixnum dim))
-     (let ((mat (,matrix-constructor dim dim)))
-       (declare (type (simple-array ,type) mat))
-       (dotimes (i dim)
-         (setf [mat i i] ,element))
-       (the (simple-array ,type) mat))))
+(defun make-identity-matrix (dim)
+  (declare (type unsigned-byte dim))
+  (let ((mat (make-matrix dim dim)))
+    (declare (type (simple-array double-float) mat))
+    (dotimes (i dim) (setf [mat i i] 1.0d0))
+    (the (simple-array double-float) mat)))
 
-(defmacro defcopy-matrix (name type)
-  `(defun ,name (a b)
-     (declare (type (simple-array ,type) a b))
-     (with-matrix-dimension-bind-and-check (row column a b)
-         (dotimes (i row)
-           (dotimes (j column)
-             (setf [b i j] [a i j]))))
-     (the (simple-array ,type) b)))
+(defun copy-matrix (a b)
+  (declare (type (simple-array double-float) a b))
+  (with-matrix-dimension-bind-and-check (row column a b)
+    (dotimes (i row)
+      (dotimes (j column)
+        (setf [b i j] [a i j]))))
+  (the (simple-array double-float) b))
 
-;;template
 ;; matrix operators
 ;; add
-(defmacro defm+ (name type const-func)
-  `(defun ,name (a b &optional (c nil))
-     (declare (type (simple-array ,type) a b))
-     (with-matrix-dimension-bind-and-check (row column a b)
-       (let ((c (or c (,const-func row column))))
-         (dotimes (i row)
-           (dotimes (j column)
-             (setf [c i j] (+ [a i j] [b i j]))))
-         (the (simple-array ,type) c)))))
+(defun m+ (a b &optional (c nil))
+  (declare (type (simple-array double-float) a b))
+  (with-matrix-dimension-bind-and-check (row column a b)
+    (let ((c (or c (make-matrix row column))))
+      (declare (type (simple-array double-float) c))
+      (dotimes (i row)
+        (dotimes (j column)
+          (setf [c i j] (+ [a i j] [b i j]))))
+      (the (simple-array double-float) c))))
 
 ;; sub
-(defmacro defm- (name type const-func)
-  `(defun ,name (a b &optional (c nil))
-     (declare (type (simple-array ,type) a b))
-     (with-matrix-dimension-bind-and-check (row column a b)
-       (let ((c (or c (,const-func row column))))
-         (dotimes (i row)
-           (dotimes (j column)
-             (setf [c i j] (- [a i j] [b i j]))))
-         (the (simple-array ,type) c)))))
+(defun m- (a b &optional (c nil))
+  (declare (type (simple-array double-float) a b))
+  (with-matrix-dimension-bind-and-check (row column a b)
+    (let ((c (or c (make-matrix row column))))
+      (declare (type (simple-array double-float) c))
+      (dotimes (i row)
+        (dotimes (j column)
+          (setf [c i j] (- [a i j] [b i j]))))
+      (the (simple-array double-float) c))))
 
-(defmacro defm* (name type matrix-constructor vector-constructor
-                 initial-value)
-  `(defun ,name (a b &optional (c nil))
-     (declare (type (simple-array ,type) a b))
-     (with-matrix-trans-dimension-bind-and-check
-         (dims-a-row dims-a-column dims-b-row dims-b-column a b)
-       (let ((c (or c (,matrix-constructor dims-a-row dims-b-column))))
-         (declare (type (simple-array ,type) c))
-         (if (not (eq b c))         ;i need to dispatch here
-             (let ((tmpv (,vector-constructor dims-b-column)))
-               (declare (type (simple-array ,type) tmpv))
-               (dotimes (i dims-a-row)
-                 (dotimes (j dims-b-column)
-                   (let ((tmp ,initial-value))
-                     (declare (type ,type tmp))
-                     (dotimes (k dims-a-column)
-                       (+== tmp (* [a i k] [b k j])))
-                     (setf [tmpv j] tmp)))
-                 (dotimes (k dims-b-column)
-                   ;; copy tmpv -> c[i, *]
-                   (setf [c i k] [tmpv k]))))
-             (let ((tmpv (,vector-constructor dims-a-row))) ;else
-               (declare (type (simple-array ,type) tmpv))
-               (dotimes (i dims-b-column)
-                 (dotimes (j dims-a-row)
-                   ;; c[j, i] = \sum_k a[j, k] * b[k, i]
-                   (let ((tmp ,initial-value))
-                     (declare (type ,type tmp))
-                     (dotimes (k dims-a-column)
-                       (+== tmp (* [b k i] [a j k])))
-                     (setf [tmpv j] tmp)))
-                 (dotimes (k dims-b-column)
-                   ;; copy tmpv -> c[i, *]
-                   (setf [c k i] [tmpv k]))))
-             )                      ;end of if
-         (the (simple-array ,type) c))))
-  )
+;; multiply
+(defun m* (a b &optional (c nil))
+  (declare (type (simple-array double-float) a b))
+  (with-matrix-trans-dimension-bind-and-check
+      (dims-a-row dims-a-column dims-b-row dims-b-column a b)
+    (let ((c (or c (make-matrix dims-a-row dims-b-column))))
+      (declare (type (simple-array double-float) c))
+      (if (not (eq b c))                ;i need to dispatch here
+          (let ((tmpv (make-vector dims-b-column)))
+            (declare (type (simple-array double-float) tmpv))
+            (dotimes (i dims-a-row)
+              (declare (type fixnum i))
+              (dotimes (j dims-b-column)
+                (let ((tmp 0.0d0))
+                  (declare (type double-float tmp))
+                  (dotimes (k dims-a-column)
+                    (+== tmp (* [a i k] [b k j])))
+                  (setf [tmpv j] tmp)))
+              (dotimes (k dims-b-column)
+                ;; copy tmpv -> c[i, *]
+                (setf [c i k] [tmpv k]))))
+          (let ((tmpv (make-vector dims-a-row))) ;else
+            (declare (type (simple-array double-float) tmpv))
+            (dotimes (i dims-b-column)
+              (declare (type fixnum i))
+              (dotimes (j dims-a-row)
+                ;; c[j, i] = \sum_k a[j, k] * b[k, i]
+                (let ((tmp 0.0d0))
+                  (declare (type double-float tmp))
+                  (dotimes (k dims-a-column)
+                    (+== tmp (* [b k i] [a j k])))
+                  (setf [tmpv j] tmp)))
+              (dotimes (k dims-b-column)
+                ;; copy tmpv -> c[i, *]
+                (setf [c k i] [tmpv k]))))
+          )                      ;end of if
+      (the (simple-array double-float) c))))
 
-(defmacro deftranspose (name type matrix-constructor)
-  `(defun ,name (mat &optional (result nil))
-     (declare (type (simple-array ,type) mat))
-     (let ((dims (array-dimensions mat)))
-       (declare (list dims))
-       (let ((row (car dims))
-             (column (cadr dims)))
-         (declare (type fixnum row column))
-         (let ((result (or result (,matrix-constructor column row))))
-           (declare (type (simple-array ,type) result))
-           (dotimes (i row)
-             (dotimes (j column)
-               (setf [result j i] [mat i j])))
-           (the (simple-array ,type) result)))))
-  )
+;; multiply with vector
+(defun mv* (mat vec &optional (result nil))
+  "return vector.
+   mat = n x m  vec = (1 x)m
+   +---------+     +-+
+   |         |     | |
+   |         |  x  | |
+   |         |     | |
+   +---------+     +-+
+  "
+  (declare (type (simple-array double-float) mat vec))
+  (let ((mat-dimensions (matrix-dimensions mat))
+        (vec-dimension (vector-dimensions vec)))
+     (declare (type fixnum vec-dimension)
+              (type list mat-dimensions))
+     (let ((mat-row (car mat-dimensions))
+           (mat-column (cadr mat-dimensions)))
+       (declare (type fixnum mat-row mat-column))
+       (when (not (= vec-dimension mat-column)) ; error check for dimension
+         (error "dimension mismatch"))
+       (let ((fv (or result (make-vector mat-column))))
+         (declare (type (simple-array double-float) fv))
+         (dotimes (n mat-column)
+           (let ((element 0.0d0))
+             (declare (type double-float element))
+             (dotimes (m vec-dimension)
+               (declare (type fixnum m))
+               (+== element (* [mat n m] [vec m])))
+             (setf [fv n] element)))
+         (the (simple-array double-float) fv)))))
+
+;; transpose
+(defun transpose (mat &optional (result nil))
+  (declare (type (simple-array double-float) mat))
+  (let ((dims (matrix-dimensions mat)))
+    (declare (list dims))
+    (let ((row (car dims))
+          (column (cadr dims)))
+      (declare (type fixnum row column))
+      (let ((result (or result (make-matrix column row))))
+        (declare (type (simple-array double-float) result))
+        (dotimes (i row)
+          (dotimes (j column)
+            (setf [result j i] [mat i j])))
+        (the (simple-array double-float) result)))))
 
 ;; matをLU分解する
 ;; destructive function!!
-(defmacro deflu-decompose (name type vector-constructor zero one eps-func)
-  `(defun ,name (result pivot)
-     (declare (type (simple-array ,type) result)
-              (type (simple-array fixnum) pivot))
+(defun lu-decompose (result pivot)
+  (declare (type (simple-array double-float) result)
+           (type (simple-array unsigned-byte) pivot))
      (let ((dimension (matrix-row-dimension result)))
        (declare (type unsigned-byte dimension))
-       (let ((weight (,vector-constructor dimension))) ;weight = new_vector(n);
-         (declare (type (simple-array ,type) weight))
+       (let ((weight (make-vector dimension))) ;weight = new_vector(n);
+         (declare (type (simple-array double-float) weight))
          ;; initialize weight vector
          ;; i: 0 ... dimension
          (dotimes (i dimension)         ;for (k = 0; k < n; k++){
+           (declare (type fixnum i))
            (setf [pivot i] i)           ;ip[k] = k;
-           (let ((u ,zero))             ;u = 0;
-             (declare (type ,type u))
+           (let ((u 0.0d0))             ;u = 0;
+             (declare (type double-float u))
              ;; search max value in i th row
              ;; j: 0 ... dimension
              (dotimes (j dimension)     ;for (j = 0; j < n; j++){
                (let ((tmp (abs [result i j]))) ;t = fabs(a[k][j])
-                 (declare (type ,type tmp))
+                 (declare (type double-float tmp))
                  (if (> tmp u)                      ;if ( t > u )
                      (setq u tmp))))                ;u = t;
-             (if (,eps-func u ,zero)                ;if ( u== 0.0 )
-                 (return-from ,name ,zero))         ;goto EXIT;
-             (setf [weight i] (/ ,one u)))) ;weight[k] = 1 / u;
+             (if (eps= u 0.0d0)                ;if ( u== 0.0 )
+                 (return-from lu-decompose 0.0d0))         ;goto EXIT;
+             (setf [weight i] (/ 1.0d0 u)))) ;weight[k] = 1 / u;
     ;; finish initializing weight vector
-    (let ((det ,one))                   ;det = 1
-      (declare (type ,type det))
+    (let ((det 1.0d0))                   ;det = 1
+      (declare (type double-float det))
       ;; k: 0 ... dimension
       (dotimes (k dimension)            ;for ( k = 0; k < n; k++)
-        (let ((u (- ,one))              ;u = -1
+        (let ((u (- 1.0d0))              ;u = -1
               (ii 0)
               (j 0))
-          (declare (type ,type u)
+          (declare (type double-float u)
                    (type unsigned-byte ii j))
           ;; i: k ... dimension
           ;; find max element in (k,k) ... (i,k)
@@ -229,7 +254,7 @@
             (setq ii [pivot i])       ;ii = ip[i]
             ;;t = fabs(a[ii][k] * weight[ii]
             (let ((tmp (abs (* [result ii k] [weight ii]))))
-              (declare (type ,type tmp))
+              (declare (type double-float tmp))
               (when (> tmp u)                      ;if ( t > u )
                 (setq u tmp)                       ;u = t
                 (setq j i))))                      ;j = i
@@ -240,10 +265,10 @@
               (setf [pivot k] ik)        ;ip[k] = ik;
               (setq det (- det)))        ;det = -det;
             (let ((u [result ik k]))     ;u = a[ik][k];
-              (declare (type ,type u))
+              (declare (type double-float u))
               (*== det u)                  ;det *== u;
-              (if (,eps-func u ,zero)      ;if ( u == 0 )
-                  (return-from ,name det)) ;goto EXIT;
+              (if (eps= u 0.0d0)      ;if ( u == 0 )
+                  (return-from lu-decompose (the double-float det))) ;goto EXIT
               (do ((i (1+ k) (1+ i)))   ;for ( i = k + 1; i < n; i++ )
                   ((not (< i dimension)))
                 (declare (type unsigned-byte i))
@@ -252,109 +277,102 @@
                   ;;t = (a[ii][k] /== u);
                   (/== [result ii k] u)
                   (let ((tmp [result ii k]))
-                    (declare (type ,type tmp))
+                    (declare (type double-float tmp))
                     (do ((j (1+ k) (1+ j))) ;for ( j = k + 1; j < n; j++ )
                         ((not (< j dimension)))
                       (declare (type unsigned-byte j))
                       ;;a[ii][j] -== t * a[ik][j];
                       (-== [result ii j] (* tmp [result ik j]))))))))))
-      (the ,type det)))))                           ;return determination
-  )
+      (the double-float det)))))        ;return determination
 
+(defun m-1 (mat &optional (result nil) (lu-mat nil))
+  (with-square-matrix-bind-and-check (dim mat)
+    (let* ((pivot (make-array dim :element-type 'unsigned-byte)))
+      (declare (type (simple-array unsigned-byte) pivot))
+      (let ((lu-mat (or lu-mat (make-matrix dim dim)))
+            (result (or result (make-matrix dim dim))))
+        (declare (type (simple-array double-float) lu-mat result))
+        (copy-matrix mat lu-mat) ;; mat -> lu-mat
+        (let ((determinant (lu-decompose lu-mat pivot)))
+          ;; lu-mat --> LU分解後の行列
+          (if (eps= determinant 0.0d0)     ;if ( det != 0 )
+              ;; 行列式が0だと逆行列は求められない
+              nil
+              (progn
+                (dotimes (k dim)
+                  ;; forward
+                  (dotimes (i dim)
+                    (declare (type fixnum i))
+                    (let* ((ii [pivot i])          ;ii = ip[i]
+                           (tmp (if (= ii k) 1.0d0 0.0d0))) ;t = (ii == k);
+                      (declare (type unsigned-byte ii)
+                               (type double-float tmp))
+                      (dotimes (j i)    ;for ( j = 0; j < i; j++ )
+                        (-== tmp        ;t -== a[ii][j] * a_inv[j][k]
+                             (* [lu-mat ii j] [result j k])))
+                      (setf [result i k] tmp))) ;a_inv[i][k] = t
+                  ;; backward
+                  (do ((i (1- dim) (1- i))) ;for ( i = n - 1; i >= 0; i-- )
+                      ((not (>= i 0)))
+                    (declare (type unsigned-byte i))
+                    (let ((tmp [result i k]) ;t = a_inv[i][k]l
+                          (ii [pivot i]))    ;ii = ip[i]
+                      (declare (type double-float tmp)
+                               (type unsigned-byte ii))
+                      (do ((j (1+ i) (1+ j))) ;for ( j = i + 1; j < n; j++ )
+                          ((not (< j dim)))
+                        (declare (type unsigned-byte j))
+                        (-== tmp     ;t -== a[ii][j] * a_inv[j][k]
+                             (* [lu-mat ii j] [result j k])))
+                      (setf [result i k] ;a_inv[i][k] = t / a[ii][i]
+                            (/ tmp [lu-mat ii i])))))
+                result)))))))
 
+(declaim (inline inverse-matrix))
+(defun inverse-matrix (&rest args)
+  (apply #'m-1 args))
 
-;; (declaim (inline inverse-matrix))
-;; (defun inverse-matrix (&rest args)
-;;   (apply #'m-1 args))
-(defmacro defm-1 (name type matrix-constructor matrix-copy lu-decompose-func
-                  zero one)
-  `(defun ,name (mat &optional (result nil) (lu-mat nil))
-     (with-square-matrix-bind-and-check (dim mat)
-       (let* ((pivot (make-integer-vector dim)))
-         (declare (type (simple-array fixnum) pivot))
-         (let ((lu-mat (or lu-mat (,matrix-constructor dim dim)))
-               (result (or result (,matrix-constructor dim dim))))
-           (declare (type (simple-array ,type) lu-mat result))
-           (,matrix-copy mat lu-mat) ;; mat -> lu-mat
-           (let ((determinant (,lu-decompose-func lu-mat pivot)))
-             ;; lu-mat --> LU分解後の行列
-             (if (eps= determinant 0.0)     ;if ( det != 0 )
-                 ;; 行列式が0だと逆行列は求められない
-                 nil
-                 (progn
-                   (do ((k 0 (1+ k)))   ;for ( k = 0; k < n; k++ )
-                       ((not (< k dim)))
-                     ;; forward
-                     (do ((i 0 (1+ i))) ;for ( i = 0; i < n; i++ )
-                         ((not (< i dim)))
-                       (let* ((ii (aref pivot i))          ;ii = ip[i]
-                              (tmp (if (= ii k) ,one ,zero))) ;t = (ii == k);
-                         (do ((j 0 (1+ j))) ;for ( j = 0; j < i; j++ )
-                             ((not (< j i)))
-                           (-== tmp     ;t -== a[ii][j] * a_inv[j][k]
-                                (* (aref lu-mat ii j) (aref result j k))))
-                         (setf (aref result i k) tmp) ;a_inv[i][k] = t
-                         ))
-                     ;; backward
-                     (do ((i (1- dim) (1- i))) ;for ( i = n - 1; i >= 0; i-- )
-                         ((not (>= i 0)))
-                       (let ((tmp (aref result i k)) ;t = a_inv[i][k]l
-                             (ii (aref pivot i)))    ;ii = ip[i]
-                         (do ((j (1+ i) (1+ j))) ;for ( j = i + 1; j < n; j++ )
-                             ((not (< j dim)))
-                           (-== tmp     ;t -== a[ii][j] * a_inv[j][k]
-                                (* (aref lu-mat ii j) (aref result j k))))
-                         (setf (aref result i k) ;a_inv[i][k] = t / a[ii][i]
-                               (/ tmp (aref lu-mat ii i)))
-                         ))
-                     )
-              result)))))))
-  )
+(defun matrix-row (mat id)
+  (declare (type (simple-array double-float) mat)
+           (type fixnum id))
+  (let ((size (matrix-column-dimension mat)))
+    (declare (type fixnum size))
+    (let ((ret (make-vector size)))
+      (declare (type (simple-array double-float) ret))
+      (dotimes (i size)
+        (setf [ret i] [mat id i]))
+      (the (simple-array double-float) ret))))
 
-;; definition
-(defmake-matrix make-matrix real 0)
-(defmake-matrix make-integer-matrix fixnum 0)
-(defmake-matrix make-float-matrix single-float 0.0)
-(defmake-matrix make-double-matrix double-float 0.0d0)
+(defun (setf matrix-row) (val mat id)
+  (declare (type (simple-array double-float) mat val)
+           (type fixnum id))
+  (let ((size (matrix-column-dimension mat)))
+    (declare (type fixnum size))
+    (dotimes (i size)
+      (declare (type fixnum i))
+      (setf [mat id i] [val i]))
+    (the (simple-array double-float) val)))
 
-(defmake-identity-matrix make-identity-matrix
-    real make-matrix 0)
-(defmake-identity-matrix make-integer-identity-matrix
-    fixnum make-integer-matrix 0)
-(defmake-identity-matrix make-float-identity-matrix
-    single-float make-float-matrix 0.0)
-(defmake-identity-matrix make-double-identity-matrix
-    double-float make-double-matrix 0.0d0)
+(defun matrix-column (mat id)
+  (declare (type (simple-array double-float) mat)
+           (type fixnum id))
+  (let ((size (matrix-row-dimension mat)))
+    (declare (type fixnum size))
+    (let ((ret (make-vector size)))
+      (declare (type (simple-array double-float) ret))
+      (dotimes (i size)
+        (setf [ret i] [mat i id]))
+      (the (simple-array double-float) ret))))
 
-(defcopy-matrix copy-matrix real)
-(defcopy-matrix copy-integer-matrix fixnum)
-(defcopy-matrix copy-float-matrix single-float)
-(defcopy-matrix copy-double-matrix double-float)
-
-(defm+ m+ real make-matrix)
-(defm+ im+ fixnum make-integer-matrix)
-(defm+ fm+ single-float make-float-matrix)
-(defm+ dm+ double-float make-double-matrix)
-
-(defm- m- real make-matrix)
-(defm- im- fixnum make-integer-matrix)
-(defm- fm- single-float make-float-matrix)
-(defm- dm- double-float make-double-matrix)
-
-(defm* m* real make-matrix make-vector 0)
-(defm* im* fixnum make-integer-matrix make-integer-vector 0)
-(defm* fm* single-float make-float-matrix make-float-vector 0.0)
-(defm* dm* double-float make-double-matrix make-double-vector 0.0d0)
-
-(deftranspose transpose real make-matrix)
-(deftranspose itranspose fixnum make-integer-matrix)
-(deftranspose ftranspose single-float make-float-matrix)
-(deftranspose dtranspose double-float make-double-matrix)
-
-(deflu-decompose lu-decompose real make-vector 0.0 1.0 eps=)
-(deflu-decompose flu-decompose single-float make-float-vector 0.0 1.0 feps=)
-(deflu-decompose dlu-decompose double-float make-double-vector
-                 0.0d0 1.0d0 deps=)
+(defun (setf matrix-column) (val mat id)
+  (declare (type (simple-array double-float) mat val)
+           (type fixnum id))
+  (let ((size (matrix-row-dimension mat)))
+    (declare (type fixnum size))
+    (dotimes (i size)
+      (declare (type fixnum i))
+      (setf [mat i id] [val i]))
+    (the (simple-array double-float) val)))
 
 (eval-when (:compile-toplevel)
   (disable-aref-reader-syntax))

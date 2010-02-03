@@ -1,5 +1,5 @@
 (defsystem nurarihyon
-    :version "0.0.0"
+    :version "0.0.1"
     :author "R. Ueda (garaemon) <garaemon@gmail.com>"
     :licence "New BSD"
     :depends-on (chimi alexandria)
@@ -9,7 +9,4 @@
                  (:file "vector" :depends-on ("nurarihyon" "syntax" "base"))
                  (:file "matrix" :depends-on ("nurarihyon" "syntax"
                                               "base" "vector"))
-		 ;;(:file "array" :depends-on ("nurarihyon" "base"))
-		 ;;(:file "base" :depends-on ("math"))
-                 ;;(:file "array" :depends-on ("base" "math"))
 		 ))

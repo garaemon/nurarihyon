@@ -63,48 +63,16 @@
 
 ;; for utility functions
 (defmacro -== (a b)
-  `(progn (setf ,a (- ,a ,b))))
+  `(setf ,a (- ,a ,b)))
 
 (defmacro +== (a b)
-  `(progn (setf ,a (+ ,a ,b))))
+  `(setf ,a (+ ,a ,b)))
 
 (defmacro *== (a b)
-  `(progn (setf ,a (* ,a ,b))))
+  `(setf ,a (* ,a ,b)))
 
 (defmacro /== (a b)
-  `(progn (setf ,a (/ ,a ,b))))
-
-;; (defun mv* (mat vec &optional (result nil))
-;;   "return vector.
-;;    mat = n x m  vec = 1 x m
-;;    +---------+     +-+
-;;    |         |     | |
-;;    |         |  x  | |
-;;    |         |     | |
-;;    +---------+     +-+
-;;   "
-;;   (declare (type (simple-array single-float) mat vec))
-;;   (let ((mat-dimensions (array-dimensions mat))
-;;         (vec-dimension (car (array-dimensions vec))))
-;;      (declare (type fixnum vec-dimension)
-;;               (type list mat-dimensions))
-;;     ;; error check for dimension
-;;     (when (not (= vec-dimension (cadr mat-dimensions)))
-;;       (error "dimension mismatch"))
-;;     (let ((column-dimension (cadr mat-dimensions)))
-;;       (declare (type fixnum column-dimension))
-;;       (let ((fv (make-float-vector column-dimension)))
-;;         (declare (type (simple-array single-float) fv))
-;;         (dotimes (n column-dimension)
-;;           (let ((element 0.0))
-;;             (declare (type single-float element))
-;;             (dotimes (m vec-dimension)
-;;               (declare (type fixnum m))
-;;               (setf element (+ element (* (aref mat n m) (aref vec m)))))
-;;             (setf (aref fv n) element)))
-;;         (if result
-;;             (copy-vector fv result)     ; copy fv -> result
-;;             fv)))))
+  `(setf ,a (/ ,a ,b)))
 
 ;; utility
 (defun rad2deg (rad)
@@ -144,55 +112,16 @@
 ;;       (push (coerce (matrix-row mat i) 'cons) ret))
 ;;     (nreverse ret))))
     
-
-;; (defun print-matrix (mat)
-;;   (let ((dims (array-dimensions mat)))
-;;     (dotimes (i (car dims))
-;;       (dotimes (j (cadr dims))
-;;         (format t "~0,3f " (aref mat i j))
-;;         )
-;;       (format t "~%")
-;;       )
-;;     ))
-
 (defun random-range (min max)
   "return random value between min and max."
   (declare (type number min max))
   (let ((d (- max min)))
-    (declare (type number d))
+    (declare (type real d))
     (+ (random d) min)))
 
 ;; ;; x x x x x
 ;; ;; x x x x x
 ;; ;; x x x x x
-;; (defun matrix-row (mat id)
-;;   (declare (type (simple-array single-float) mat)
-;;            (type fixnum id))
-;;   (let ((size (cadr (array-dimensions mat))))
-;;     (let ((ret (make-float-vector size)))
-;;       (dotimes (i size)
-;;         (setf (aref ret i) (aref mat id i)))
-;;       ret)))
-
-;; (defun (setf matrix-row) (val mat id)
-;;   (declare (type (simple-array single-float) mat val)
-;;            (type fixnum id))
-;;   (let ((size (cadr (array-dimensions mat))))
-;;     (declare (type fixnum size))
-;;     (dotimes (i size)
-;;       (declare (type fixnum i))
-;;       (setf (aref mat id i) (aref val i)))
-;;     mat))
-
-;; (defun matrix-column (mat id)
-;;   (declare (type (simple-array single-float) mat)
-;;            (type fixnum id))
-;;   (let ((size (car (array-dimensions mat))))
-;;     (declare (type fixnum size))
-;;     (let ((ret (make-float-vector size)))
-;;       (dotimes (i size)
-;;         (setf (aref ret i) (aref mat i id)))
-;;       ret)))
 
 ;; (defun normalize-vector (v)
 ;;   (declare (type (simple-array single-float) v))
@@ -208,10 +137,10 @@
   (coerce val 'single-float))
 
 ;; eps=
-(defmacro defeps= (name type default-diff)
-  `(defun ,name (a b &optional (diff ,default-diff))
-     (declare (type ,type a b diff))
-     (< (abs (- a b)) diff)))
+(declaim (inline eps=))
+(defun eps= (a b &optional (diff +eps+))
+  (declare (type double-float a b diff))
+  (the symbol (< (abs (- a b)) diff)))
 
 ;; (defun eps-matrix= (a b &optional (diff +eps+))
 ;;   "returns t if matrix a and b is near enough."
@@ -232,10 +161,6 @@
 ;; 	  t)				;if passed
 ;; 	nil)))
 
-(defeps= eps= real +eps+)
-(defeps= ieps= fixnum 1)
-(defeps= feps= single-float #.(coerce +eps+ 'single-float))
-(defeps= deps= double-float +eps+)
 
 (eval-when (:compile-toplevel)
   (disable-aref-reader-syntax))
