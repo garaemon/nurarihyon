@@ -11,11 +11,6 @@
 (use-package :lisp-unit)
 (use-package :nurarihyon)
 
-(define-test deg2rad-and-rad2deg-test
-  (dotimes (i 10)
-    (let ((theta (random-range -350.0 350.0)))
-      (assert-true (eps= (rad2deg (deg2rad theta)) theta)))))
-
 (define-test make-integer-vector-test
   (let ((dim 10)
 	(init-element 10))
