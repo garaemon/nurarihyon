@@ -15,4 +15,3 @@
                         theta)))))
 
 (lisp-unit:run-tests deg2rad-and-rad2deg-test)
- 

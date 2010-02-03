@@ -11,50 +11,7 @@
 (use-package :lisp-unit)
 (use-package :nurarihyon)
 
-(define-test make-integer-vector-test
-  (let ((dim 10)
-	(init-element 10))
-    (let ((vec (make-integer-vector dim :initial-element init-element)))
-      (assert-equal (list dim) (array-dimensions vec))
-      (dotimes (i dim)
-	(assert-equal init-element (aref vec i))))))
-
-(define-test make-float-vector-test
-  (let ((dim 10)
-	(init-element 10.0))
-    (let ((vec (make-float-vector dim :initial-element init-element)))
-      (assert-equal (list dim) (array-dimensions vec))
-      (dotimes (i dim)
-	(assert-float-equal init-element (aref vec i))))))
-
-(define-test make-float-matrix-test
-  (let ((dim 10)
-	(init-element 10.0))
-    (let ((vec (make-float-matrix dim dim :initial-element init-element)))
-      (assert-equal (list dim dim) (array-dimensions vec))
-      (dotimes (i dim)
-	(dotimes (j dim)
-	  (assert-float-equal init-element (aref vec i j)))))))
-
-(define-test make-identity-matrix-test
-    (let ((dim 10))
-      (let ((mat (make-identity-matrix dim)))
-	(assert-equal (list dim dim) (array-dimensions mat))
-	(dotimes (i dim)
-	  (dotimes (j dim)
-	    (if (= i j)
-		(assert-float-equal 1.0 (aref mat i j))
-		(assert-float-equal 0.0 (aref mat i j))))))))
-
-(define-test float-vector-test
-  (let ((vec (float-vector 1 2 3)))
-    (assert-true (eps-vector= vec #(1.0 2.0 3.0))))
-  (let ((vec (float-vector 3 2 1)))
-    (assert-true (eps-vector= vec #(3.0 2.0 1.0))))
-  (let ((vec (float-vector 1.1 1.1 1.1)))
-    (assert-true (eps-vector= vec #(1.1 1.1 1.1)))))
-
-(define-test copy-vector-test
+(lisp-unit:define-test copy-vector-test
   (dotimes (i 3)
     (let ((vec (float-vector (random-range -100.0 100.0)
 			     (random-range -100.0 100.0)
@@ -63,7 +20,7 @@
       (copy-vector vec buf)
       (assert-true (eps-vector= vec buf)))))
 
-(define-test copy-matrix-test
+(lisp-unit:define-test copy-matrix-test
   (dotimes (i 3)
     (let ((dim 10))
       (let ((mat (make-float-matrix dim dim :initial-element (random-range -100.0 100.0)))
@@ -71,7 +28,7 @@
 	(copy-matrix mat tmp)
 	(assert-true (eps-matrix= mat tmp))))))
 
-(define-test v+-test
+(lisp-unit:define-test v+-test
   (let ((a (float-vector 1 2 3))
 	(b (float-vector 4 5 6)))
     ;; #(1 2 3) + #(4 5 6) = #(5 7 9)
@@ -82,7 +39,7 @@
     (assert-true (eps-vector= (v+ b (v+ a (v+ a b))) (float-vector 10 14 18)))
     ))
 
-(define-test v--test
+(lisp-unit:define-test v--test
   (let ((a (float-vector 1 2 3))
 	(b (float-vector 4 5 6)))
     ;; #(4 5 6) - #(1 2 3) = #(3 3 3)
@@ -93,7 +50,7 @@
     (assert-true (eps-vector= (v- (v- (v- b a) a) b) (float-vector -2 -4 -6)))
     ))
 
-(define-test v.-test
+(lisp-unit:define-test v.-test
   ;; norm of unit vector
   (let ((a (float-vector 1 0 0)))
     (assert-float-equal (v. a a) 1.0))
@@ -111,7 +68,7 @@
     (assert-float-equal (v. a b) 0.0))
   )
 
-(define-test v*-test
+(lisp-unit:define-test v*-test
   ;; check cross product by using dot product
   (let ((a (float-vector 1 2 3))
 	(b (float-vector 4 5 6)))
@@ -131,7 +88,7 @@
     (assert-true (eps-vector= (v* a a) (float-vector 0.0 0.0 0.0))))
   )
 
-(define-test norm-test
+(lisp-unit:define-test norm-test
   (let ((a (float-vector 1 0 0)))
     (assert-float-equal (norm a) 1.0))
   (let ((a (float-vector 2 0 0)))
@@ -140,7 +97,7 @@
     (assert-float-equal (norm a) 2.0))
   )
 
-(define-test distance-test
+(lisp-unit:define-test distance-test
   (let ((a (float-vector 1 0 0)))
     (assert-float-equal (distance a a) 0.0))
   (dotimes (i 10)
@@ -156,7 +113,7 @@
       (assert-float-equal (distance a c) (norm a))))
   )
 
-(define-test list->vector-test
+(lisp-unit:define-test list->vector-test
   (let ((a (list 1.0 2.0 3.0))
 	(b (float-vector 1 2 3)))
     (assert-true (eps-vector= (list->vector a) b)))
@@ -164,7 +121,7 @@
 	(b (float-vector 2 3 4)))
     (assert-true (eps-vector= (list->vector a) b))))
 
-(define-test vector->list-test
+(lisp-unit:define-test vector->list-test
   (let ((a (list 1.0 2.0 3.0))
 	(b (float-vector 1 2 3)))
     ;;(assert-true ((vector->list a) b))
@@ -178,7 +135,7 @@
 		(assert-float-equal aa bb))
 	    a (vector->list b))))
 
-(define-test list->matrix-test
+(lisp-unit:define-test list->matrix-test
   (let ((a (list->matrix '((1.0 2.0 3.0) (1.0 2.0 3.0))))
 	(b #2A((1.0 2.0 3.0) (1.0 2.0 3.0))))
     (assert-true (eps-matrix= a b)))
@@ -187,7 +144,7 @@
     (assert-true (eps-matrix= a b)))
   )
 
-(define-test m+-test
+(lisp-unit:define-test m+-test
   (let ((a #2A((1.0 2.0 3.0) (1.0 2.0 3.0)))
 	(b #2A((4.0 5.0 6.0) (4.0 5.0 6.0)))
 	(c #2A((5.0 7.0 9.0) (5.0 7.0 9.0))))
@@ -198,7 +155,7 @@
     (assert-true (eps-matrix= (m+ a b) c)))
   )
 
-(define-test m--test
+(lisp-unit:define-test m--test
   (let ((a #2A((1.0 2.0 3.0) (1.0 2.0 3.0)))
 	(b #2A((4.0 5.0 6.0) (4.0 5.0 6.0)))
 	(c #2A((3.0 3.0 3.0) (3.0 3.0 3.0))))
@@ -209,7 +166,7 @@
     (assert-true (eps-matrix= (m- b a) c)))
   )
 
-(define-test matrix-addsub-test
+(lisp-unit:define-test matrix-addsub-test
   (dotimes (i 10)
     (let ((a (list->matrix (list (list (random-range -100.0 100.0)
 				       (random-range -100.0 100.0)
@@ -233,7 +190,7 @@
       (assert-true (eps-matrix= (m- (m+ a b) a) b))
       )))
 
-(define-test m*-test
+(lisp-unit:define-test m*-test
   ;; 2x2 x 2x2
   (let ((a #2A((1.0 2.0) (3.0 4.0)))
 	(b #2A((5.0 6.0) (7.0 8.0)))
@@ -283,7 +240,7 @@
 	)))
   )
 
-(define-test m-1-test
+(lisp-unit:define-test m-1-test
   ;; 2x2
   (let ((identity (make-identity-matrix 2)))
     (dotimes (i 100)
@@ -315,7 +272,7 @@
 	  ))))
   )
 
-(define-test flip-test
+(lisp-unit:define-test flip-test
   ;; 2x2
   (dotimes (i 100)
     (let* ((a (random-range -100.0 100.0))
@@ -339,7 +296,7 @@
   )
 
 ;; mv*
-(define-test mv*-test
+(lisp-unit:define-test mv*-test
   ;; 2x2 x 2x1
   (let ((a #2A((1.0 2.0) (3.0 4.0)))
 	(b #(5.0 6.0))
