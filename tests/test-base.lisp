@@ -11,19 +11,6 @@
 (use-package :lisp-unit)
 (use-package :nurarihyon)
 
-(define-test rad2deg-test
-  ;; 0[rad] -> 0[deg]
-  (assert-float-equal (rad2deg 0.0) 0.0)
-  ;; pi/2[rad] -> 90[deg]
-  (assert-float-equal (rad2deg +pi/2+) 90.0)
-  ;; 180[deg] -> pi[rad]
-  (assert-float-equal (rad2deg +pi+) 180.0)
-  ;; 270[deg] -> 3pi/2[rad]
-  (assert-float-equal (rad2deg (+ +pi/2+ +pi+)) 270.0)
-  ;; 360[deg] -> 2pi[rad]
-  (assert-float-equal (rad2deg +2pi+) 360.0)
-  )
-
 (define-test deg2rad-and-rad2deg-test
   (dotimes (i 10)
     (let ((theta (random-range -350.0 350.0)))
