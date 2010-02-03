@@ -11,45 +11,6 @@
 (use-package :lisp-unit)
 (use-package :nurarihyon)
 
-(define-test constants-test
-  (assert-float-equal +e+ (exp 1.0))
-  (assert-float-equal +pi+ pi)
-  (assert-float-equal +2pi+ (* 2.0 +pi+))
-  (assert-float-equal +pi/2+ (/ +pi+ 2.0))
-  (assert-float-equal +pi/4+ (/ +pi+ 4.0)))
-
-(define-test eps=-test
-  (assert-true (eps= 10.0 10.0))
-  (assert-false (eps= 10.0 9.9))
-  (assert-true (eps= 10.0 9.1 1.0))
-  (assert-true (eps= 10.0 10.9 1.0))
-  (assert-false (eps= 10.0 11.1 1.0)))
-
-(define-test random-range-test
-  ;; float
-  (dotimes (i 100)
-    (let ((min -100.0)
-	  (max 100.0))
-      (assert-true (<= min (random-range min max) max))))
-  ;; integer
-  (dotimes (i 100)
-    (let ((min -100)
-	  (max 100))
-      (assert-true (<= min (random-range min max) max)))))
-
-(define-test deg2rad-test
-  ;; 0[deg] -> 0[rad]
-  (assert-float-equal (deg2rad 0.0) 0.0)
-  ;; 90[deg] -> pi/2[rad]
-  (assert-float-equal (deg2rad 90.0) +pi/2+)
-  ;; 180[deg] -> pi[rad]
-  (assert-float-equal (deg2rad 180.0) +pi+)
-  ;; 270[deg] -> 3pi/2[rad]
-  (assert-float-equal (deg2rad 270.0) (+ +pi/2+ +pi+))
-  ;; 360[deg] -> 2pi[rad]
-  (assert-float-equal (deg2rad 360.0) +2pi+)
-  )
-
 (define-test rad2deg-test
   ;; 0[rad] -> 0[deg]
   (assert-float-equal (rad2deg 0.0) 0.0)

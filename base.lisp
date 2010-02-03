@@ -18,9 +18,13 @@
 (eval-when (:compile-toplevel :load-toplevel)
   (defconstant +e+ (exp 1.0d0))
   (defconstant +pi+ pi)
+  (defconstant +-pi+ (- pi))
   (defconstant +2pi+ (* 2.0d0 +pi+))
+  (defconstant +-2pi+ (- +2pi+))
   (defconstant +pi/2+ (/ +pi+ 2.0d0))
+  (defconstant +-pi/2+ (/ +-pi+ 2.0d0))
   (defconstant +pi/4+ (/ +pi+ 4.0d0))
+  (defconstant +-pi/4+ (/ +-pi+ 4.0d0))
   (defconstant +eps+ 0.0001d0))
 
 (eval-when (:compile-toplevel)

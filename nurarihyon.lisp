@@ -17,7 +17,10 @@
    ;; syntax.lisp
    #:enable-aref-reader-syntax #:disable-aref-reader-syntax
    ;; base.lisp
-   #:+e+ #:+pi+ #:+2pi+ #:+pi/2+ #:+pi/4+ #:+eps+
+   #:+e+
+   #:+pi+ #:+2pi+ #:+pi/2+ #:+pi/4+
+   #:+-pi+ #:+-2pi+ #:+-pi/2+ #:+-pi/4+
+   #:+eps+
    #:rad2deg #:deg2rad
    #:random-range
    #:->double-float #:->single-float
