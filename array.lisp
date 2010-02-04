@@ -17,27 +17,27 @@
 
 (in-package :nurarihyon)
 
-(defvar *x-axis* (make-array 3 :element-type 'single-float
+(defvar *x-axis* (make-array 3 :element-type 'double-float
                              :initial-contents '(1.0 0.0 0.0)))
-(defvar *y-axis* (make-array 3 :element-type 'single-float
+(defvar *y-axis* (make-array 3 :element-type 'double-float
                              :initial-contents '(0.0 1.0 0.0)))
-(defvar *z-axis* (make-array 3 :element-type 'single-float
+(defvar *z-axis* (make-array 3 :element-type 'double-float
                              :initial-contents '(0.0 0.0 1.0)))
 
 (defun rotation-matrix (ang vec &optional (result (make-float-matrix 3 3)))
   "returns a matrix which rotates ang[rad] around vec."
-  (declare (type (simple-array single-float (3)) vec)
-           (type (simple-array single-float (3 3)) result)
-           (type single-float ang))
+  (declare (type (simple-array double-float (3)) vec)
+           (type (simple-array double-float (3 3)) result)
+           (type double-float ang))
   (let ((cos (cos ang))
         (sin (sin ang)))
-    (declare (type single-float cos sin))
+    (declare (type double-float cos sin))
     (let ((1-cos (- 1.0 cos)))
-      (declare (type single-float 1-cos))
+      (declare (type double-float 1-cos))
       (let ((vx (x vec))
             (vy (y vec))
             (vz (z vec)))
-        (declare (type single-float vx vy vz))
+        (declare (type double-float vx vy vz))
         ;; ugly implementation!!
         (setf (aref result 0 0) (+ (* vx vx 1-cos) cos))
         (setf (aref result 0 1) (- (* vx vy 1-cos) (* vz sin)))
@@ -49,7 +49,7 @@
         (setf (aref result 2 1) (+ (* vy vz 1-cos) (* vx sin)))
         (setf (aref result 2 2) (+ (* vz vz 1-cos) cos))
         )))
-  (the (simple-array single-float (3 3)) result))
+  (the (simple-array double-float (3 3)) result))
 
 ;; matをang, axis, worldpにしたがって回転させる
 ;; 結果はresultに入れる.
@@ -64,12 +64,12 @@
    axis   ... one of :x,:y or :z
    worldp ... nil -> local, multiple rot from the right
               t   -> world, multiple rot from the left"
-  (declare (type (simple-array single-float (3 3)) mat result)
-           (type single-float ang)
+  (declare (type (simple-array double-float (3 3)) mat result)
+           (type double-float ang)
            (type symbol worldp axis))
   (let ((cos (cos ang))
         (sin (sin ang)))
-    (declare (type single-float cos sin))
+    (declare (type double-float cos sin))
     (let ((s2 (case axis
                 ((:x :-y :z)
                  (if worldp sin (- sin)))
@@ -94,7 +94,7 @@
                 ((:z :-z) 1)
                 (t
                  (error "unkown axis")))))
-      (declare (type single-float s1 s2)
+      (declare (type double-float s1 s2)
                (type fixnum k1 k2))
       (if (not (eq result mat))
           (copy-matrix mat result))
@@ -105,14 +105,14 @@
                          (* s1 (aref result k2 i))))
                   (f2 (+ (* s2 (aref result k1 i))
                          (* cos (aref result k2 i)))))
-              (declare (type single-float f1 f2))
+              (declare (type double-float f1 f2))
               (setf (aref result k1 i) f1)
               (setf (aref result k2 i) f2))
             (let ((f1 (+ (* cos (aref result i k1))
                          (* s1 (aref result i k2))))
                   (f2 (+ (* s2 (aref result i k1))
                          (* cos (aref result i k2)))))
-              (declare (type single-float f1 f2))
+              (declare (type double-float f1 f2))
               (setf (aref result i k1) f1)
               (setf (aref result i k2) f2))))
       result)))
@@ -121,9 +121,9 @@
 ;; 指定されたオイラー角にしたがって,
 ;; その回転を表現する3x3の行列を返す
 (defun euler-matrix (az ay az2)
-  (declare (type single-float az ay az2))
+  (declare (type double-float az ay az2))
   (let ((r (rotation-matrix az *z-axis*)))
-    (declare (type (simple-array single-float (3 3)) r))
+    (declare (type (simple-array double-float (3 3)) r))
     (rotate-matrix r ay :y nil r)
     (rotate-matrix r az2 :z nil r)
     r))
@@ -132,15 +132,15 @@
 ;; 指定されたz, y, x軸周りの角度の回転を表す
 ;; 3x3の行列を返す.
 (defun rpy-matrix (az ay ax)
-  (declare (type single-float ax ay az))
+  (declare (type double-float ax ay az))
   (let ((r (rotation-matrix ax *x-axis*)))
-    (declare (type (simple-array single-float (3 3)) r))
+    (declare (type (simple-array double-float (3 3)) r))
     (rotate-matrix r ay :y t r)
     (rotate-matrix r az :z t r)
     r))
 
 ;; function: rpy-angle
-;; returns matrix's rpy angle by two means.
+;; returns matrix's rpy angle in two means.
 ;; EusLisp Implementation -> matrix.c::INV_RPY
 ;; mat = x x x
 ;;       x x x
@@ -154,7 +154,7 @@
 ;; c = atan2(sa*mat(2)-ca*mat(5), -sa*mat(1)+ca*mat(4))
 ;;   = atan2(sa*mat(0,2)-ca*mat(1,2), -sa*mat(0,1)+ca*mat(1,1))
 (defun rpy-angle (mat)
-  (declare (type (simple-array single-float (3 3)) mat))
+  (declare (type (simple-array double-float (3 3)) mat))
   (let ((result 
          (let* ((a (atan (aref mat 0 1) (aref mat 0 0)))
                 (sa (sin a))
@@ -166,7 +166,7 @@
                              (* ca (aref mat 1 2)))
                           (- (* ca (aref mat 1 1))
                              (* sa (aref mat 0 1))))))
-             (float-vector a b c))))
+             (double-vector a b c))))
         (result2
          (let* ((a (+ +pi+ (atan (aref mat 0 1) (aref mat 0 0))))
                 (sa (sin a))
@@ -178,8 +178,8 @@
                               (* ca (aref mat 1 2)))
                            (- (* ca (aref mat 1 1))
                               (* sa (aref mat 0 1))))))
-             (float-vector a b c)))))
-    (list result result2)))
+             (double-vector a b c)))))
+    (values result result2)))
 
 (declaim (inline axis->vec))
 (defun axis->vec (axis)
