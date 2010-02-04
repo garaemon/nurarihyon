@@ -186,7 +186,7 @@
   "
   (declare (type (simple-array double-float) mat vec))
   (let ((mat-dimensions (matrix-dimensions mat))
-        (vec-dimension (vector-dimensions vec)))
+        (vec-dimension (vector-dimension vec)))
      (declare (type fixnum vec-dimension)
               (type list mat-dimensions))
      (let ((mat-row (car mat-dimensions))
