@@ -387,6 +387,22 @@
       (setf [mat i id] [val i]))
     (the (simple-array double-float) val)))
 
+(defun matrix-diagonal (mat)
+  (declare (type (simple-array double-float) mat))
+  (with-square-matrix-bind-and-check (dim mat)
+    (let ((ret (make-vector dim)))
+      (declare (type (simple-array double-float) ret))
+      (dotimes (i dim)
+        (setf [ret i] [mat i i]))
+      ret)))
+
+(defun (setf matrix-diagonal) (val mat)
+  (declare (type (simple-array double-float) val mat))
+  (with-square-matrix-bind-and-check (dim mat)
+    (dotimes (i dim)
+      (setf [mat i i] [val i]))
+    ret))
+
 (defun eps-matrix= (a b &optional (diff +eps+))
   "returns t if matrix a and b is near enough."
   (declare (type (simple-array double-float) a b)
