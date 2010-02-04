@@ -25,14 +25,14 @@
 ;;
 ;;==================================
 
-(declaim (inline vector-dimensions))
+(declaim (inline vector-dimension))
 (defun vector-dimension (a)
   (declare (type simple-array a))
-  (the unsigned-byte (array-dimension a)))
+  (the fixnum (array-dimension a 0)))
 
 ;; template for make-**-vector
 (defun make-vector (dim &key (initial-element 0.0d0))
-  (declare (type unsigned-byte dim)
+  (declare (type fixnum dim)
            (type double-float initial-element))
   (the (simple-array double-float)
     (make-array dim :element-type 'double-float
@@ -47,7 +47,7 @@
 (defmacro with-vector-dimension-bind-and-check ((dim a b) &rest args)
   ;;  check dimensions of vecs are equal or not
   `(let ((,dim (vector-dimension ,a)))
-     (declare (type unsigned-byte ,dim))
+     (declare (type fixnum ,dim))
      (if (= ,dim (vector-dimension ,b))
          (progn ,@args)
          (error "vector dimension mismatch"))))

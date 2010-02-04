@@ -146,24 +146,6 @@
   (declare (type double-float a b diff))
   (the symbol (< (abs (- a b)) diff)))
 
-;; (defun eps-matrix= (a b &optional (diff +eps+))
-;;   "returns t if matrix a and b is near enough."
-;;   (declare (type (simple-array single-float) a b)
-;; 	   (type single-float diff))
-;;   (let ((a-dims (array-dimensions a))
-;; 	(b-dims (array-dimensions b)))
-;;     (declare (type list a-dims b-dims))
-;;     (if (equal a-dims b-dims)
-;; 	(progn
-;; 	  (dotimes (i (car a-dims))
-;; 	    (declare (type fixnum i))
-;; 	    (dotimes (j (cadr a-dims))
-;; 	      (declare (type fixnum j))
-;; 	      (if (not (eps= (aref a i j) (aref b i j) diff))
-;; 		  (return-from eps-matrix= nil))
-;; 	      ))
-;; 	  t)				;if passed
-;; 	nil)))
 
 
 (eval-when (:compile-toplevel)

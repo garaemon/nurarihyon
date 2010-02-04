@@ -27,7 +27,7 @@
    #:eps=
    ;; vector.lisp
    #:vector-dimension
-   #:make-vector
+   #:make-vector #:double-vector
    #:real-vector
    #:copy-vector
    #:v+ #:v- #:v. #:v*
@@ -37,7 +37,7 @@
    #:vector-mean
    #:eps-vector=
    ;; matrix.lisp
-   #:make-matrix
+   #:make-matrix #:double-matrix
    #:make-identity-matrix
    #:copy-matrix
    #:m+ #:m- #:m* #:mv*
@@ -45,5 +45,6 @@
    #:lu-decompose
    #:inverse-matrix #:m-1
    #:matrix-column #:matrix-row
+   #:eps-matrix=
    )
   )

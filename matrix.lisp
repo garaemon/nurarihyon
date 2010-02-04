@@ -3,9 +3,9 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(declaim (optimize (speed 3)
-		   (safety 0)
-		   (debug 0)
+(declaim (optimize (speed 0)
+		   (safety 3)
+		   (debug 3)
 		   (space 0)))
 
 (in-package :nurarihyon)
@@ -27,7 +27,7 @@
              (,m (cadr ,a-dims))
              (,n-dash (car ,b-dims))
              (,m-dash (cadr ,b-dims)))
-         (declare (type unsigned-byte ,n ,m ,n-dash ,m-dash))
+         (declare (type fixnum ,n ,m ,n-dash ,m-dash))
          (if (= ,m ,n-dash)
              (progn ,@args)
              (error "matrix dimensions mismatch"))))))
@@ -71,22 +71,35 @@
 (declaim (inline matrix-row-dimension))
 (defun matrix-row-dimension (a)
   (declare (type simple-array a))
-  (the fixnum (car (array-dimensions a))))
+  (the fixnum (array-dimension a 0)))
 
 (declaim (inline matrix-column-dimension))
 (defun matrix-column-dimension (a)
   (declare (type simple-array a))
-  (the fixnum (cadr (array-dimensions a))))
+  (the fixnum (array-dimension a 1)))
 
 (defun make-matrix (row column &key (initial-element 0.0d0))
-  (declare (type unsigned-byte row column)
+  (declare (type fixnum row column)
            (type double-float initial-element))
   (the (simple-array double-float)
        (make-array (list row column) :element-type 'double-float
                    :initial-element initial-element)))
 
+;; (double-matrix '(1 2 3 4) '(4 5 6 7))
+;; => 1 2 3 4
+;;    4 5 6 7
+(defun double-matrix (&rest args)
+  (let ((row (length args))
+        (column (length (car args))))
+    (let ((mat (make-matrix row column)))
+      (declare (type (simple-array double-float) mat))
+      (dotimes (i row)
+        (dotimes (j column)
+          (setf [mat i j] (coerce (elt (elt args i) j) 'double-float))))
+      (the (simple-array double-float) mat))))
+
 (defun make-identity-matrix (dim)
-  (declare (type unsigned-byte dim))
+  (declare (type fixnum dim))
   (let ((mat (make-matrix dim dim)))
     (declare (type (simple-array double-float) mat))
     (dotimes (i dim) (setf [mat i i] 1.0d0))
@@ -211,9 +224,9 @@
 ;; destructive function!!
 (defun lu-decompose (result pivot)
   (declare (type (simple-array double-float) result)
-           (type (simple-array unsigned-byte) pivot))
+           (type (simple-array fixnum) pivot))
      (let ((dimension (matrix-row-dimension result)))
-       (declare (type unsigned-byte dimension))
+       (declare (type fixnum dimension))
        (let ((weight (make-vector dimension))) ;weight = new_vector(n);
          (declare (type (simple-array double-float) weight))
          ;; initialize weight vector
@@ -242,7 +255,7 @@
               (ii 0)
               (j 0))
           (declare (type double-float u)
-                   (type unsigned-byte ii j))
+                   (type fixnum ii j))
           ;; i: k ... dimension
           ;; find max element in (k,k) ... (i,k)
           ;; max value will be set in u
@@ -250,7 +263,7 @@
           ;; ii is a original pivot
           (do ((i k (1+ i)))            ;for ( i = k; i < n; i++ )
               ((not (< i dimension)))
-            (declare (type unsigned-byte i))
+            (declare (type fixnum i))
             (setq ii [pivot i])       ;ii = ip[i]
             ;;t = fabs(a[ii][k] * weight[ii]
             (let ((tmp (abs (* [result ii k] [weight ii]))))
@@ -259,7 +272,7 @@
                 (setq u tmp)                       ;u = t
                 (setq j i))))                      ;j = i
           (let ((ik [pivot j]))                    ;ik = ip[j]
-            (declare (type unsigned-byte ik))
+            (declare (type fixnum ik))
             (when (not (= j k))          ;if ( j != k )
               (setf [pivot j] [pivot k]) ;ip[j] = ip[k]
               (setf [pivot k] ik)        ;ip[k] = ik;
@@ -271,24 +284,24 @@
                   (return-from lu-decompose (the double-float det))) ;goto EXIT
               (do ((i (1+ k) (1+ i)))   ;for ( i = k + 1; i < n; i++ )
                   ((not (< i dimension)))
-                (declare (type unsigned-byte i))
+                (declare (type fixnum i))
                 (let ((ii [pivot i])) ;ii = ip[i]
-                  (declare (type unsigned-byte ii))
+                  (declare (type fixnum ii))
                   ;;t = (a[ii][k] /== u);
                   (/== [result ii k] u)
                   (let ((tmp [result ii k]))
                     (declare (type double-float tmp))
                     (do ((j (1+ k) (1+ j))) ;for ( j = k + 1; j < n; j++ )
                         ((not (< j dimension)))
-                      (declare (type unsigned-byte j))
+                      (declare (type fixnum j))
                       ;;a[ii][j] -== t * a[ik][j];
                       (-== [result ii j] (* tmp [result ik j]))))))))))
       (the double-float det)))))        ;return determination
 
 (defun m-1 (mat &optional (result nil) (lu-mat nil))
   (with-square-matrix-bind-and-check (dim mat)
-    (let* ((pivot (make-array dim :element-type 'unsigned-byte)))
-      (declare (type (simple-array unsigned-byte) pivot))
+    (let* ((pivot (make-array dim :element-type 'fixnum)))
+      (declare (type (simple-array fixnum) pivot))
       (let ((lu-mat (or lu-mat (make-matrix dim dim)))
             (result (or result (make-matrix dim dim))))
         (declare (type (simple-array double-float) lu-mat result))
@@ -305,7 +318,7 @@
                     (declare (type fixnum i))
                     (let* ((ii [pivot i])          ;ii = ip[i]
                            (tmp (if (= ii k) 1.0d0 0.0d0))) ;t = (ii == k);
-                      (declare (type unsigned-byte ii)
+                      (declare (type fixnum ii)
                                (type double-float tmp))
                       (dotimes (j i)    ;for ( j = 0; j < i; j++ )
                         (-== tmp        ;t -== a[ii][j] * a_inv[j][k]
@@ -314,14 +327,14 @@
                   ;; backward
                   (do ((i (1- dim) (1- i))) ;for ( i = n - 1; i >= 0; i-- )
                       ((not (>= i 0)))
-                    (declare (type unsigned-byte i))
+                    (declare (type fixnum i))
                     (let ((tmp [result i k]) ;t = a_inv[i][k]l
                           (ii [pivot i]))    ;ii = ip[i]
                       (declare (type double-float tmp)
-                               (type unsigned-byte ii))
+                               (type fixnum ii))
                       (do ((j (1+ i) (1+ j))) ;for ( j = i + 1; j < n; j++ )
                           ((not (< j dim)))
-                        (declare (type unsigned-byte j))
+                        (declare (type fixnum j))
                         (-== tmp     ;t -== a[ii][j] * a_inv[j][k]
                              (* [lu-mat ii j] [result j k])))
                       (setf [result i k] ;a_inv[i][k] = t / a[ii][i]
@@ -373,6 +386,28 @@
       (declare (type fixnum i))
       (setf [mat i id] [val i]))
     (the (simple-array double-float) val)))
+
+(defun eps-matrix= (a b &optional (diff +eps+))
+  "returns t if matrix a and b is near enough."
+  (declare (type (simple-array double-float) a b)
+	   (type double-float diff))
+  (let ((a-dims (matrix-dimensions a))
+	(b-dims (matrix-dimensions b)))
+    (declare (type list a-dims b-dims))
+    (if (equal a-dims b-dims)
+	(let ((row (car a-dims))
+              (column (cadr a-dims)))
+          (declare (type fixnum row column))
+	  (dotimes (i row)
+	    (declare (type fixnum i))
+	    (dotimes (j column)
+	      (declare (type fixnum j))
+	      (if (not (eps= [a i j] [b i j] diff))
+		  (return-from eps-matrix= nil))
+	      ))
+          t)                            ;if passed
+	nil)))
+
 
 (eval-when (:compile-toplevel)
   (disable-aref-reader-syntax))
