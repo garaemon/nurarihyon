@@ -13,6 +13,7 @@
 (defpackage :nurarihyon
   (:use #:common-lisp)
   (:shadow #:norm)
+  (:nicknames :nh)
   (:export
    ;; syntax.lisp
    #:enable-aref-reader-syntax #:disable-aref-reader-syntax
