@@ -12,12 +12,6 @@
 (use-package :nurarihyon)
 ;;(use-package :chimi)
 
-(define-test axis->vec-test
-  (assert-true (eps-vector= (axis->vec :x) +x-axis+))
-  (assert-true (eps-vector= (axis->vec :y) +y-axis+))
-  (assert-true (eps-vector= (axis->vec :y) +y-axis+))
-  )
-
 (define-test rotation-matrix-test
   ;; rotate 0 rad matrix = identity matrix
   (let ((identity (make-identity-matrix 3)))

@@ -3,13 +3,13 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-;; (declaim (optimize (speed 3)
-;; 		   (safety 0)
-;; 		   (debug 0)
-;; 		   (space 0)))
+(declaim (optimize (speed 3)
+		   (safety 0)
+		   (debug 0)
+		   (space 0)))
 ;; for debugging
-(declaim (optimize (safety 3)
-                  (debug 3)))
+;; (declaim (optimize (safety 3)
+;;                   (debug 3)))
 
 (in-package :nurarihyon)
 
@@ -151,9 +151,10 @@
   "returns matrix's rpy angle in two means."
   (declare (type (simple-array double-float (3 3)) mat))
   (let ((result 
-         (let* ((a (atan (aref mat 0 1) (aref mat 0 0)))
+         (let* ((a (atan [mat 0 1] [mat 0 0]))
                 (sa (sin a))
                 (ca (cos a)))
+           (declare (type double-float sa ca))
            (let ((b (atan (- [mat 0 2])
                           (+ (* ca [mat 0 0])
                              (* sa [mat 0 1]))))
@@ -161,11 +162,18 @@
                              (* ca [mat 1 2]))
                           (- (* ca [mat 1 1])
                              (* sa [mat 0 1])))))
-             (double-vector a b c))))
+             (declare (type double-float b c))
+             (let ((ret (make-vector 3)))
+               (declare (type (simple-array double-float (3)) ret))
+               (setf [ret 0] a)
+               (setf [ret 1] b)
+               (setf [ret 2] c)
+               ret))))
         (result2
          (let* ((a (+ +pi+ (atan [mat 0 1] [mat 0 0])))
                 (sa (sin a))
                 (ca (cos a)))
+           (declare (type double-float sa ca))
            (let ((b (atan (- [mat 0 2])
                            (+ (* ca [mat 0 0])
                               (* sa [mat 0 1]))))
@@ -173,7 +181,14 @@
                               (* ca [mat 1 2]))
                            (- (* ca [mat 1 1])
                               (* sa [mat 0 1])))))
-             (double-vector a b c)))))
+             (declare (type double-float b c))
+             (let ((ret (make-vector 3)))
+               (declare (type (simple-array double-float (3)) ret))
+               (setf [ret 0] a)
+               (setf [ret 1] b)
+               (setf [ret 2] c)
+               ret)))))
+    (declare (type (simple-array double-float (3)) result result2))
     (values (the (simple-array double-float (3)) result)
             (the (simple-array double-float (3)) result2))))
 
