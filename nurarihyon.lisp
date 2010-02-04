@@ -44,6 +44,7 @@
    #:transpose
    #:lu-decompose
    #:inverse-matrix #:m-1
+   #:matrix-determinant
    #:matrix-column #:matrix-row #:matrix-diagonal
    #:eps-matrix=
    ;; geometry.lisp

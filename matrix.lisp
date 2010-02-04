@@ -403,6 +403,16 @@
       (setf [mat i i] [val i]))
     ret))
 
+(defun matrix-determinant (mat &optional (lu-mat nil))
+  (declare (type (simple-array double-float) mat))
+  (with-square-matrix-bind-and-check (dim mat)
+    (let* ((pivot (make-array dim :element-type 'fixnum)))
+      (declare (type (simple-array fixnum) pivot))
+      (let ((lu-mat (or lu-mat (make-matrix dim dim))))
+        (declare (type (simple-array double-float) lu-mat))
+        (copy-matrix mat lu-mat)
+        (the double-float (lu-decompose lu-mat pivot))))))
+
 (defun eps-matrix= (a b &optional (diff +eps+))
   "returns t if matrix a and b is near enough."
   (declare (type (simple-array double-float) a b)
