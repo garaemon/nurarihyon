@@ -401,7 +401,7 @@
   (with-square-matrix-bind-and-check (dim mat)
     (dotimes (i dim)
       (setf [mat i i] [val i]))
-    ret))
+    val))
 
 (defun matrix-determinant (mat &optional (lu-mat nil))
   (declare (type (simple-array double-float) mat))
