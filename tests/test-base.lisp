@@ -11,23 +11,6 @@
 (use-package :lisp-unit)
 (use-package :nurarihyon)
 
-(lisp-unit:define-test copy-vector-test
-  (dotimes (i 3)
-    (let ((vec (float-vector (random-range -100.0 100.0)
-			     (random-range -100.0 100.0)
-			     (random-range -100.0 100.0)))
-	  (buf (make-float-vector 3)))
-      (copy-vector vec buf)
-      (assert-true (eps-vector= vec buf)))))
-
-(lisp-unit:define-test copy-matrix-test
-  (dotimes (i 3)
-    (let ((dim 10))
-      (let ((mat (make-float-matrix dim dim :initial-element (random-range -100.0 100.0)))
-	    (tmp (make-float-matrix dim dim)))
-	(copy-matrix mat tmp)
-	(assert-true (eps-matrix= mat tmp))))))
-
 (lisp-unit:define-test v+-test
   (let ((a (float-vector 1 2 3))
 	(b (float-vector 4 5 6)))
