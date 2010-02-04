@@ -17,7 +17,6 @@
   (enable-aref-reader-syntax))
 
 (alexandria:define-constant +x-axis+ #d(1.0 0.0 0.0) :test #'eps-vector=)
-                            
 (alexandria:define-constant +y-axis+ #d(0.0 1.0 0.0) :test #'eps-vector=)
 (alexandria:define-constant +z-axis+ #d(0.0 0.0 1.0) :test #'eps-vector=)
 
