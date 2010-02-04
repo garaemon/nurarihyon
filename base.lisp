@@ -15,17 +15,16 @@
 (in-package :nurarihyon)
 
 ;; constant
-(eval-when (:compile-toplevel :load-toplevel)
-  (defconstant +e+ (exp 1.0d0))
-  (defconstant +pi+ pi)
-  (defconstant +-pi+ (- pi))
-  (defconstant +2pi+ (* 2.0d0 +pi+))
-  (defconstant +-2pi+ (- +2pi+))
-  (defconstant +pi/2+ (/ +pi+ 2.0d0))
-  (defconstant +-pi/2+ (/ +-pi+ 2.0d0))
-  (defconstant +pi/4+ (/ +pi+ 4.0d0))
-  (defconstant +-pi/4+ (/ +-pi+ 4.0d0))
-  (defconstant +eps+ 0.0001d0))
+(alexandria:define-constant +e+ (exp 1.0d0) :test #'=)
+(alexandria:define-constant +pi+ pi :test #'=)
+(alexandria:define-constant +-pi+ (- pi) :test #'=)
+(alexandria:define-constant +2pi+ (* 2.0d0 +pi+) :test #'=)
+(alexandria:define-constant +-2pi+ (- +2pi+) :test #'=)
+(alexandria:define-constant +pi/2+ (/ +pi+ 2.0d0) :test #'=)
+(alexandria:define-constant +-pi/2+ (/ +-pi+ 2.0d0) :test #'=)
+(alexandria:define-constant +pi/4+ (/ +pi+ 4.0d0) :test #'=)
+(alexandria:define-constant +-pi/4+ (/ +-pi+ 4.0d0) :test #'=)
+(alexandria:define-constant +eps+ 0.0001d0 :test #'=)
 
 (eval-when (:compile-toplevel)
   (enable-aref-reader-syntax))
@@ -145,8 +144,6 @@
 (defun eps= (a b &optional (diff +eps+))
   (declare (type double-float a b diff))
   (the symbol (< (abs (- a b)) diff)))
-
-
 
 (eval-when (:compile-toplevel)
   (disable-aref-reader-syntax))

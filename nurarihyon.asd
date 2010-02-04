@@ -9,4 +9,7 @@
                  (:file "vector" :depends-on ("nurarihyon" "syntax" "base"))
                  (:file "matrix" :depends-on ("nurarihyon" "syntax"
                                               "base" "vector"))
+                 (:file "geometry" :depends-on ("nurarihyon" "syntax"
+                                                "base" "vector"
+                                                "matrix"))
 		 ))

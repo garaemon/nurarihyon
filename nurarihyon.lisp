@@ -46,5 +46,13 @@
    #:inverse-matrix #:m-1
    #:matrix-column #:matrix-row
    #:eps-matrix=
+   ;; geometry.lisp
+   #:+x-axis+ #:+y-axis+ #:+z-axis+
+   #:rotation-matrix
+   #:rotate-matrix
+   #:euler-matrix
+   #:rpy-matrix
+   #:rpy-angle
+   #:axis->vec
    )
   )

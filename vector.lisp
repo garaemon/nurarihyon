@@ -17,11 +17,11 @@
 ;;==================================
 ;; in-package utility
 (defmacro x (a)
-  `(aref a 0))
+  `(aref ,a 0))
 (defmacro y (a)
-  `(aref a 1))
+  `(aref ,a 1))
 (defmacro z (a)
-  `(aref a 2))
+  `(aref ,a 2))
 ;;
 ;;==================================
 
