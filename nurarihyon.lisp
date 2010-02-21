@@ -54,7 +54,8 @@
    ;; geometry.lisp
    #:+x-axis+ #:+y-axis+ #:+z-axis+
    #:rotation-matrix
-   #:rotate-matrix
+   ;;#:rotate-matrix
+   #:rotate-matrix-local #:rotate-matrix-world
    #:euler-matrix
    #:rpy-matrix
    #:rpy-angle

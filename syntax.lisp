@@ -15,7 +15,8 @@
     (set-macro-character #\] (get-macro-character #\)))
     ;; for #d(1 2 3)
     (set-dispatch-macro-character #\# #\d 'double-array-open)
-    )
+    ;; for #%(1 + 2)
+    (set-dispatch-macro-character #\# #\% 'read-infix-sexp))
   t)
 
 (defun aref-reader-open (stream char)
@@ -35,6 +36,37 @@
         (cons 'double-matrix (mapcar #'(lambda (x)
                                          (cons 'list x))
                                      in-list)))))
+
+(defun read-infix-sexp (stream n char)
+  (declare (ignore n char))
+  (let ((sexp (read stream)))
+    (infix->prefix sexp)))
+
+(defun infix->prefix (sexp)
+  (cond
+    ((symbolp sexp)
+     sexp)                              ;just return
+    ((listp sexp)                       ;we need to convert
+     ;; (1 + 2) (1 + sin(3)) (a = hoge(fuga)) ...
+     (let ((1arg (car sexp))
+           (2arg (cadr sexp))
+           (3arg (cddr sexp)))
+       (cond ((symbolp 2arg)
+              (let ((key (chimi:symbol->keyword 2arg)))
+                (case key
+                  ((:= :<-)
+                   (append (cons 'setf (infix->prefix 1arg))
+                           (infix->prefix 3arg)))
+                  (:->
+                   (append (cons 'setf (infix->prefix 3arg))
+                           (infix->prefix 1arg)))
+                  (t
+                   (append (cons 2arg (infix->prefix 1arg))
+                           (infix->prefix 3arg)))
+                  ))))))
+    (t sexp))                            ;literal
+  )
+    
 
 (defun %disable-nurarihyon-reader-syntax ()
   (when *original-readtable*
