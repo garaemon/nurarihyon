@@ -27,7 +27,7 @@
 (alexandria:define-constant +eps+ 0.0001d0 :test #'=)
 
 (eval-when (:compile-toplevel)
-  (enable-aref-reader-syntax))
+  (enable-nurarihyon-reader-syntax))
 
 ;; operator utility
 (defmacro with-array-dimension-check ((a b) &rest args)
@@ -145,5 +145,9 @@
   (declare (type double-float a b diff))
   (the symbol (< (abs (- a b)) diff)))
 
+(defun mean (list)
+  (declare (type list list))
+  (/ (apply #'+ list) (length list)))
+
 (eval-when (:compile-toplevel)
-  (disable-aref-reader-syntax))
+  (disable-nurarihyon-reader-syntax))

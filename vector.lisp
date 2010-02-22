@@ -12,7 +12,7 @@
 (in-package :nurarihyon)
 
 (eval-when (:compile-toplevel)
-  (enable-aref-reader-syntax))
+  (enable-nurarihyon-reader-syntax))
 
 ;;==================================
 ;; in-package utility
@@ -144,4 +144,4 @@
     (scale (/ 1.0d0 (length vecs)) (reduce #'v+ vecs))))
 
 (eval-when (:compile-toplevel)
-  (disable-aref-reader-syntax))
+  (disable-nurarihyon-reader-syntax))

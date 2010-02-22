@@ -7,7 +7,7 @@
 (require :asdf)
 (require :nurarihyon)
 (require :lisp-unit)
-(nurarihyon:enable-aref-reader-syntax)
+(nurarihyon:enable-nurarihyon-reader-syntax)
 
 ;; mv*
 (lisp-unit:define-test mv*-test

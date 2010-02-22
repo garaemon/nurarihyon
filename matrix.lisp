@@ -10,7 +10,7 @@
 
 (in-package :nurarihyon)
 (eval-when (:compile-toplevel)
-  (enable-aref-reader-syntax))
+  (enable-nurarihyon-reader-syntax))
 
 ;; util
 (defmacro with-matrix-trans-dimension-bind-and-check ((n m n-dash m-dash
@@ -436,4 +436,4 @@
 
 
 (eval-when (:compile-toplevel)
-  (disable-aref-reader-syntax))
+  (disable-nurarihyon-reader-syntax))

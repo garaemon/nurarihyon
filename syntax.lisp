@@ -6,7 +6,7 @@
 (in-package :nurarihyon)
 ;; syntax
 (defvar *original-readtable* nil)
-(defun %enable-aref-reader-syntax ()
+(defun %enable-nurarihyon-reader-syntax ()
   (unless *original-readtable*          ;not enabled
     (setq *original-readtable* *readtable*)
     (setq *readtable* (copy-readtable))
@@ -36,16 +36,16 @@
                                          (cons 'list x))
                                      in-list)))))
 
-(defun %disable-aref-reader-syntax ()
+(defun %disable-nurarihyon-reader-syntax ()
   (when *original-readtable*
     (setq *readtable* *original-readtable*
           *original-readtable* nil))
   t)
 
-(defmacro enable-aref-reader-syntax ()
+(defmacro enable-nurarihyon-reader-syntax ()
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (%enable-aref-reader-syntax)))
+     (%enable-nurarihyon-reader-syntax)))
 
-(defmacro disable-aref-reader-syntax ()
+(defmacro disable-nurarihyon-reader-syntax ()
   `(eval-when (:compile-toplevel :load-toplevel :execute)
-     (%disable-aref-reader-syntax)))
+     (%disable-nurarihyon-reader-syntax)))

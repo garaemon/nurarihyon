@@ -7,7 +7,7 @@
 (require :asdf)
 (require :nurarihyon)
 (require :lisp-unit)
-(nurarihyon:enable-aref-reader-syntax)
+(nurarihyon:enable-nurarihyon-reader-syntax)
 
 (lisp-unit:define-test transpose-test
   ;; 2x2

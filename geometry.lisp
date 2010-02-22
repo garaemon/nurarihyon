@@ -14,7 +14,7 @@
 (in-package :nurarihyon)
 
 (eval-when (:compile-toplevel)
-  (enable-aref-reader-syntax))
+  (enable-nurarihyon-reader-syntax))
 
 (alexandria:define-constant +x-axis+ #d(1.0 0.0 0.0) :test #'eps-vector=)
 (alexandria:define-constant +y-axis+ #d(0.0 1.0 0.0) :test #'eps-vector=)
@@ -197,4 +197,4 @@
     (t axis)))
 
 (eval-when (:compile-toplevel)
-  (disable-aref-reader-syntax))
+  (disable-nurarihyon-reader-syntax))

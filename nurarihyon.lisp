@@ -16,7 +16,7 @@
   (:nicknames :nh)
   (:export
    ;; syntax.lisp
-   #:enable-aref-reader-syntax #:disable-aref-reader-syntax
+   #:enable-nurarihyon-reader-syntax #:disable-nurarihyon-reader-syntax
    ;; base.lisp
    #:+e+
    #:+pi+ #:+2pi+ #:+pi/2+ #:+pi/4+
@@ -25,7 +25,7 @@
    #:rad2deg #:deg2rad
    #:random-range
    #:->double-float #:->single-float
-   #:eps=
+   #:eps= #:mean
    ;; vector.lisp
    #:vector-dimension
    #:make-vector #:double-vector
