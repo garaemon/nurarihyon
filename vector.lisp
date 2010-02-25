@@ -149,5 +149,18 @@
   (the (simple-array double-float)
     (scale (/ 1.0d0 (length vecs)) (reduce #'v+ vecs))))
 
+;; utility, not fast
+(defun make-random-vector (dim &key (min -10000.0d0) (max 10000.0d0))
+  (declare (type fixnum dim)
+           (type double-float min max))
+  (let ((v (make-vector dim)))
+    (declare (type (simple-array single-float) v))
+    (dotimes (i dim)
+      (declare (type fixnum i))
+      (let ((r (random-range min max)))
+        (declare (type double-float v))
+        (setf [v i] r)))
+    v))
+
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))

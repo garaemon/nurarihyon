@@ -38,6 +38,7 @@
    #:distance
    #:vector-mean
    #:eps-vector=
+   #:make-random-vector
    ;; matrix.lisp
    #:make-matrix #:double-matrix
    #:make-matrix33 #:make-identity-matrix3
