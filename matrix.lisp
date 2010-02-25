@@ -115,7 +115,9 @@
 (defun make-identity-matrix3 ()
   (let ((mat (make-matrix33)))
     (declare (type (simple-array double-float (3 3)) mat))
-    (dotimes (i dim) (setf [mat i i] 1.0d0))
+    (setf [mat 0 0] 1.0d0)
+    (setf [mat 1 1] 1.0d0)
+    (setf [mat 2 2] 1.0d0)
     (the (simple-array double-float (3 3)) mat)))
 
 (defun copy-matrix (a b)
