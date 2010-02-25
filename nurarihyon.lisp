@@ -29,6 +29,7 @@
    ;; vector.lisp
    #:vector-dimension
    #:make-vector #:double-vector
+   #:make-vector3
    #:real-vector
    #:copy-vector
    #:v+ #:v- #:v. #:v*
@@ -39,6 +40,7 @@
    #:eps-vector=
    ;; matrix.lisp
    #:make-matrix #:double-matrix
+   #:make-matrix33
    #:make-identity-matrix
    #:copy-matrix
    #:m+ #:m- #:m* #:mv*

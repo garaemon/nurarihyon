@@ -38,6 +38,12 @@
     (make-array dim :element-type 'double-float
                 :initial-element initial-element)))
 
+(defun make-vector3 (&key (initial-element 0.0d0))
+  (declare (type double-float initial-element))
+  (the (simple-array double-float (3))
+    (make-array 3 :element-type 'double-float
+                :initial-element initial-element)))
+
 (defun double-vector (&rest args)
   (the (simple-array double-float)
     (make-array (length args) :element-type 'double-float

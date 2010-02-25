@@ -85,6 +85,13 @@
        (make-array (list row column) :element-type 'double-float
                    :initial-element initial-element)))
 
+(defun make-matrix33 (&key (initial-element 0.0d0))
+  (declare (type double-float initial-element))
+  (the (simple-array double-float (3 3))
+    (make-array '(3 3) :element-type 'double-float
+                :initial-element initial-element)))
+
+
 ;; (double-matrix '(1 2 3 4) '(4 5 6 7))
 ;; => 1 2 3 4
 ;;    4 5 6 7
