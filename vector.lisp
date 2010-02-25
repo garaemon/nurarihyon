@@ -154,11 +154,11 @@
   (declare (type fixnum dim)
            (type double-float min max))
   (let ((v (make-vector dim)))
-    (declare (type (simple-array single-float) v))
+    (declare (type (simple-array double-float) v))
     (dotimes (i dim)
       (declare (type fixnum i))
       (let ((r (random-range min max)))
-        (declare (type double-float v))
+        (declare (type double-float r))
         (setf [v i] r)))
     v))
 
