@@ -112,6 +112,12 @@
     (dotimes (i dim) (setf [mat i i] 1.0d0))
     (the (simple-array double-float) mat)))
 
+(defun make-identity-matrix3 ()
+  (let ((mat (make-matrix33)))
+    (declare (type (simple-array double-float (3 3)) mat))
+    (dotimes (i dim) (setf [mat i i] 1.0d0))
+    (the (simple-array double-float (3 3)) mat)))
+
 (defun copy-matrix (a b)
   (declare (type (simple-array double-float) a b))
   (with-matrix-dimension-bind-and-check (row column a b)

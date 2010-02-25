@@ -40,7 +40,7 @@
    #:eps-vector=
    ;; matrix.lisp
    #:make-matrix #:double-matrix
-   #:make-matrix33
+   #:make-matrix33 #:make-identity-matrix3
    #:make-identity-matrix
    #:copy-matrix
    #:m+ #:m- #:m* #:mv*
