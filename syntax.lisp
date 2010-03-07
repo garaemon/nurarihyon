@@ -33,9 +33,7 @@
     (if (= (chimi:list-rank in-list) 1)
         (cons 'double-vector in-list)
         ;; here, in-list is a list of list of number
-        (cons 'double-matrix (mapcar #'(lambda (x)
-                                         (cons 'list x))
-                                     in-list)))))
+        (cons 'double-matrix (mapcar #'(lambda (x) (cons 'list x)) in-list)))))
 
 (defun read-infix-sexp (stream n char)
   (declare (ignore n char))
@@ -43,30 +41,27 @@
     (infix->prefix sexp)))
 
 (defun infix->prefix (sexp)
+  "This function converts an infix s-expression to a prefix s-expression.
+We need to think about like (1 + 2)"
   (cond
-    ((symbolp sexp)
-     sexp)                              ;just return
+    ((symbolp sexp) sexp)               ;just return
     ((listp sexp)                       ;we need to convert
      ;; (1 + 2) (1 + sin(3)) (a = hoge(fuga)) ...
-     (let ((1arg (car sexp))
-           (2arg (cadr sexp))
-	   (3arg (cddr sexp)))
-       (cond ((symbolp 2arg)
-              (let ((key (chimi:symbol->keyword 2arg)))
-                (case key
-                  ((:= :<-)
-                   (cons (cons 'setf (infix->prefix 1arg))
-                           (infix->prefix 3arg)))
-                  (:->
-                   (cons (cons 'setf (infix->prefix 3arg))
-                           (infix->prefix 1arg)))
-                  (t
-                   (cons (cons 2arg (infix->prefix 1arg))
-                           (infix->prefix 3arg)))
-                  ))))))
-    (t sexp))                            ;literal
-  )
-    
+     (destructuring-bind (a &optional b &rest c) sexp
+       (cond ((and (not (null b)) (listp b))
+              ;; here, we check sexp like (sin(x) ...)
+              (if c
+                  (destructuring-bind (operator &rest args) c
+                    (list (infix->prefix operator)
+                          (list (infix->prefix a) (infix->prefix b))
+                          (infix->prefix args)))
+                  (list (infix->prefix a) (infix->prefix b))))
+             ((and a b c)
+              (list (infix->prefix b) (infix->prefix a) (infix->prefix c)))
+             ((and b (null c)) ; no c, it means function appling like sin(x)
+              (list (infix->prefix a) (infix->prefix b)))
+             ((and (null b) (null c)) (infix->prefix a))))) ;only a
+    (t sexp)))                                              ;literal
 
 (defun %disable-nurarihyon-reader-syntax ()
   (when *original-readtable*
