@@ -14,9 +14,9 @@
   (enable-nurarihyon-reader-syntax))
 
 (declaim (type (simple-array double-float (3)) +x-axis+ +y-axis+ +z-axis+))
-(alexandria:define-constant +x-axis+ #d(1.0 0.0 0.0) :test #'eps-vector=)
-(alexandria:define-constant +y-axis+ #d(0.0 1.0 0.0) :test #'eps-vector=)
-(alexandria:define-constant +z-axis+ #d(0.0 0.0 1.0) :test #'eps-vector=)
+(alexandria:define-constant +x-axis+ #.#d(1.0 0.0 0.0) :test #'eps-vector=)
+(alexandria:define-constant +y-axis+ #.#d(0.0 1.0 0.0) :test #'eps-vector=)
+(alexandria:define-constant +z-axis+ #.#d(0.0 0.0 1.0) :test #'eps-vector=)
 
 (defun rotation-matrix (ang vec &optional (result (make-matrix33)))
   "returns a matrix which rotates ang[rad] around vec."
@@ -98,25 +98,30 @@ You can extract (az ay az2) from result using euler-angle."
 
 (defun rpy-angle (mat)
   "extract the angles.
-Let M mat:
+Let M `mat':
 az = atan2(M[0, 1], mat[0, 0]) or atan2(M[0, 1], mat[0, 0]) + pi
+            because, tan(theta) = tan(theta + pi).
 s = sin(az)
 c = cos(az)
 ay = atan2(-M[0, 2], c * M[0, 0] + s*  M[0, 1])
 ax = atan2(s * M[0, 2] - c * M[1, 2], -s * M[0, 1] + c * M[1, 1])
 "
   (declare (type (simple-array double-float (3 3)) mat))
-  (let ((az (atan [mat 0 1] [mat 0 0])))
-    (declare (type double-float az))
-    (let ((s (sin az))
-          (c (cos az)))
-      (declare (type double-float s c))
-      (let ((ay (atan (- [mat 0 2]) (+ (* c [mat 0 0]) (* s [mat 0 1]))))
-            (ax (atan (- (* s [mat 0 2]) (* c [mat 1 2]))
-                      (- (* c [mat 1 1]) (* s [mat 0 1])))))
-        (declare (type double-float ay ax))
-        (list az ay ax)))))
-
+  (labels ((calc-y-and-x (az)
+             (declare (type double-float az))
+             (let ((s (sin az))
+                   (c (cos az)))
+               (declare (type double-float s c))
+               (let ((ay (atan (- [mat 0 2])
+                               (+ (* c [mat 0 0]) (* s [mat 0 1]))))
+                     (ax (atan (- (* s [mat 0 2]) (* c [mat 1 2]))
+                               (- (* c [mat 1 1]) (* s [mat 0 1])))))
+                 (declare (type double-float ay ax))
+                 (list az ay ax)))))
+    (let ((az1 (atan [mat 0 1] [mat 0 0]))
+          (az2 (+ az1 +pi+)))
+      (values (calc-y-and-x az1) (calc-y-and-x az2)))))
+      
 
 (defun euler-angle (mat)
   (declare (type (simple-array double-float (3 3)) mat))

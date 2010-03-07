@@ -50,18 +50,18 @@
      ;; (1 + 2) (1 + sin(3)) (a = hoge(fuga)) ...
      (let ((1arg (car sexp))
            (2arg (cadr sexp))
-           (3arg (cddr sexp)))
+	   (3arg (cddr sexp)))
        (cond ((symbolp 2arg)
               (let ((key (chimi:symbol->keyword 2arg)))
                 (case key
                   ((:= :<-)
-                   (append (cons 'setf (infix->prefix 1arg))
+                   (cons (cons 'setf (infix->prefix 1arg))
                            (infix->prefix 3arg)))
                   (:->
-                   (append (cons 'setf (infix->prefix 3arg))
+                   (cons (cons 'setf (infix->prefix 3arg))
                            (infix->prefix 1arg)))
                   (t
-                   (append (cons 2arg (infix->prefix 1arg))
+                   (cons (cons 2arg (infix->prefix 1arg))
                            (infix->prefix 3arg)))
                   ))))))
     (t sexp))                            ;literal
