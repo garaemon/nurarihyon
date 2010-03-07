@@ -118,8 +118,8 @@ ax = atan2(s * M[0, 2] - c * M[1, 2], -s * M[0, 1] + c * M[1, 1])
                                (- (* c [mat 1 1]) (* s [mat 0 1])))))
                  (declare (type double-float ay ax))
                  (list az ay ax)))))
-    (let ((az1 (atan [mat 0 1] [mat 0 0]))
-          (az2 (+ az1 +pi+)))
+    (let* ((az1 (atan [mat 0 1] [mat 0 0]))
+           (az2 (+ az1 +pi+)))
       (values (calc-y-and-x az1) (calc-y-and-x az2)))))
       
 

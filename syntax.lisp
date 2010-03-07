@@ -57,7 +57,13 @@ We need to think about like (1 + 2)"
                           (infix->prefix args)))
                   (list (infix->prefix a) (infix->prefix b))))
              ((and a b c)
-              (list (infix->prefix b) (infix->prefix a) (infix->prefix c)))
+              (let ((sym (chimi:symbol->keyword b)))
+                (case sym
+                  ((:= :<-)
+                   (list 'setf (infix->prefix a) (infix->prefix c)))
+                  (t
+                   (list (infix->prefix b) (infix->prefix a) (infix->prefix c)))
+                  )))
              ((and b (null c)) ; no c, it means function appling like sin(x)
               (list (infix->prefix a) (infix->prefix b)))
              ((and (null b) (null c)) (infix->prefix a))))) ;only a
