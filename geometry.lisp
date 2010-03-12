@@ -54,7 +54,7 @@ we muliply it to mat from left"
   (if (eq mat result)
       ;; if mat == result, we cannot use result as a buffer of rotation-matrix
       (m* (rotation-matrix ang vec) mat result)
-      (m* (rotation-matrix ang vec mat result) result))
+      (m* (rotation-matrix ang vec result) mat result))
   (the (simple-array double-float (3 3)) result))
 
 (defun rotate-matrix-world (mat ang vec &optional (result (make-matrix33)))
@@ -121,11 +121,17 @@ ax = atan2(s * M[0, 2] - c * M[1, 2], -s * M[0, 1] + c * M[1, 1])
     (let* ((az1 (atan [mat 0 1] [mat 0 0]))
            (az2 (+ az1 +pi+)))
       (values (calc-y-and-x az1) (calc-y-and-x az2)))))
-      
 
 (defun euler-angle (mat)
   (declare (type (simple-array double-float (3 3)) mat))
   )
+
+(defun axis->vec (axis)
+  (case axis
+    (:x +x-axis+)
+    (:y +y-axis+)
+    (:z +z-axis+)
+    (t axis)))
 
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))

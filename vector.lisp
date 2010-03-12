@@ -143,6 +143,12 @@
            (type double-float diff))
   (eps= (distance a b) 0.0d0 diff))
 
+(defun normalize-vector (a
+                         &optional (result (make-vector (vector-dimension a))))
+  (let ((len (norm a)))
+    (declare (type double-float len))
+    (the (simple-array double-float) (scale (/ 1.0d0 len) a result))))
+
 ;; not fast implementation
 (defun vector-mean (vecs)
   (declare (type list vecs))

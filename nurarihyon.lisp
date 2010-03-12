@@ -36,6 +36,7 @@
    #:scale
    #:norm
    #:distance
+   #:normalize-vector
    #:vector-mean
    #:eps-vector=
    #:make-random-vector
@@ -56,9 +57,8 @@
    #:rotation-matrix
    ;;#:rotate-matrix
    #:rotate-matrix-local #:rotate-matrix-world
-   #:euler-matrix
-   #:rpy-matrix
-   #:rpy-angle
+   #:euler-matrix #:euler-angle
+   #:rpy-matrix #:rpy-angle
    #:axis->vec
    )
   )
