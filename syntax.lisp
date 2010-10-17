@@ -30,7 +30,7 @@
   (declare (ignore n char))
   ;; #d(....)
   (let ((in-list (read stream)))
-    (if (= (chimi:list-rank in-list) 1)
+    (if (= (list-rank in-list) 1)
         (cons 'double-vector in-list)
       ;; here, in-list is a list of list of number
       (cons 'double-matrix (mapcar #'(lambda (x) (cons 'list x)) in-list)))))
