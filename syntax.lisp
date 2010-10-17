@@ -32,8 +32,8 @@
   (let ((in-list (read stream)))
     (if (= (chimi:list-rank in-list) 1)
         (cons 'double-vector in-list)
-        ;; here, in-list is a list of list of number
-        (cons 'double-matrix (mapcar #'(lambda (x) (cons 'list x)) in-list)))))
+      ;; here, in-list is a list of list of number
+      (cons 'double-matrix (mapcar #'(lambda (x) (cons 'list x)) in-list)))))
 
 (defun read-infix-sexp (stream n char)
   (declare (ignore n char))
@@ -53,7 +53,7 @@
   ;;             ->                         ((1 + 2) (3))
   (cond ((null arg) (append result (list buf)))
         ((and (symbolp (car arg))
-              (eq (chimi:symbol->keyword (car arg)) :$))
+              (eq (symbol->keyword (car arg)) :$))
          (infix->prefix/split$ (cdr arg) nil (append result (list buf))))
         (t
          (infix->prefix/split$ (cdr arg) (append buf (list (car arg)))
@@ -72,7 +72,7 @@ c := another s-expression..."
         ;; if there is c, we need to resolve c to operator and its args.
         (destructuring-bind (operator &rest args) c
           (list operator function-sexp (infix->prefix args)))
-        function-sexp)))
+      function-sexp)))
 
 (defun %infix->prefix (sexp)
   (destructuring-bind (a &optional b &rest c) sexp ;(a b . c)
@@ -80,7 +80,7 @@ c := another s-expression..."
            ;; here, we check sexp like (sin(x) ...)
            (infix->prefix/function-call a b c))
           ((and a b c)
-           (let ((bsym (chimi:symbol->keyword b)))
+           (let ((bsym (symbol->keyword b)))
              (case bsym
                (:@
                 ;; @ works as aref a @ (1 2) -> (aref a 1 2)
@@ -90,13 +90,13 @@ c := another s-expression..."
                   (let ((this-section
                          (if (listp index)
                              (append (list 'aref a) index)
-                             (append (list 'aref a) (list index)))))
+                           (append (list 'aref a) (list index)))))
                     (if args
                         (destructuring-bind (operator &rest op-args) args
                           (list (infix->prefix operator) ;no need?
                                 this-section
                                 (infix->prefix op-args)))
-                        this-section))))
+                      this-section))))
                (t
                 (list (infix->prefix b)
                       (infix->prefix a) (infix->prefix c))))))
@@ -107,12 +107,12 @@ c := another s-expression..."
 (defun infix->prefix (sexp)
   "This function converts an infix s-expression to a prefix s-expression."
   (cond
-    ((and (symbolp sexp)
-          (or (eq (chimi:symbol->keyword sexp) :<-)
-              (eq (chimi:symbol->keyword sexp) :=)))
-     'setf)                              ;setf alias
-    ((listp sexp) (%infix->prefix sexp)) ;we need to convert
-    (t sexp)))                           ;may be literal
+   ((and (symbolp sexp)
+         (or (eq (symbol->keyword sexp) :<-)
+             (eq (symbol->keyword sexp) :=)))
+    'setf)                              ;setf alias
+   ((listp sexp) (%infix->prefix sexp)) ;we need to convert
+   (t sexp)))                           ;may be literal
 
 (defun %disable-nurarihyon-reader-syntax ()
   (when *original-readtable*
