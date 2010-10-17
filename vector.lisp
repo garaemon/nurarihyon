@@ -111,9 +111,13 @@
       ((a b) '(3))                      ;dimension must be 3
     (let ((c (or c (make-vector 3))))
       (declare (type (simple-array double-float (3)) c))
-      (setf [c 0] (- (* (y a) (z b)) (* (z a) (y b))))
-      (setf [c 1] (- (* (z a) (x b)) (* (x a) (z b))))
-      (setf [c 2] (- (* (x a) (y b)) (* (y a) (x b))))
+      (let ((xa (x a)) (xb (x b))
+            (ya (y a)) (yb (y b))
+            (za (z a)) (zb (z b)))
+        (declare (type double-float xa xb ya yb za zb))
+        (setf [c 0] (- (* ya zb) (* za yb)))
+        (setf [c 1] (- (* za xb) (* xa zb)))
+        (setf [c 2] (- (* xa yb) (* ya xb))))
       (the (simple-array double-float (3)) c))))
 
 ;; scale function
