@@ -44,6 +44,12 @@
     (make-array 3 :element-type 'double-float
                 :initial-element initial-element)))
 
+(defun make-vector4 (&key (initial-element 0.0d0))
+  (declare (type double-float initial-element))
+  (the (simple-array double-float (4))
+    (make-array 4 :element-type 'double-float
+                :initial-element initial-element)))
+
 (defun double-vector (&rest args)
   (the (simple-array double-float)
     (make-array (length args) :element-type 'double-float
