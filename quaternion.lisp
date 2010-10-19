@@ -75,20 +75,43 @@
 
 (declaim (inline quaternion-axis))
 (defun quaternion-axis (q &optional (buf (make-vector3)))
+  "returns the axis of a quaternion.
+You can use the optional argument to avoid allocation.
+reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm"
   (declare (type (simple-array double-float (4)) q)
            (type (simple-array double-float (3)) buf))
-  (setf [buf 0] [q 1])
-  (setf [buf 1] [q 2])
-  (setf [buf 2] [q 3])
-  (the (simple-array double-float (3)) buf))
+  (let ((qw [q 0]))
+    (declare (type double-float qw))
+    (if (eps= qw 1.0d0)                 ;to avoid to devide by zero
+        (progn
+          (setf [buf 0] 0.0d0)
+          (setf [buf 1] 0.0d0)
+          (setf [buf 2] 0.0d0))
+      (let ((r1-qw^2 (sqrt (- 1.0d0 (* qw qw)))))
+        (declare (type double-float r1-qw^2))
+        (setf [buf 0] (/ [q 1] r1-qw^2))
+        (setf [buf 1] (/ [q 2] r1-qw^2))
+        (setf [buf 2] (/ [q 3] r1-qw^2))))
+  (the (simple-array double-float (3)) buf)))
 
 (declaim (inline quaternion-angle))
 (defun quaternion-angle (q)
+  "return an angle of a quaternion in radian"
   (declare (type (simple-array double-float (4)) q))
   (let ((qw [q 0))
     (declare (type double-float qw))
     (the double-float (* 2.0d0 (acos qw)))))
 
+(declaim (inline quaternion-conjugate))
+(defun quaternion-conjugate (q &optional (buf (make-vector4)))
+  "return a conjugate of a quaternion.
+You can use optional argument to avoid allocation."
+  (declare (type (simple-array double-float (4)) q buf))
+  (setf [buf 0] [q 0])
+  (setf [buf 1] (- [q 1]))
+  (setf [buf 2] (- [q 2]))
+  (setf [buf 3] (- [q 3]))
+  (the (simple-array double-float (4)) buf))
+
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))
-
