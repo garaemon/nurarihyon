@@ -58,7 +58,20 @@
 
 (defun quaternion->matrix33 (q &optional (mat (make-matrix33)))
   "convert a quaternion to 3x3 matrix"
-  )
+  (declare (type (simple-array double-float (3 3)) mat)
+           (type (simple-array double-float (4)) q))
+  (let ((qw [q 0]) (qx [q 1]) (qy [q 2]) (qz [q 3]))
+    (declare (type double-float qw qx qy qz))
+    (setf [mat 0 0] (- 1.0d0 (* 2.0d0 qy qy) (* 2.0d0 qz qz)))
+    (setf [mat 0 1] (- (* 2.0d0 qx qy) (* 2.0d0 qz qw)))
+    (setf [mat 0 2] (+ (* 2.0d0 qx qz) (* 2.0d0 qy qw)))
+    (setf [mat 1 0] (+ (* 2.0d0 qx qy) (* 2.0d0 qz qw)))
+    (setf [mat 1 1] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qz qz)))
+    (setf [mat 1 2] (- (* 2.0d0 qy qz) (* 2.0d0 qx qw)))
+    (setf [mat 2 0] (- (* 2.0d0 qx qz) (* 2.0d0 qy qw)))
+    (setf [mat 2 1] (+ (* 2.0d0 qy qz) (* 2.0d0 qx qw)))
+    (setf [mat 2 2] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qy qy)))
+    (the (simple-array double-float (3 3)) mat)))
 
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))
