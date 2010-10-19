@@ -415,6 +415,16 @@
       (setf [mat i i] [val i]))
     val))
 
+(defun matrix-trace (mat)
+  (declare (type (simple-array double-float) mat))
+  (let ((ret 0.0d0))
+    (declaim (type double-float ret))
+    (with-square-matrix-bind-and-check (dim mat)
+       (dotimes (i dim)
+         (+== ret [mat i i])))
+    (the double-float ret)))
+  
+
 (defun matrix-determinant (mat &optional (lu-mat nil))
   (declare (type (simple-array double-float) mat))
   (with-square-matrix-bind-and-check (dim mat)
