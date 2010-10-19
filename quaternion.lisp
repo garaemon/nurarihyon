@@ -73,6 +73,22 @@
     (setf [mat 2 2] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qy qy)))
     (the (simple-array double-float (3 3)) mat)))
 
+(declaim (inline quaternion-axis))
+(defun quaternion-axis (q &optional (buf (make-vector3)))
+  (declare (type (simple-array double-float (4)) q)
+           (type (simple-array double-float (3)) buf))
+  (setf [buf 0] [q 1])
+  (setf [buf 1] [q 2])
+  (setf [buf 2] [q 3])
+  (the (simple-array double-float (3)) buf))
+
+(declaim (inline quaternion-angle))
+(defun quaternion-angle (q)
+  (declare (type (simple-array double-float (4)) q))
+  (let ((qw [q 0))
+    (declare (type double-float qw))
+    (the double-float (* 2.0d0 (acos qw)))))
+
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))
 
