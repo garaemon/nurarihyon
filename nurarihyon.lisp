@@ -52,6 +52,12 @@
    #:matrix-determinant
    #:matrix-column #:matrix-row #:matrix-diagonal
    #:eps-matrix=
+   ;; quaternion.lisp
+   #:matrix33->quaternion
+   #:quaternion->matrix33
+   #:quaternion-axis
+   #:quaternion-angle
+   #:quaternion-conjugate
    ;; geometry.lisp
    #:+x-axis+ #:+y-axis+ #:+z-axis+
    #:rotation-matrix

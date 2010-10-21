@@ -12,8 +12,8 @@
      (:file "matrix" :depends-on ("nurarihyon" "syntax"
                                   "base" "vector"))
      (:file "quaternion" :depends-on ("nurarihyon" "syntax"
-                                    "base" "vector"
-                                    "matrix"))
+                                      "base" "vector"
+                                      "matrix"))
      (:file "geometry" :depends-on ("nurarihyon" "syntax"
                                     "base" "vector"
                                     "matrix"))
