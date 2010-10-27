@@ -27,11 +27,22 @@
 
 (declaim (inline vector-dimension))
 (defun vector-dimension (a)
-  (declare (type simple-array a))
+  "Return  dimension of a vector. the vector muse be a simple-array
+of double-float.
+
+example::
+  (vector-dimension #d(1.0d0 2.0d0 3.0d0)) => 3"
+  (declare (type (simple-array double-float) a))
   (the fixnum (array-dimension a 0)))
 
 ;; template for make-**-vector
 (defun make-vector (dim &key (initial-element 0.0d0))
+  "Allocate a vector with dim dimension. you can use :initial-element
+keyword to specify the value of the vector.
+
+example::
+  (make-vector 3) => #d(0.0d0 0.0d0 0.0d0)
+  (make-vector 2 :initial-element 2.0d0) => #d(2.0d0 2.0d0)"
   (declare (type fixnum dim)
            (type double-float initial-element))
   (the (simple-array double-float)
@@ -39,6 +50,12 @@
                 :initial-element initial-element)))
 
 (defun make-vector3 (&key (initial-element 0.0d0))
+  "Allocate a 3-dimension vector. this function is specialized for 3 dimension.
+:initial-element allows you to specify the values of the vector.
+
+example::
+  (make-vector3) => #d(0.0d0 0.0d0 0.0d0)
+  (make-vector3 :initial-element 2.0d0) => #d(2.0d0 2.0d0 2.0d0)"
   (declare (type double-float initial-element))
   (the (simple-array double-float (3))
     (make-array 3 :element-type 'double-float
