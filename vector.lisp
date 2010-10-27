@@ -159,8 +159,21 @@
     (declare (type double-float len))
     (the (simple-array double-float) (scale (/ 1.0d0 len) a result))))
 
+(defun vector-sum (vec)
+  "calculate a summation of a vector like.
+
+example::
+  (vector-sum #d(1.0d0 2.0d0 3.0d0)) => 6.0d0"
+  (declare (type (simple-array double-float) vec))
+  (let ((ret 0.0d0))
+    (declare (type double-float ret))
+    (dotimes (i (vector-dimension vec))
+      (declare (type fixnum i))
+      (+== ret (aref vec i)))
+    (the double-float ret)))
+
 ;; not fast implementation
-(defun vector-mean (vecs)
+(defun vector-mean (vecs)               ;...?
   (declare (type list vecs))
   (the (simple-array double-float)
     (scale (/ 1.0d0 (length vecs)) (reduce #'v+ vecs))))
@@ -177,6 +190,25 @@
         (declare (type double-float r))
         (setf [v i] r)))
     v))
+
+;; (defun vector-range (start &optional stop (step 1.0d0))
+;;   "Return evenly spaced values within a specified interval like
+;; numpy.arange.
+;; example::
+;;  (vector-range 3.0d0) => #d(0.0d0 1.0d0 2.0d0)
+;;  (vector-range 2.0d0 5.0d0) => #d(2.0d0 3.0d0 4.0d0 5.0d0)
+;;  (vector-range 3 7 2)"
+;;   (let ((n (if stop (/ (- stop start) step) start)) ;length of vector
+;;         (start-num (if stop start 0.0d0)))
+;;     (declare (type fixnum n)
+;;              (type double-float start-num))
+;;     (let ((ret (make-vector n)))
+;;       (declare (type (simple-array double-float) ret))
+;;       (dotimes (i n)
+;;         (declare (type fixnum i))
+;;         (setf (aref ret i) (+ start-num (* i step))))
+;;       (the (simple-array double-float) ret))))
+
 
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))

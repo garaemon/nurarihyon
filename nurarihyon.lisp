@@ -39,6 +39,7 @@
    #:normalize-vector
    #:vector-mean
    #:eps-vector=
+   #:vector-sum
    #:make-random-vector
    ;; matrix.lisp
    #:make-matrix #:double-matrix

@@ -3,6 +3,7 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
+
 (in-package :nurarihyon)
 ;; syntax
 (defvar *original-readtable* nil)
