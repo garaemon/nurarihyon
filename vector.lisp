@@ -124,6 +124,7 @@ length.
 You can use C, the third argument, to reduce heap allocation.
 
 example::
+
   (v+ #d(1 2) #d(3 4)) => #d(4 6)
   (let ((buf (make-vector 2)))
     (v+ #d(1 2) #d(3 4) buf)            ;=> #d(4 6)
