@@ -105,6 +105,8 @@ If they does not have the save dimension, this macro will raise an error.
          (error "vector dimension mismatch"))))
 
 (defun copy-vector (a b)
+  "copy the double vector A to B and return B.
+A and B must be a (simple-array double-float) and have the same length."
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
     (dotimes (i dim)
