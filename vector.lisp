@@ -194,6 +194,15 @@ You can use C, the third argument, to reduce heap allocation."
 
 ;; scale function
 (defun scale (k vec &optional (buf nil))
+  "scale a vector, VEC with K. K is a double-float and K is
+a (simple-array double-float).
+
+You can use BUF, the third argument, to reduce heap allocation.
+
+ example::
+
+   (scale -1.0 #d(1 2 3)) => #d(-1 -2 -3)
+"
   (declare (type double-float k)
            (type (simple-array double-float) vec))
   (let ((dim (vector-dimension vec)))
@@ -204,8 +213,10 @@ You can use C, the third argument, to reduce heap allocation."
         (setf [buf i] (the double-float (* k [vec i]))))
       (the (simple-array double-float) buf))))
 
-;; norm function
 (defun norm (a)
+  "calculate norm of the vector A.
+
+A is required to be a (simple-array double-float)."
   (declare (type (simple-array double-float) a))
   (the double-float (sqrt (v. a a))))
 
@@ -236,7 +247,7 @@ You can use C, the third argument, to reduce heap allocation."
     (declare (type double-float ret))
     (dotimes (i (vector-dimension vec))
       (declare (type fixnum i))
-      (+== ret (aref vec i)))
+      (+== ret [vec i]))
     (the double-float ret)))
 
 ;; not fast implementation
