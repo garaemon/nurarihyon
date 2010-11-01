@@ -116,6 +116,18 @@ A and B must be a (simple-array double-float) and have the same length."
 ;; vector operators
 ;; add
 (defun v+ (a b &optional (c nil))
+  "add two vectors, A and B, and return the result.
+
+A and B are required to be a (simple-array double-float) and have the same
+length.
+
+You can use C, the third argument, to reduce heap allocation.
+
+example::
+  (v+ #d(1 2) #d(3 4)) => #d(4 6)
+  (let ((buf (make-vector 2)))
+    (v+ #d(1 2) #d(3 4) buf)            ;=> #d(4 6)
+    ...)"
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
     (let ((c (or c (make-vector dim))))
