@@ -120,6 +120,9 @@ c := another s-expression..."
    (t sexp)))                           ;may be literal
 
 (defun %disable-nurarihyon-reader-syntax ()
+  "internal function for disable-nurarihyon-reader-syntax.
+this function just set *readtable* to *original-readtable*, and
+*original-readtable* to nil."
   (when *original-readtable*
     (setq *readtable* *original-readtable*
           *original-readtable* nil))
@@ -145,11 +148,12 @@ nurarihyon support followin syntax:
  3. infix syntax
  you can use infix style to describe math formulas within #% macro character.
  in infyx syntax, you need to use $ character to separate the arguments passed
- into functions.
+ into functions. and, in order to assign a value to symbol, you can use = or <-.
   example:
     #%(1 + 2) => (+ 1 2) => 3
     #%(1 + sin(2.0)) => 1.9092975
     #%(add(3 $ 2) - 4) => 1 where add = (lambda (a b) (+ a b))
+    #%(A <- 1 + 2) => 3 and A is bound to 3.
 "
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (%enable-nurarihyon-reader-syntax)))
