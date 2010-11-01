@@ -6,8 +6,10 @@
 
 (in-package :nurarihyon)
 ;; syntax
-(defvar *original-readtable* nil)
+(defvar *original-readtable* nil "variable to store the original read table")
+
 (defun %enable-nurarihyon-reader-syntax ()
+  "internal function called from enable-nurarihyon-reader-syntax."
   (unless *original-readtable*          ;not enabled
     (setq *original-readtable* *readtable*)
     (setq *readtable* (copy-readtable))
@@ -21,17 +23,19 @@
   t)
 
 (defun aref-reader-open (stream char)
-  ;; call after read [
-  ;; this function convert [hoge a b] => (aref hoge a b)
+  "called after reading the character [.
+this function convert \"[hoge a b]\" to (aerf hoge a b)."
   (declare (ignore char))
   (let ((word-list (read-delimited-list #\] stream t)))
     (cons 'aref word-list)))
 
 (defun double-array-open (stream n char)
+  "called after reading the character d.
+this function convert #d(1 2 3) to (double-vector 1 2 3) or
+#d((1 2 3) (4 5 6)) to (double-matrix ((1 2 3) (4 5 6))."
   (declare (ignore n char))
-  ;; #d(....)
   (let ((in-list (read stream)))
-    (if (= (list-rank in-list) 1)
+    (if (= (list-rank in-list) 1)       ;check a vector or matrix
         (cons 'double-vector in-list)
       ;; here, in-list is a list of list of number
       (cons 'double-matrix (mapcar #'(lambda (x) (cons 'list x)) in-list)))))
@@ -122,9 +126,36 @@ c := another s-expression..."
   t)
 
 (defmacro enable-nurarihyon-reader-syntax ()
+  "enable nurarihyon reader macro. the old read table will
+be stored *original-readtable*.
+
+nurarihyon support followin syntax:
+ 1. array accessor
+ you can use [] syntax instead of aref.
+  example:
+    [foo 1] => (aref foo 1)
+    [bar 1 2] => (aref bar 1 2)
+
+ 2. double array literal.
+ you can use #d syntax for double-float matrix.
+  example:
+    #d(1 2 3) => #(1.0d0 2.0d0 3.0d0)
+    #d((1 2 3) (4 5 6)) => #2A((1.0d0 2.0d0 3.0d0) (4.0d0 5.0d0 6.0d0))
+
+ 3. infix syntax
+ you can use infix style to describe math formulas within #% macro character.
+ in infyx syntax, you need to use $ character to separate the arguments passed
+ into functions.
+  example:
+    #%(1 + 2) => (+ 1 2) => 3
+    #%(1 + sin(2.0)) => 1.9092975
+    #%(add(3 $ 2) - 4) => 1 where add = (lambda (a b) (+ a b))
+"
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (%enable-nurarihyon-reader-syntax)))
 
 (defmacro disable-nurarihyon-reader-syntax ()
+  "disable nurarihyon reader macro. this function just set *readtable*
+with *original-readtable* and reset *original-readtable*."
   `(eval-when (:compile-toplevel :load-toplevel :execute)
      (%disable-nurarihyon-reader-syntax)))
