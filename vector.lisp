@@ -17,10 +17,13 @@
 ;;==================================
 ;; in-package utility
 (defmacro x (a)
+  "take the first element of the argument."
   `(aref ,a 0))
 (defmacro y (a)
+  "take the second element of the argument."
   `(aref ,a 1))
 (defmacro z (a)
+  "take the third element of the argument."
   `(aref ,a 2))
 ;;
 ;;==================================
@@ -30,8 +33,9 @@
   "Return  dimension of a vector. the vector muse be a simple-array
 of double-float.
 
-example::
-  (vector-dimension #d(1.0d0 2.0d0 3.0d0)) => 3"
+ example::
+
+   (vector-dimension #d(1.0d0 2.0d0 3.0d0)) => 3"
   (declare (type (simple-array double-float) a))
   (the fixnum (array-dimension a 0)))
 
@@ -40,9 +44,10 @@ example::
   "Allocate a vector with dim dimension. you can use :initial-element
 keyword to specify the value of the vector.
 
-example::
-  (make-vector 3) => #d(0.0d0 0.0d0 0.0d0)
-  (make-vector 2 :initial-element 2.0d0) => #d(2.0d0 2.0d0)"
+ example::
+
+   (make-vector 3) => #d(0.0d0 0.0d0 0.0d0)
+   (make-vector 2 :initial-element 2.0d0) => #d(2.0d0 2.0d0)"
   (declare (type fixnum dim)
            (type double-float initial-element))
   (the (simple-array double-float)
@@ -53,40 +58,49 @@ example::
   "Allocate a 3-dimension vector. this function is specialized for 3 dimension.
 :initial-element allows you to specify the values of the vector.
 
-example::
-  (make-vector3) => #d(0.0d0 0.0d0 0.0d0)
-  (make-vector3 :initial-element 2.0d0) => #d(2.0d0 2.0d0 2.0d0)"
+ example::
+
+   (make-vector3) => #d(0.0d0 0.0d0 0.0d0)
+   (make-vector3 :initial-element 2.0d0) => #d(2.0d0 2.0d0 2.0d0)"
   (declare (type double-float initial-element))
   (the (simple-array double-float (3))
     (make-array 3 :element-type 'double-float
                 :initial-element initial-element)))
 
 (defun make-vector4 (&key (initial-element 0.0d0))
+  "Allocate a 4-dimension vector. this function is specialized for 4 dimension.
+:initial-element allows you to specify the values of the vector.
+
+ example::
+
+   (make-vector4) => #d(0.0d0 0.0d0 0.0d0 0.0d0)
+   (make-vector4 :initial-element 2.0d0) => #d(2.0d0 2.0d0 2.0d0 2.0d0)"
   (declare (type double-float initial-element))
   (the (simple-array double-float (4))
     (make-array 4 :element-type 'double-float
                 :initial-element initial-element)))
 
 (defun double-vector (&rest args)
+  "this is a utility function to make a double vector. this function will
+create the vector which has ARGS as contents.
+
+ example::
+
+   (double-vector 1 2 3) => #d(1.0d0 2.0d0 3.0d0)"
   (the (simple-array double-float)
     (make-array (length args) :element-type 'double-float
                    :initial-contents
                    (mapcar #'(lambda (x) (coerce x 'double-float)) args))))
 
 (defmacro with-vector-dimension-bind-and-check ((dim a b) &rest args)
-  ;;  check dimensions of vecs are equal or not
+  "verificate the vector A and B has the same length dimension and
+bind the dimension to DIM when evaluating ARGS.
+
+If they does not have the save dimension, this macro will raise an error.
+"
   `(let ((,dim (vector-dimension ,a)))
      (declare (type fixnum ,dim))
      (if (= ,dim (vector-dimension ,b))
-         (progn ,@args)
-         (error "vector dimension mismatch"))))
-
-(defmacro with-vector-dimension-bind-and-check* ((dim a b n) &rest args)
-  ;;  check dimensions of vecs are equal or not
-  `(let ((,dim (vector-dimension ,a)))
-     (declare (type fixnum ,dim))
-     (if (and (= ,dim ,n)
-              (= ,dim (vector-dimension ,b)))
          (progn ,@args)
          (error "vector dimension mismatch"))))
 

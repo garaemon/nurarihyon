@@ -32,9 +32,9 @@
 ;; operator utility
 (defmacro with-array-dimension-check ((a b) &rest args)
   ;;  check dimensions of vecs are equal or not
-   `(if (equal (array-dimensions ,a) (array-dimensions ,b))
-        (progn ,@args)
-        (error "vector dimension mismatch")))
+  `(if (equal (array-dimensions ,a) (array-dimensions ,b))
+       (progn ,@args)
+       (error "vector dimension mismatch")))
 
 (defmacro with-array-dimensions-bind-and-check ((dims a b) &rest args)
   ;;  check dimensions of vecs are equal or not

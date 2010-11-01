@@ -9,7 +9,9 @@
 (defvar *original-readtable* nil "variable to store the original read table")
 
 (defun %enable-nurarihyon-reader-syntax ()
-  "internal function called from enable-nurarihyon-reader-syntax."
+  "internal function called from enable-nurarihyon-reader-syntax.
+this function will enable [ and ] as macro characters and enable d and % as
+dispatch macro characters."
   (unless *original-readtable*          ;not enabled
     (setq *original-readtable* *readtable*)
     (setq *readtable* (copy-readtable))
@@ -41,12 +43,13 @@ this function convert #d(1 2 3) to (double-vector 1 2 3) or
       (cons 'double-matrix (mapcar #'(lambda (x) (cons 'list x)) in-list)))))
 
 (defun read-infix-sexp (stream n char)
+  "this is a function to register as a read macro function for #%."
   (declare (ignore n char))
   (let ((sexp (read stream)))
     (infix->prefix sexp)))
 
 (defun infix->prefix/split$ (arg &optional (buf nil) (result nil))
-  "this function separete arg by the symbol `$'"
+  "this function separete arg by the symbol $."
   ;; first, just separate arg by $.
   ;; (1 $ 2 $ 3) -> ((3) (2) (1))
   ;; (1 + 2 $ 3) -> ((3) (1 + 2))
@@ -65,8 +68,7 @@ this function convert #d(1 2 3) to (double-vector 1 2 3) or
                                result))))
 
 (defun infix->prefix/function-call (a b c)
-  "
-example:
+  "example::
  a := sin
  b := (1)
  c := another s-expression..."
@@ -116,7 +118,8 @@ recursively to convert a infix s-expression into a prefix s-expression."
 (defun infix->prefix (sexp)
   "This function converts an infix s-expression to a prefix s-expression.
 
- example:
+ example::
+
   (1 + 2) => (+ 1 2)"
   (cond
    ((and (symbolp sexp)
@@ -142,13 +145,17 @@ be stored *original-readtable*.
 nurarihyon support followin syntax:
  1. array accessor
  you can use [] syntax instead of aref.
-  example:
+
+ example::
+
     [foo 1] => (aref foo 1)
     [bar 1 2] => (aref bar 1 2)
 
  2. double array literal.
  you can use #d syntax for double-float matrix.
-  example:
+
+ example::
+
     #d(1 2 3) => #(1.0d0 2.0d0 3.0d0)
     #d((1 2 3) (4 5 6)) => #2A((1.0d0 2.0d0 3.0d0) (4.0d0 5.0d0 6.0d0))
 
@@ -156,7 +163,9 @@ nurarihyon support followin syntax:
  you can use infix style to describe math formulas within #% macro character.
  in infyx syntax, you need to use $ character to separate the arguments passed
  into functions. and, in order to assign a value to symbol, you can use = or <-.
-  example:
+
+ example::
+
     #%(1 + 2) => (+ 1 2) => 3
     #%(1 + sin(2.0)) => 1.9092975
     #%(add(3 $ 2) - 4) => 1 where add = (lambda (a b) (+ a b))
