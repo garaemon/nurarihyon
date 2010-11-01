@@ -65,10 +65,11 @@ this function convert #d(1 2 3) to (double-vector 1 2 3) or
                                result))))
 
 (defun infix->prefix/function-call (a b c)
-  "For example,
-a := sin
-b := (1)
-c := another s-expression..."
+  "
+example:
+ a := sin
+ b := (1)
+ c := another s-expression..."
   ;; its deficult to estimate the number of arguments of b.
   ;; so we utilize another syntax `$' for separate arguments.
   (let ((function-sexp
@@ -80,6 +81,8 @@ c := another s-expression..."
       function-sexp)))
 
 (defun %infix->prefix (sexp)
+  "internal function of infix->prefix. this function will call infix->prefix
+recursively to convert a infix s-expression into a prefix s-expression."
   (destructuring-bind (a &optional b &rest c) sexp ;(a b . c)
     (cond ((and (not (null b)) (listp b))  ;when b is list
            ;; here, we check sexp like (sin(x) ...)
@@ -105,12 +108,16 @@ c := another s-expression..."
                (t
                 (list (infix->prefix b)
                       (infix->prefix a) (infix->prefix c))))))
+          ;; TODO: required?
           ((and b (null c)) ; no c, it means function appling like sin(x)
            (list (infix->prefix a) (infix->prefix b)))
           ((and (null b) (null c)) (infix->prefix a))))) ;only a
 
 (defun infix->prefix (sexp)
-  "This function converts an infix s-expression to a prefix s-expression."
+  "This function converts an infix s-expression to a prefix s-expression.
+
+ example:
+  (1 + 2) => (+ 1 2)"
   (cond
    ((and (symbolp sexp)
          (or (eq (symbol->keyword sexp) :<-)
