@@ -222,6 +222,10 @@ A is required to be a (simple-array double-float)."
 
 ;; distance function
 (defun distance (a b)
+  "calculate the distance between A and B.
+
+A and B are required to be a (simple-array double-float) and have the
+same length."
   (declare (type (simple-array double-float) a b))
   (the double-float (norm (v- a b))))
 
