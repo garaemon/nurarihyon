@@ -98,9 +98,12 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
 (defun quaternion-angle (q)
   "return an angle of a quaternion in radian"
   (declare (type (simple-array double-float (4)) q))
-  (let ((qw [q 0]))
+  (let ((qw [q 0])
+        (sin (sqrt (+ (* [q 1] [q 1])
+                      (* [q 2] [q 2])
+                      (* [q 3] [q 3])))))
     (declare (type double-float qw))
-    (the double-float (* 2.0d0 (acos qw)))))
+    (the double-float (* 2.0d0 (atan sin qw)))))
 
 (declaim (inline quaternion-conjugate))
 (defun quaternion-conjugate (q &optional (buf (make-vector4)))
