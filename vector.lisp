@@ -114,7 +114,6 @@ A and B must be a (simple-array double-float) and have the same length."
     (the (simple-array double-float) b)))
 
 ;; vector operators
-;; add
 (defun v+ (a b &optional (c nil))
   "add two vectors, A and B, and return the result.
 
@@ -123,7 +122,7 @@ length.
 
 You can use C, the third argument, to reduce heap allocation.
 
-example::
+ example::
 
   (v+ #d(1 2) #d(3 4)) => #d(4 6)
   (let ((buf (make-vector 2)))
@@ -137,8 +136,20 @@ example::
         (setf [c i] (+ [a i] [b i])))
       (the (simple-array double-float) c))))
 
-;; sub
 (defun v- (a b &optional (c nil))
+  "substitute B from A and return the result.
+
+A and B are required to be a (simple-array double-float) and have the same
+length.
+
+You can use C, the third argument, to reduce heap allocation.
+
+ example::
+
+   (v- #d(3 4) #d(1 2)) => #d(2 2)
+   (let ((buf (make-vector 2)))
+    (v- #d(1 2) #d(3 4) buf)            ;=> #d(-2 -2)
+    ...)"
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
     (let ((c (or c (make-vector dim))))
@@ -148,6 +159,10 @@ example::
 
 ;; dot product
 (defun v. (a b)
+  "calculate a dot product of A and B.
+
+A and B are required to be a (simple-array double-float) and have the same
+length."
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
     (let ((ret 0.0d0))
@@ -158,6 +173,11 @@ example::
 
 ;; cross product
 (defun v* (a b &optional (c nil))
+  "calculate a cross product of A and B.
+
+A and B are required to be a (simple-array double-float (3)).
+
+You can use C, the third argument, to reduce heap allocation."
   (declare (type (simple-array double-float (3)) a b))
   (with-array-dimension-check*
       ((a b) '(3))                      ;dimension must be 3
@@ -208,7 +228,8 @@ example::
 (defun vector-sum (vec)
   "calculate a summation of a vector like.
 
-example::
+ example::
+
   (vector-sum #d(1.0d0 2.0d0 3.0d0)) => 6.0d0"
   (declare (type (simple-array double-float) vec))
   (let ((ret 0.0d0))
