@@ -133,10 +133,12 @@
 
 (declaim (inline ->double-float))
 (defun ->double-float (val)
+  "convert VAL to double-float"
   (coerce val 'double-float))
 
 (declaim (inline ->single-float))
 (defun ->single-float (val)
+  "convert VAL to single-float"
   (coerce val 'single-float))
 
 ;; eps=
