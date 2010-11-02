@@ -122,15 +122,6 @@
     (declare (type real d))
     (+ (random d) min)))
 
-;; ;; x x x x x
-;; ;; x x x x x
-;; ;; x x x x x
-
-;; (defun normalize-vector (v)
-;;   (declare (type (simple-array single-float) v))
-;;   (let ((k (/ 1.0 (norm v))))
-;;     (scale k v)))
-
 (declaim (inline ->double-float))
 (defun ->double-float (val)
   "convert VAL to double-float"
