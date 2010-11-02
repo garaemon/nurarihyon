@@ -3,7 +3,7 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(declaim (optimize (speed 3) (safety 0) (debug 0) (space 0)))
+(declaim (optimize (speed 3) (safety 0) (debug 1) (space 0)))
 ;; for debugging
 ;; (declaim (optimize (safety 3)
 ;;                   (debug 3)))
@@ -98,7 +98,7 @@ You can extract (az ay az2) from result using euler-angle."
 
 (defun rpy-angle (mat)
   "extract the angles.
-Let M `mat':
+Let M mat:
 az = atan2(M[0, 1], mat[0, 0]) or atan2(M[0, 1], mat[0, 0]) + pi
             because, tan(theta) = tan(theta + pi).
 s = sin(az)

@@ -6,7 +6,7 @@
 
 (declaim (optimize (speed 3)
 		   (safety 0)
-		   (debug 0)
+		   (debug 1)
 		   (space 0)))
 
 (in-package :nurarihyon)
@@ -230,6 +230,7 @@ same length."
   (the double-float (norm (v- a b))))
 
 (defun eps-vector= (a b &optional (diff +eps+))
+  "returns T if the vectors A and B is near enough."
   (declare (type (simple-array double-float) a b)
            (type double-float diff))
   (eps= (distance a b) 0.0d0 diff))

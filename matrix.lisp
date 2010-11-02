@@ -3,7 +3,7 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(declaim (optimize (speed 3) (safety 0) (debug 0) (space 0)))
+(declaim (optimize (speed 3) (safety 0) (debug 1) (space 0)))
 
 (in-package :nurarihyon)
 (eval-when (:compile-toplevel)

@@ -6,7 +6,7 @@
 
 (declaim (optimize (speed 3)
 		   (safety 0)
-		   (debug 0)
+		   (debug 1)
 		   (space 0)))
 
 (in-package :nurarihyon)
