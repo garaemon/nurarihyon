@@ -4,9 +4,7 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 
 (lisp-unit:define-test make-matrix-test
   (let ((dim 10)
@@ -17,4 +15,4 @@
 	(dotimes (j dim)
 	  (lisp-unit:assert-float-equal init-element (aref vec i j)))))))
 
-(lisp-unit:run-tests make-matrix-test)
+

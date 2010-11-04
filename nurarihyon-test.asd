@@ -20,6 +20,8 @@
                (:file "vector-cross")
                (:file "vector-distance")
                (:file "vector-norm")
+               ;; matrix operations
+               (:file "matrix-create")
                ))))
 
 
