@@ -3,9 +3,7 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 
 (lisp-unit:define-test rad2deg-test
   ;; 0[rad] -> 0[deg]
@@ -21,5 +19,5 @@
   (lisp-unit:assert-float-equal (nurarihyon:rad2deg nurarihyon:+2pi+) 360.0d0)
   )
 
-(lisp-unit:run-tests rad2deg-test)
+
 

@@ -1,12 +1,16 @@
 (defsystem nurarihyon-test
     :depends-on (nurarihyon lisp-unit)
     :components
-    ((:module "tests"
+    ((:file "nurarihyon-test")
+     (:module "tests"
+              :depends-on ("nurarihyon-test")
               :components
-              ((:file "nurarihyon-test")
-               (:file "constants" :depends-on ("nurarihyon-test"))
-               (:file "degree-to-radian" :depends-on ("nurarihyon-test"))
-               (:file "copy-vector" :depends-on ("nurarihyon-test"))
+              ((:file "constants")
+               (:file "degree-to-radian")
+               (:file "degree-to-radian-to-degree")
+               (:file "radian-to-degree")
+               (:file "eps")
+               (:file "copy-vector")
                ))))
 
 
