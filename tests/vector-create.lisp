@@ -4,9 +4,7 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 
 (lisp-unit:define-test make-vector-test
   (let ((dim 10)
@@ -29,5 +27,5 @@
         (lisp-unit:assert-float-equal c (aref vec 2))))
     ))
 
-(lisp-unit:run-tests make-vector-test double-vector-test)
+
 
