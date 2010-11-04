@@ -8,6 +8,8 @@
 (require :nurarihyon)
 (require :lisp-unit)
 
+(in-package :nurarihyon-test)
+
 (lisp-unit:define-test constants-test
   (lisp-unit:assert-float-equal nurarihyon:+e+ (exp 1.0))
   (lisp-unit:assert-float-equal nurarihyon:+pi+ pi)
@@ -19,4 +21,4 @@
   (lisp-unit:assert-float-equal nurarihyon:+pi/4+ (/ pi 4.0d0))
   (lisp-unit:assert-float-equal nurarihyon:+-pi/4+ (/ pi -4.0d0)))
 
-(lisp-unit:run-tests constants-test)
+
