@@ -16,6 +16,7 @@
                (:file "vector-add")
                (:file "vector-sub")
                (:file "vector-dot")
+               (:file "vector-cross")
                ))))
 
 

@@ -3,9 +3,7 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 
 (lisp-unit:define-test v*-test
   ;; check cross product by using dot product
@@ -31,4 +29,4 @@
       (nurarihyon:v* a a) (nurarihyon:double-vector 0.0 0.0 0.0))))
   )
 
-(lisp-unit:run-tests v*-test)
+
