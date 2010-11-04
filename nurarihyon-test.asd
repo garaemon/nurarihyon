@@ -15,6 +15,7 @@
                (:file "copy-vector")
                (:file "vector-add")
                (:file "vector-sub")
+               (:file "vector-dot")
                ))))
 
 
