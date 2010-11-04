@@ -3,9 +3,8 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+
+(in-package :nurarihyon-test)
 
 (lisp-unit:define-test copy-vector-test
   (dotimes (i 3)
@@ -17,4 +16,4 @@
       (nurarihyon:copy-vector vec buf)
       (lisp-unit:assert-true (nurarihyon:eps-vector= vec buf)))))
 
-(lisp-unit:run-tests copy-vector-test)
+

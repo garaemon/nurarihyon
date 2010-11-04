@@ -6,6 +6,7 @@
               ((:file "nurarihyon-test")
                (:file "constants" :depends-on ("nurarihyon-test"))
                (:file "degree-to-radian" :depends-on ("nurarihyon-test"))
+               (:file "copy-vector" :depends-on ("nurarihyon-test"))
                ))))
 
 
