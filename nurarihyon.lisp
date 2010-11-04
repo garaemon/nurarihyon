@@ -60,6 +60,7 @@
    #:quaternion-axis
    #:quaternion-angle
    #:quaternion-conjugate
+   #:identity-quaternion
    ;; geometry.lisp
    #:+x-axis+ #:+y-axis+ #:+z-axis+
    #:rotation-matrix

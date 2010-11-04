@@ -14,6 +14,15 @@
 (eval-when (:compile-toplevel)
   (enable-nurarihyon-reader-syntax))
 
+(defun identity-quaternion ()
+  "make an identity quaternion.
+it means [1; #(0 0 0)]"
+  (let ((ret (make-vector4)))
+    (declare (type (simple-array double-float (4)) ret))
+    ;; in nurarihyon, we use angle-axis quaternion, not axis-angle
+    (setf [ret 0] 1.0d0)
+    (the (simple-array double-float (4)) ret)))
+
 ;; in nurarihyon, quaternion is represented as  angle-axis quaternion.
 (defun matrix33->quaternion (mat &optional (q (make-vector4)))
   "convert a 3x3 matrix to a quaternion.
@@ -54,7 +63,7 @@
         (setf [q 1] (/ (+ [mat 0 2] [mat 2 0]) s))
         (setf [q 2] (/ (+ [mat 1 2] [mat 2 1]) s))
         (setf [q 3] (* 0.25d0 s))))))
-  (normalize-vector q q))
+  (the (simple-array double-float (4)) (normalize-vector q q)))
 
 (defun quaternion->matrix33 (q &optional (mat (make-matrix33)))
   "convert a quaternion to 3x3 matrix"

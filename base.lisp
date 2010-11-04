@@ -15,10 +15,14 @@
 (in-package :nurarihyon)
 
 ;; constant
-(alexandria:define-constant +e+ (exp 1.0d0) :test #'=)
-(alexandria:define-constant +pi+ pi :test #'=)
-(alexandria:define-constant +-pi+ (- pi) :test #'=)
-(alexandria:define-constant +2pi+ (* 2.0d0 +pi+) :test #'=)
+(alexandria:define-constant +e+ (exp 1.0d0) :test #'=
+                            :documentation "Euler's number")
+(alexandria:define-constant +pi+ pi :test #'=
+                            :documentation "ratio of any circles :math:`\pi`")
+(alexandria:define-constant +-pi+ (- pi) :test #'=
+                            :documentation "negative value of pi")
+(alexandria:define-constant +2pi+ (* 2.0d0 +pi+) :test #'=
+                            :documentation "the value of 2 * pi")
 (alexandria:define-constant +-2pi+ (- +2pi+) :test #'=)
 (alexandria:define-constant +pi/2+ (/ +pi+ 2.0d0) :test #'=)
 (alexandria:define-constant +-pi/2+ (/ +-pi+ 2.0d0) :test #'=)

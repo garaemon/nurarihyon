@@ -162,7 +162,13 @@ You can use C, the third argument, to reduce heap allocation.
   "calculate a dot product of A and B.
 
 A and B are required to be a (simple-array double-float) and have the same
-length."
+length.
+
+.. math::
+
+    \sigma_{i} A_{i}B_{i}
+
+"
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
     (let ((ret 0.0d0))
@@ -177,7 +183,13 @@ length."
 
 A and B are required to be a (simple-array double-float (3)).
 
-You can use C, the third argument, to reduce heap allocation."
+You can use C, the third argument, to reduce heap allocation.
+
+.. math::
+
+   \bold{C} = \bold{A} \times \bold{B}
+
+"
   (declare (type (simple-array double-float (3)) a b))
   (with-array-dimension-check*
       ((a b) '(3))                      ;dimension must be 3
@@ -220,9 +232,8 @@ A is required to be a (simple-array double-float)."
   (declare (type (simple-array double-float) a))
   (the double-float (sqrt (v. a a))))
 
-;; distance function
 (defun distance (a b)
-  "calculate the distance between A and B.
+  "calculate th distance between A and B.
 
 A and B are required to be a (simple-array double-float) and have the
 same length."
