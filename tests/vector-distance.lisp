@@ -4,9 +4,7 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 
 (lisp-unit:define-test distance-test
   (let ((a (nurarihyon:double-vector 1 0 0)))
@@ -27,4 +25,4 @@
        (nurarihyon:distance a c) (nurarihyon:norm a))))
   )
 
-(lisp-unit:run-tests distance-test)
+

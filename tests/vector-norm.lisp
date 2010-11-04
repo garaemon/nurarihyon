@@ -3,10 +3,7 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 
 (lisp-unit:define-test norm-test
   (let ((a (nurarihyon:double-vector 1 0 0)))
@@ -17,5 +14,5 @@
     (lisp-unit:assert-float-equal (nurarihyon:norm a) 2.0))
   )
 
-(lisp-unit:run-tests norm-test)
+
 

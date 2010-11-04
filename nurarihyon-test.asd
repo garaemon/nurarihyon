@@ -6,6 +6,7 @@
               :depends-on ("nurarihyon-test")
               :components
               ((:file "constants")
+               (:file "random-range")
                (:file "degree-to-radian")
                (:file "degree-to-radian-to-degree")
                (:file "radian-to-degree")
@@ -17,6 +18,8 @@
                (:file "vector-sub")
                (:file "vector-dot")
                (:file "vector-cross")
+               (:file "vector-distance")
+               (:file "vector-norm")
                ))))
 
 
