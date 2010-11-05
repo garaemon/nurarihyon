@@ -24,6 +24,7 @@
                (:file "matrix-create")
                (:file "matrix-add")
                (:file "matrix-sub")
+               (:file "matrix-add-and-sub")
                ))))
 
 
