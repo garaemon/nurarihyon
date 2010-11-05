@@ -31,8 +31,7 @@
    #:make-vector #:double-vector
    #:make-vector3
    #:make-vector4
-   #:real-vector
-   #:copy-vector
+   #:copy-vector #:copy-vector*
    #:v+ #:v- #:v. #:v*
    #:vscale
    #:norm
