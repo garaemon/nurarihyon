@@ -11,6 +11,8 @@
                (:file "degree-to-radian-to-degree")
                (:file "radian-to-degree")
                (:file "eps")
+               ;; syntax
+               (:file "array-syntax")
                ;; vector operations
                (:file "eps-vector")
                (:file "vector-create")
@@ -30,6 +32,3 @@
                (:file "matrix-multiply")
                (:file "matrix-vector-multiply")
                ))))
-
-
-
