@@ -4,9 +4,7 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 (nurarihyon:enable-nurarihyon-reader-syntax)
 
 ;; mv*
@@ -38,4 +36,4 @@
        (nurarihyon:eps-vector= (nurarihyon:mv* mat vec) vec)))
     ))
 
-(lisp-unit:run-tests mv*-test)
+(nurarihyon:disable-nurarihyon-reader-syntax)

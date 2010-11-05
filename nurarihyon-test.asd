@@ -26,6 +26,8 @@
                (:file "matrix-sub")
                (:file "matrix-add-and-sub")
                (:file "matrix-transpose")
+               (:file "matrix-multiply")
+               (:file "matrix-vector-multiply")
                ))))
 
 
