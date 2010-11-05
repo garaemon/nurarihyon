@@ -5,7 +5,7 @@
 ;;================================================
 
 (in-package :nurarihyon-test)
-
+(nh:enable-nurarihyon-reader-syntax)
 (lisp-unit:define-test make-vector-test
   (let ((dim 10)
 	(init-element 10.0d0))
@@ -27,5 +27,41 @@
         (lisp-unit:assert-float-equal c (aref vec 2))))
     ))
 
+(lisp-unit:define-test make-vector3-test
+  (let ((vec (nh:make-vector3)))
+    (lisp-unit:assert-eq (nh:vector-dimension vec) 3)
+    (lisp-unit:assert-float-equal [vec 0] 0.0d0)
+    (lisp-unit:assert-float-equal [vec 1] 0.0d0)
+    (lisp-unit:assert-float-equal [vec 2] 0.0d0))
+  (let ((vec (nh:make-vector3 :initial-element 2.0d0)))
+    (lisp-unit:assert-eq (nh:vector-dimension vec) 3)
+    (lisp-unit:assert-float-equal [vec 0] 2.0d0)
+    (lisp-unit:assert-float-equal [vec 1] 2.0d0)
+    (lisp-unit:assert-float-equal [vec 2] 2.0d0))
+  (let ((vec (nh:make-vector3 :initial-element -2.0d0)))
+    (lisp-unit:assert-eq (nh:vector-dimension vec) 3)
+    (lisp-unit:assert-float-equal [vec 0] -2.0d0)
+    (lisp-unit:assert-float-equal [vec 1] -2.0d0)
+    (lisp-unit:assert-float-equal [vec 2] -2.0d0)))
 
-
+(lisp-unit:define-test make-vector4-test
+  (let ((vec (nh:make-vector4)))
+    (lisp-unit:assert-eq (nh:vector-dimension vec) 4)
+    (lisp-unit:assert-float-equal [vec 0] 0.0d0)
+    (lisp-unit:assert-float-equal [vec 1] 0.0d0)
+    (lisp-unit:assert-float-equal [vec 2] 0.0d0)
+    (lisp-unit:assert-float-equal [vec 3] 0.0d0))
+  (let ((vec (nh:make-vector4 :initial-element 2.0d0)))
+    (lisp-unit:assert-eq (nh:vector-dimension vec) 4)
+    (lisp-unit:assert-float-equal [vec 0] 2.0d0)
+    (lisp-unit:assert-float-equal [vec 1] 2.0d0)
+    (lisp-unit:assert-float-equal [vec 2] 2.0d0)
+    (lisp-unit:assert-float-equal [vec 3] 2.0d0))
+  (let ((vec (nh:make-vector4 :initial-element -2.0d0)))
+    (lisp-unit:assert-eq (nh:vector-dimension vec) 4)
+    (lisp-unit:assert-float-equal [vec 0] -2.0d0)
+    (lisp-unit:assert-float-equal [vec 1] -2.0d0)
+    (lisp-unit:assert-float-equal [vec 2] -2.0d0)
+    (lisp-unit:assert-float-equal [vec 3] -2.0d0)))
+                                  
+(nh:disable-nurarihyon-reader-syntax)
