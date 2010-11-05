@@ -5,7 +5,9 @@
 ;;================================================
 
 (in-package :nurarihyon-test)
+
 (nh:enable-nurarihyon-reader-syntax)
+
 (lisp-unit:define-test copy-vector-test
   (let ((a #d(1 2 3 4 5)))
     (let ((b (nh:copy-vector a)))
@@ -29,7 +31,6 @@
       (lisp-unit:assert-false (eq a b))
       (dotimes (i (nh:vector-dimension a))
         (lisp-unit:assert-float-equal [a i] [b i]))
-      ))
-  )
+      )))
 
 (nh:disable-nurarihyon-reader-syntax)

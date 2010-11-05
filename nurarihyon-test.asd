@@ -19,6 +19,7 @@
                (:file "vector-dimension")
                (:file "vector-scale")
                (:file "vector-copy")
+               (:file "vector-normalize")
                (:file "vector-create")
                (:file "copy-vector")
                (:file "vector-add")
