@@ -4,9 +4,7 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 (nurarihyon:enable-nurarihyon-reader-syntax)
 
 (lisp-unit:define-test m--test
@@ -20,5 +18,5 @@
     (lisp-unit:assert-true (nurarihyon:eps-matrix= (nurarihyon:m- b a) c)))
   )
 
-(lisp-unit:run-tests m--test)
+(nurarihyon:disable-nurarihyon-reader-syntax)
 

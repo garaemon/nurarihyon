@@ -23,6 +23,7 @@
                ;; matrix operations
                (:file "matrix-create")
                (:file "matrix-add")
+               (:file "matrix-sub")
                ))))
 
 
