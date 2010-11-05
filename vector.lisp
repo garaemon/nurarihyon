@@ -205,7 +205,7 @@ You can use C, the third argument, to reduce heap allocation.
       (the (simple-array double-float (3)) c))))
 
 ;; scale function
-(defun scale (k vec &optional (buf nil))
+(defun vscale (k vec &optional (buf nil))
   "scale a vector, VEC with K. K is a double-float and K is
 a (simple-array double-float).
 
@@ -213,7 +213,7 @@ You can use BUF, the third argument, to reduce heap allocation.
 
  example::
 
-   (scale -1.0 #d(1 2 3)) => #d(-1 -2 -3)
+   (vscale -1.0 #d(1 2 3)) => #d(-1 -2 -3)
 "
   (declare (type double-float k)
            (type (simple-array double-float) vec))
@@ -250,7 +250,7 @@ same length."
                          &optional (result (make-vector (vector-dimension a))))
   (let ((len (norm a)))
     (declare (type double-float len))
-    (the (simple-array double-float) (scale (/ 1.0d0 len) a result))))
+    (the (simple-array double-float) (vscale (/ 1.0d0 len) a result))))
 
 (defun vector-sum (vec)
   "calculate a summation of a vector like.
@@ -270,7 +270,7 @@ same length."
 (defun vector-mean (vecs)               ;...?
   (declare (type list vecs))
   (the (simple-array double-float)
-    (scale (/ 1.0d0 (length vecs)) (reduce #'v+ vecs))))
+    (vscale (/ 1.0d0 (length vecs)) (reduce #'v+ vecs))))
 
 ;; utility, not fast
 (defun make-random-vector (dim &key (min -10000.0d0) (max 10000.0d0))

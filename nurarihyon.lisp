@@ -34,7 +34,7 @@
    #:real-vector
    #:copy-vector
    #:v+ #:v- #:v. #:v*
-   #:scale
+   #:vscale
    #:norm
    #:distance
    #:normalize-vector
