@@ -4,9 +4,7 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(require :asdf)
-(require :nurarihyon)
-(require :lisp-unit)
+(in-package :nurarihyon-test)
 (nurarihyon:enable-nurarihyon-reader-syntax)
 
 (lisp-unit:define-test transpose-test
@@ -34,5 +32,5 @@
                               (nurarihyon:transpose mat) mat))))
   )
 
-(lisp-unit:run-tests transpose-test)
+(nurarihyon:disable-nurarihyon-reader-syntax)
 

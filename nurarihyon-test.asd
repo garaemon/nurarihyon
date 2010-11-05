@@ -25,6 +25,7 @@
                (:file "matrix-add")
                (:file "matrix-sub")
                (:file "matrix-add-and-sub")
+               (:file "matrix-transpose")
                ))))
 
 
