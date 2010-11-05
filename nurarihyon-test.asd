@@ -13,6 +13,7 @@
                (:file "eps")
                ;; syntax
                (:file "array-syntax")
+               (:file "infix-syntax")
                ;; vector operations
                (:file "eps-vector")
                (:file "vector-create")
