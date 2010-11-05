@@ -12,6 +12,7 @@
                (:file "radian-to-degree")
                (:file "eps")
                ;; vector operations
+               (:file "eps-vector")
                (:file "vector-create")
                (:file "copy-vector")
                (:file "vector-add")
