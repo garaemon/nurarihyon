@@ -17,6 +17,7 @@
                ;; vector operations
                (:file "eps-vector")
                (:file "vector-dimension")
+               (:file "vector-scale")
                (:file "vector-create")
                (:file "copy-vector")
                (:file "vector-add")
