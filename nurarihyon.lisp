@@ -29,8 +29,7 @@
    ;; vector.lisp
    #:vector-dimension
    #:make-vector #:double-vector
-   #:make-vector3
-   #:make-vector4
+   #:make-vector3 #:make-vector4
    #:copy-vector #:copy-vector*
    #:v+ #:v- #:v. #:v*
    #:vscale
