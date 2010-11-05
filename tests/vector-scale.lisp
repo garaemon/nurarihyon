@@ -37,8 +37,7 @@
 (lisp-unit:define-test vscale-same-buffer-test
   (let ((a #d(-1 2 -3 4 -5))
         (scale 4.0d0))
-    (let ((a-buf (nh:make-vector 5)))
-      (nh:copy-vector a a-buf)
+    (let ((a-buf (nh:copy-vector a)))
       (let ((b (nh:vscale scale a-buf a-buf)))
         (lisp-unit:assert-float-equal (* scale [a 0]) [b 0])
         (lisp-unit:assert-float-equal (* scale [a 1]) [b 1])
