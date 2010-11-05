@@ -22,6 +22,7 @@
                (:file "vector-norm")
                ;; matrix operations
                (:file "matrix-create")
+               (:file "matrix-add")
                ))))
 
 
