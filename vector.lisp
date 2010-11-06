@@ -264,7 +264,7 @@ same length."
     (the (simple-array double-float) (vscale (/ 1.0d0 len) a result))))
 
 (defun vector-sum (vec)
-  "calculate a summation of a vector like.
+  "calculate summation of a vector like.
 
  example::
 
@@ -313,7 +313,6 @@ same length."
 ;;         (declare (type fixnum i))
 ;;         (setf (aref ret i) (+ start-num (* i step))))
 ;;       (the (simple-array double-float) ret))))
-
 
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))

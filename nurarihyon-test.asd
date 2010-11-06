@@ -28,6 +28,7 @@
                (:file "vector-cross")
                (:file "vector-distance")
                (:file "vector-norm")
+               (:file "vector-sum")
                ;; matrix operations
                (:file "matrix-create")
                (:file "matrix-add")
