@@ -253,6 +253,15 @@ same length."
 
 (defun normalize-vector (a
                          &optional (result (make-vector (vector-dimension a))))
+  "scale a vector A into a unit vector.
+
+You can use the second argument, RESULT, to reduce heap allocation.
+In order to specify RESULT, you need give a double vector which has the
+same length to A.
+
+ example::
+
+    (normalize-vector #d(2 0 0)) => #(1 0 0)"
   (let ((len (norm a)))
     (declare (type double-float len))
     (the (simple-array double-float) (vscale (/ 1.0d0 len) a result))))
@@ -270,12 +279,6 @@ same length."
       (declare (type fixnum i))
       (+== ret [vec i]))
     (the double-float ret)))
-
-;; not fast implementation
-(defun vector-mean (vecs)               ;...?
-  (declare (type list vecs))
-  (the (simple-array double-float)
-    (vscale (/ 1.0d0 (length vecs)) (reduce #'v+ vecs))))
 
 ;; utility, not fast
 (defun make-random-vector (dim &key (min -10000.0d0) (max 10000.0d0))

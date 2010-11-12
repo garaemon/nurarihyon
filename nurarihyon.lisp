@@ -36,7 +36,6 @@
    #:norm
    #:distance
    #:normalize-vector
-   #:vector-mean
    #:eps-vector=
    #:vector-sum
    #:make-random-vector
