@@ -282,6 +282,8 @@ same length to A.
 
 ;; utility, not fast
 (defun make-random-vector (dim &key (min -10000.0d0) (max 10000.0d0))
+  "make a double vector whose dimension equals to DIM, and fill the vector
+with the random values between MIN and MAX."
   (declare (type fixnum dim)
            (type double-float min max))
   (let ((v (make-vector dim)))
