@@ -39,6 +39,7 @@
    #:eps-vector=
    #:vector-sum
    #:make-random-vector
+   #:with-vector-dimension-bind-and-check
    ;; matrix.lisp
    #:make-matrix #:double-matrix
    #:make-matrix33 #:make-identity-matrix3
