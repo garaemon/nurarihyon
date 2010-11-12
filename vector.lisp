@@ -96,8 +96,7 @@ create the vector which has ARGS as contents.
   "verificate the vector A and B has the same length dimension and
 bind the dimension to DIM when evaluating ARGS.
 
-If they does not have the save dimension, this macro will raise an error.
-"
+If they does not have the save dimension, this macro will raise an error."
   `(let ((,dim (vector-dimension ,a)))
      (declare (type fixnum ,dim))
      (if (= ,dim (vector-dimension ,b))
@@ -177,9 +176,7 @@ length.
 
 .. math::
 
-    \sigma_{i} A_{i}B_{i}
-
-"
+    \sigma_{i} A_{i}B_{i}"
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
     (let ((ret 0.0d0))
@@ -198,9 +195,7 @@ You can use C, the third argument, to reduce heap allocation.
 
 .. math::
 
-   \bold{C} = \bold{A} \times \bold{B}
-
-"
+   \bold{C} = \bold{A} \times \bold{B}"
   (declare (type (simple-array double-float (3)) a b))
   (with-array-dimension-check*
       ((a b) '(3))                      ;dimension must be 3
@@ -224,8 +219,7 @@ You can use BUF, the third argument, to reduce heap allocation.
 
  example::
 
-   (vscale -1.0 #d(1 2 3)) => #d(-1 -2 -3)
-"
+   (vscale -1.0 #d(1 2 3)) => #d(-1 -2 -3)"
   (declare (type double-float k)
            (type (simple-array double-float) vec))
   (let ((dim (vector-dimension vec)))
@@ -295,24 +289,6 @@ same length."
         (declare (type double-float r))
         (setf [v i] r)))
     v))
-
-;; (defun vector-range (start &optional stop (step 1.0d0))
-;;   "Return evenly spaced values within a specified interval like
-;; numpy.arange.
-;; example::
-;;  (vector-range 3.0d0) => #d(0.0d0 1.0d0 2.0d0)
-;;  (vector-range 2.0d0 5.0d0) => #d(2.0d0 3.0d0 4.0d0 5.0d0)
-;;  (vector-range 3 7 2)"
-;;   (let ((n (if stop (/ (- stop start) step) start)) ;length of vector
-;;         (start-num (if stop start 0.0d0)))
-;;     (declare (type fixnum n)
-;;              (type double-float start-num))
-;;     (let ((ret (make-vector n)))
-;;       (declare (type (simple-array double-float) ret))
-;;       (dotimes (i n)
-;;         (declare (type fixnum i))
-;;         (setf (aref ret i) (+ start-num (* i step))))
-;;       (the (simple-array double-float) ret))))
 
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))
