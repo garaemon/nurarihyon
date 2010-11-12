@@ -10,11 +10,13 @@
   (enable-nurarihyon-reader-syntax))
 
 ;; util
-(defmacro with-matrix-trans-dimension-bind-and-check ((n m n-dash m-dash
-                                                       a b) &rest args)
-  ;;  a: NxM
-  ;;  b: N'xM'
-  ;; this macro checking M = N' or not
+(defmacro with-matrix-trans-dimension-bind-and-check ((n m n-dash m-dash a b)
+                                                      &rest args)
+  "let A NxM matrix and B N'xM'. ARGS will be evaluated
+only when M equals to N'. before evaluating ARGS, this macro binds
+the length of column of A to N and row to M.
+
+if M does not equals to N', this macro will raise a condition."
   (let ((a-dims (gensym))
         (b-dims (gensym)))
     `(let ((,a-dims (matrix-dimensions ,a))
@@ -28,9 +30,11 @@
          (if (= ,m ,n-dash)
              (progn ,@args)
              (error "matrix dimensions mismatch"))))))
-         
+
 (defmacro with-square-matrix-bind-and-check ((dim mat) &rest args)
-  ;; checking mat is square matrix or not
+  "let MAT NxM matrix. ARGS will be evaluated only when N equals to M,
+it means MAT is a square matrix. before evaluate ARGS, this macro binds
+the dimension of MAT (N) to DIM."
   (let ((dim2 (gensym)))
     (let ((dims (gensym)))
       `(let ((,dims (array-dimensions ,mat)))
@@ -188,14 +192,13 @@
 
 ;; multiply with vector
 (defun mv* (mat vec &optional (result nil))
-  "return vector.
-   mat = n x m  vec = (1 x)m
-   +---------+     +-+
-   |         |     | |
-   |         |  x  | |
-   |         |     | |
-   +---------+     +-+
-  "
+  ;;return vector.
+  ;; mat = n x m  vec = (1 x)m
+  ;; +---------+     +-+
+  ;; |         |     | |
+  ;; |         |  x  | |
+  ;; |         |     | |
+  ;; +---------+     +-+
   (declare (type (simple-array double-float) mat vec))
   (let ((mat-dimensions (matrix-dimensions mat))
         (vec-dimension (vector-dimension vec)))
