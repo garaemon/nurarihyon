@@ -39,7 +39,7 @@ of double-float.
   (declare (type (simple-array double-float) a))
   (the fixnum (array-dimension a 0)))
 
-;; template for make-**-vector
+(declaim (inline make-vector))
 (defun make-vector (dim &key (initial-element 0.0d0))
   "Allocate a vector with dim dimension. you can use :initial-element
 keyword to specify the value of the vector.
@@ -54,6 +54,7 @@ keyword to specify the value of the vector.
     (make-array dim :element-type 'double-float
                 :initial-element initial-element)))
 
+(declaim (inline make-vector3))
 (defun make-vector3 (&key (initial-element 0.0d0))
   "Allocate a 3-dimension vector. this function is specialized for 3 dimension.
 :initial-element allows you to specify the values of the vector.
@@ -67,6 +68,7 @@ keyword to specify the value of the vector.
     (make-array 3 :element-type 'double-float
                 :initial-element initial-element)))
 
+(declaim (inline make-vector4))
 (defun make-vector4 (&key (initial-element 0.0d0))
   "Allocate a 4-dimension vector. this function is specialized for 4 dimension.
 :initial-element allows you to specify the values of the vector.
@@ -80,6 +82,7 @@ keyword to specify the value of the vector.
     (make-array 4 :element-type 'double-float
                 :initial-element initial-element)))
 
+(declaim (inline double-vector))
 (defun double-vector (&rest args)
   "this is a utility function to make a double vector. this function will
 create the vector which has ARGS as contents.
