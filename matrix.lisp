@@ -130,9 +130,9 @@ values of :initial-element must be a double-float.
  example::
 
     (make-matrix44) => #2A((0.0d0 0.0d0 0.0d0 0.0d0)
-                              (0.0d0 0.0d0 0.0d0 0.0d0)
-                              (0.0d0 0.0d0 0.0d0 0.0d0)
-                              (0.0d0 0.0d0 0.0d0 0.0d0))
+                           (0.0d0 0.0d0 0.0d0 0.0d0)
+                           (0.0d0 0.0d0 0.0d0 0.0d0)
+                           (0.0d0 0.0d0 0.0d0 0.0d0))
     (make-matrix44 :initial-element 3.0d0) => #2A((3.0d0 3.0d0 3.0d0 3.0d0)
                                                   (3.0d0 3.0d0 3.0d0 3.0d0)
                                                   (3.0d0 3.0d0 3.0d0 3.0d0)
