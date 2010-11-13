@@ -139,6 +139,10 @@
 ;; eps=
 (declaim (inline eps=))
 (defun eps= (a b &optional (diff +eps+))
+  "compare two double-float values , A and B, and if the difference between
+the two values within DIFF, return T.
+
++eps+ is used as the default DIFF value equals."
   (declare (type double-float a b diff))
   (the symbol (< (abs (- a b)) diff)))
 
