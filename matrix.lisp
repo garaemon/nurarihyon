@@ -144,11 +144,14 @@ values of :initial-element must be a double-float.
     (make-array '(4 4) :element-type 'double-float
                 :initial-element initial-element)))
 
-
-;; (double-matrix '(1 2 3 4) '(4 5 6 7))
-;; => 1 2 3 4
-;;    4 5 6 7
 (defun double-matrix (&rest args)
+  "this is a utility function to make a double matrix. this function will
+create the vector which has ARGS as contents.
+
+ example::
+
+   (double-matrix '(1 2 3 4) '(4 5 6 7)) => #2A((1.0d0 2.0d0 3.0d0 4.0d0)
+                                                (4.0d0 5.0d0 6.0d0 7.0d0))"
   (let ((row (length args))
         (column (length (car args))))
     (let ((mat (make-matrix row column)))
