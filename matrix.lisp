@@ -302,7 +302,6 @@ create the vector which has ARGS as contents.
             (setf [result j i] [mat i j])))
         (the (simple-array double-float) result)))))
 
-;; matをLU分解する
 ;; destructive function!!
 (defun lu-decompose (result pivot)
   (declare (type (simple-array double-float) result)
@@ -389,9 +388,10 @@ create the vector which has ARGS as contents.
         (declare (type (simple-array double-float) lu-mat result))
         (copy-matrix mat lu-mat) ;; mat -> lu-mat
         (let ((determinant (lu-decompose lu-mat pivot)))
-          ;; lu-mat --> LU分解後の行列
+          ;; lu-mat --> lu-decomposed matrix
           (if (eps= determinant 0.0d0)     ;if ( det != 0 )
-              ;; 行列式が0だと逆行列は求められない
+              ;; if determinant equals to 0, inverse matrix
+              ;; cannot be calculated.
               nil
               (progn
                 (dotimes (k dim)
