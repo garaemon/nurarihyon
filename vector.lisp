@@ -106,12 +106,13 @@ If they does not have the save dimension, this macro will raise an error."
          (progn ,@args)
          (error "vector dimension mismatch"))))
 
-(defun copy-vector (a &optional (b (nh:make-vector (nh:vector-dimension a))))
+(declaim (inline copy-vector))
+(defun copy-vector (a &optional (b (make-vector (vector-dimension a))))
   "copy the double vector A to B and return B.
 
 You can specify B, the second argument, to reduce heap allocation.
 If not, COPY-VECTOR will allocate another vector which has
-the same length to b.
+the same length to A.
 
 A (and B) must be a (simple-array double-float) and have the same length."
   (declare (type (simple-array double-float) a b))
