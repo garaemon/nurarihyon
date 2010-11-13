@@ -105,6 +105,14 @@ values of :initial-element must be a double-float.
                    :initial-element initial-element)))
 
 (defun make-matrix33 (&key (initial-element 0.0d0))
+  "make a 3x3 matrix. the matrix is a simple-aray of double-float.
+you can use :initial-element keyword to specify the contents of the matrix.
+values of :initial-element must be a double-float.
+
+ example::
+
+    (make-matrix33) => #2A((0.0d0 0.0d0 0.0d0) (0.0d0 0.0d0 0.0d0) (0.0d0 0.0d0 0.0d0))
+    (make-matrix33 :initial-element) => #2A((4.0d0 4.0d0 4.0d0) (4.0d0 4.0d0 4.0d0) (4.0d0 4.0d0 4.0d0))"
   (declare (type double-float initial-element))
   (the (simple-array double-float (3 3))
     (make-array '(3 3) :element-type 'double-float
