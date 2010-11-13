@@ -92,33 +92,6 @@
   (declare (type double-float deg))
   (the double-float (* deg (/ +2pi+ 360.d0))))
 
-;; (defun list->vector (list)
-;;   "convert list to float vector"
-;;   (coerce list '(array single-float 1)))
-
-;; (defun vector->list (vec)
-;;   "convert vector to list"
-;;   (coerce vec 'cons))
-
-;; ;; あほい
-;; (defun list->matrix (list)
-;;   "convert list to matrix."
-;;   (let ((mat (make-float-matrix (length list) (length (car list)))))
-;;     (dotimes (i (length list))
-;;       (dotimes (j (length (car list)))
-;;         (setf (aref mat i j) (coerce (elt (elt list i) j) 'single-float))))
-;;     mat))
-
-;; ;; あほい
-;; (defun matrix->list (mat)
-;;   (let* ((dims (array-dimensions mat))
-;;          (row (car dims))
-;;          (col (cadr dims)))
-;;     (let ((ret nil))
-;;     (dotimes (i row)
-;;       (push (coerce (matrix-row mat i) 'cons) ret))
-;;     (nreverse ret))))
-    
 (defun random-range (min max)
   "return random value between min and max."
   (declare (type number min max))
