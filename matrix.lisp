@@ -210,17 +210,13 @@ A and B must be a (simple-array double-float) and have the same dimensions."
         (setf [b i j] [a i j]))))
   (the (simple-array double-float) b))
 
-;; (defun copy-matrix (a b)
-;;   (declare (type (simple-array double-float) a b))
-;;   (with-matrix-dimension-bind-and-check (row column a b)
-;;     (dotimes (i row)
-;;       (dotimes (j column)
-;;         (setf [b i j] [a i j]))))
-;;   (the (simple-array double-float) b))
-
 ;; matrix operators
 ;; add
 (defun m+ (a b &optional (c nil))
+  "add two matrix, A and B, put the result into C and return C.
+If you does not specify C, M+ will allocate another matrix in the heap.
+
+A, B and C must have the same dimensions and be (simple-array double-float)."
   (declare (type (simple-array double-float) a b))
   (with-matrix-dimension-bind-and-check (row column a b)
     (let ((c (or c (make-matrix row column))))
@@ -232,6 +228,10 @@ A and B must be a (simple-array double-float) and have the same dimensions."
 
 ;; sub
 (defun m- (a b &optional (c nil))
+  "substitute B from A, put the result into C and return C.
+If you does not specify C, M- will allocate another matrix in the heap.
+
+A, B and C must have the same dimensions and be (simple-array double-float)."
   (declare (type (simple-array double-float) a b))
   (with-matrix-dimension-bind-and-check (row column a b)
     (let ((c (or c (make-matrix row column))))
@@ -243,6 +243,13 @@ A and B must be a (simple-array double-float) and have the same dimensions."
 
 ;; multiply
 (defun m* (a b &optional (c nil))
+  "multiply two matrix, A and B, put the result into C and return C.
+If you does not specify C, M+ will allocate another matrix in the heap.
+
+A, B and C must have the same dimensions and be (simple-array double-float).
+.. math::
+
+     C = AB"
   (declare (type (simple-array double-float) a b))
   (with-matrix-trans-dimension-bind-and-check
       (dims-a-row dims-a-column dims-b-row dims-b-column a b)
@@ -281,13 +288,18 @@ A and B must be a (simple-array double-float) and have the same dimensions."
 
 ;; multiply with vector
 (defun mv* (mat vec &optional (result nil))
-  ;;return vector.
-  ;; mat = n x m  vec = (1 x)m
-  ;; +---------+     +-+
-  ;; |         |     | |
-  ;; |         |  x  | |
-  ;; |         |     | |
-  ;; +---------+     +-+
+  "multiply MAT and VEC, put the result into RESULT and return RESULT.
+
+if you does not specify RESULT, M+ will allocate another matrix in the heap.
+
+let A NxM matrix, it means MAT,  and B D dimension vector, it means VEC,
+MV* report an error if M does not equal to D.
+
+.. math::
+
+    R = AB
+
+where R is RESULT."
   (declare (type (simple-array double-float) mat vec))
   (let ((mat-dimensions (matrix-dimensions mat))
         (vec-dimension (vector-dimension vec)))
@@ -311,6 +323,15 @@ A and B must be a (simple-array double-float) and have the same dimensions."
 
 ;; transpose
 (defun transpose (mat &optional (result nil))
+  "calculat a transpose matrix of MAT, put the result into RESULT and
+return RESULT.
+
+If you does not specify RESULT, TRANSPOSE allocates another matrinx in
+the heap.
+
+MAT and RESULT must be (simple-array double-float).
+LET MAT NxM matrix and RESULT N'xM' matrix, N must equal to M' and
+M must equal to N'."
   (declare (type (simple-array double-float) mat))
   (let ((dims (matrix-dimensions mat)))
     (declare (list dims))
