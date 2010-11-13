@@ -88,7 +88,16 @@ A must be a simple-array of double-float."
   (declare (type (simple-array double-float) a))
   (the fixnum (array-dimension a 1)))
 
+(declaim (inline make-matrix))
 (defun make-matrix (row column &key (initial-element 0.0d0))
+  "make a ROWxCOLUMN matrix. the matrix is a siple-array of double-float.
+you can use :initial-element keyword to specify the contents of the matrix.
+values of :initial-element must be a double-float.
+
+ example::
+
+   (make-matrix 2 2) => #2A((0.0d0 0.0d0) (0.0d0 0.0d0)).
+   (make-matrix 2 2 :initial-element 3.0d0) => #2A((3.0d0 3.0d0) (3.0d0 3.0d0))"
   (declare (type fixnum row column)
            (type double-float initial-element))
   (the (simple-array double-float)
