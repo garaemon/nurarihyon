@@ -162,6 +162,7 @@ create the vector which has ARGS as contents.
       (the (simple-array double-float) mat))))
 
 (defun make-identity-matrix (dim)
+  "make an identity DIMxDIM matrix."
   (declare (type fixnum dim))
   (let ((mat (make-matrix dim dim)))
     (declare (type (simple-array double-float) mat))
@@ -169,12 +170,23 @@ create the vector which has ARGS as contents.
     (the (simple-array double-float) mat)))
 
 (defun make-identity-matrix3 ()
+  "make an 3x3 identity matrix"
   (let ((mat (make-matrix33)))
     (declare (type (simple-array double-float (3 3)) mat))
     (setf [mat 0 0] 1.0d0)
     (setf [mat 1 1] 1.0d0)
     (setf [mat 2 2] 1.0d0)
     (the (simple-array double-float (3 3)) mat)))
+
+(defun make-identity-matrix4 ()
+  "make an 4x4 identity matrix"
+  (let ((mat (make-matrix33)))
+    (declare (type (simple-array double-float (4 4)) mat))
+    (setf [mat 0 0] 1.0d0)
+    (setf [mat 1 1] 1.0d0)
+    (setf [mat 2 2] 1.0d0)
+    (setf [mat 3 3] 1.0d0)
+    (the (simple-array double-float (4 4)) mat)))
 
 (defun copy-matrix (a b)
   (declare (type (simple-array double-float) a b))

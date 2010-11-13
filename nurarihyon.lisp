@@ -43,7 +43,7 @@
    ;; matrix.lisp
    #:make-matrix #:double-matrix
    #:make-matrix33 #:make-identity-matrix3
-   #:make-matrix44
+   #:make-matrix44 #:make-identity-matrix4
    #:make-identity-matrix
    #:copy-matrix
    #:m+ #:m- #:m* #:mv*
