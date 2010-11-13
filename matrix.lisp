@@ -47,6 +47,9 @@ the dimension of MAT (N) to DIM."
                (error "array is not identity matrix")))))))
 
 (defmacro with-matrix-dimension-bind-and-check ((row column a b) &rest args)
+  "let A NxM matrix and B N'xM' matrix, and ARGS will be evaluated when
+N equals to N' and M equals to M'. and ARGS will be evaluated with binding
+N to ROW and M to COLUMN."
   (let ((a-dims (gensym))
         (b-dims (gensym))
         (b-row (gensym))
