@@ -45,7 +45,7 @@
    #:make-matrix33 #:make-identity-matrix3
    #:make-matrix44 #:make-identity-matrix4
    #:make-identity-matrix
-   #:copy-matrix
+   #:copy-matrix #:copy-matrix*
    #:m+ #:m- #:m* #:mv*
    #:transpose
    #:lu-decompose

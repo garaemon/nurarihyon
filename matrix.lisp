@@ -188,13 +188,35 @@ create the vector which has ARGS as contents.
     (setf [mat 3 3] 1.0d0)
     (the (simple-array double-float (4 4)) mat)))
 
-(defun copy-matrix (a b)
+(declaim (inline copy-matrix))
+(defun copy-matrix (a &optional (b (apply #'make-matrix (matrix-dimensions a))))
+  "copy the double matrix A to B and return B.
+
+You can specify B, the second argument, to reduce heap allocation.
+If not, COPY-MATRIX will allocate another matrix which has
+the same demensions to A.
+
+A and B must be a (simple-array double-float) and have the same length."
+  (declare (type (simple-array double-float) a b))
+  (the (simple-array double-float) (copy-matrix* a b)))
+
+(defun copy-matrix* (a b)
+    "this is a low level api to copy the double matrix A to B and return B.
+A and B must be a (simple-array double-float) and have the same dimensions."
   (declare (type (simple-array double-float) a b))
   (with-matrix-dimension-bind-and-check (row column a b)
     (dotimes (i row)
       (dotimes (j column)
         (setf [b i j] [a i j]))))
   (the (simple-array double-float) b))
+
+;; (defun copy-matrix (a b)
+;;   (declare (type (simple-array double-float) a b))
+;;   (with-matrix-dimension-bind-and-check (row column a b)
+;;     (dotimes (i row)
+;;       (dotimes (j column)
+;;         (setf [b i j] [a i j]))))
+;;   (the (simple-array double-float) b))
 
 ;; matrix operators
 ;; add

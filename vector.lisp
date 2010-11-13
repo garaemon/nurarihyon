@@ -114,7 +114,7 @@ You can specify B, the second argument, to reduce heap allocation.
 If not, COPY-VECTOR will allocate another vector which has
 the same length to A.
 
-A (and B) must be a (simple-array double-float) and have the same length."
+A and B) must be a (simple-array double-float) and have the same length."
   (declare (type (simple-array double-float) a b))
   (the (simple-array double-float) (copy-vector* a b)))
 
