@@ -146,9 +146,11 @@ the two values within DIFF, return T.
   (declare (type double-float a b diff))
   (the symbol (< (abs (- a b)) diff)))
 
-(defun mean (list)
-  (declare (type list list))
-  (/ (apply #'+ list) (length list)))
+(declaim (inline mean))
+(defun mean (args)
+  "calculate the mean of ARGS."
+  (declare (type list args))
+  (/ (apply #'+ args) (length args)))
 
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))
