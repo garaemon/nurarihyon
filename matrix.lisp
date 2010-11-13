@@ -134,9 +134,9 @@ values of :initial-element must be a double-float.
                               (0.0d0 0.0d0 0.0d0 0.0d0)
                               (0.0d0 0.0d0 0.0d0 0.0d0))
     (make-matrix44 :initial-element 3.0d0) => #2A((3.0d0 3.0d0 3.0d0 3.0d0)
-                                                   (3.0d0 3.0d0 3.0d0 3.0d0)
-                                                   (3.0d0 3.0d0 3.0d0 3.0d0)
-                                                   (3.0d0 3.0d0 3.0d0 3.0d0))"
+                                                  (3.0d0 3.0d0 3.0d0 3.0d0)
+                                                  (3.0d0 3.0d0 3.0d0 3.0d0)
+                                                  (3.0d0 3.0d0 3.0d0 3.0d0))"
   (declare (type double-float initial-element))
   (the (simple-array double-float (4 4))
     (make-array '(4 4) :element-type 'double-float
