@@ -69,17 +69,23 @@ N to ROW and M to COLUMN."
 
 (declaim (inline matrix-dimensions))
 (defun matrix-dimensions (a)
-  (declare (type simple-array a))
+  "let A NxM matrix. matrix-dimensions returns (N M).
+A must be a simple-array of double-float."
+  (declare (type (simple-array double-float) a))
   (the list (array-dimensions a)))
 
 (declaim (inline matrix-row-dimension))
 (defun matrix-row-dimension (a)
-  (declare (type simple-array a))
+  "let A NxM matrix. matrix-row-dimension returns N.
+A must be a simple-array of double-float."
+  (declare (type (simple-array double-float) a))
   (the fixnum (array-dimension a 0)))
 
 (declaim (inline matrix-column-dimension))
 (defun matrix-column-dimension (a)
-  (declare (type simple-array a))
+    "let A NxM matrix. matrix-row-dimension returns M.
+A must be a simple-array of double-float."
+  (declare (type (simple-array double-float) a))
   (the fixnum (array-dimension a 1)))
 
 (defun make-matrix (row column &key (initial-element 0.0d0))
