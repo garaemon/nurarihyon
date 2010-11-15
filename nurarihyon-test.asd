@@ -32,6 +32,7 @@
                ;; matrix operations
                (:file "matrix-create")
                (:file "matrix-row")
+               (:file "matrix-column")
                (:file "matrix-add")
                (:file "matrix-sub")
                (:file "matrix-add-and-sub")
