@@ -18,10 +18,12 @@
    ;; syntax.lisp
    #:enable-nurarihyon-reader-syntax #:disable-nurarihyon-reader-syntax
    ;; base.lisp
+   ;; constants
    #:+e+
    #:+pi+ #:+2pi+ #:+pi/2+ #:+pi/4+
    #:+-pi+ #:+-2pi+ #:+-pi/2+ #:+-pi/4+
    #:+eps+
+   ;; functions
    #:rad2deg #:deg2rad
    #:random-range
    #:->double-float #:->single-float
@@ -33,8 +35,7 @@
    #:copy-vector #:copy-vector*
    #:v+ #:v- #:v. #:v*
    #:vscale
-   #:norm
-   #:distance
+   #:norm #:distance
    #:normalize-vector
    #:eps-vector=
    #:vector-sum

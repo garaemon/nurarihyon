@@ -97,7 +97,8 @@ values of :initial-element must be a double-float.
  example::
 
    (make-matrix 2 2) => #2A((0.0d0 0.0d0) (0.0d0 0.0d0)).
-   (make-matrix 2 2 :initial-element 3.0d0) => #2A((3.0d0 3.0d0) (3.0d0 3.0d0))"
+   (make-matrix 2 2 :initial-element 3.0d0) => #2A((3.0d0 3.0d0)
+                                                   (3.0d0 3.0d0))"
   (declare (type fixnum row column)
            (type double-float initial-element))
   (the (simple-array double-float)
@@ -106,7 +107,7 @@ values of :initial-element must be a double-float.
 
 (declaim (inline make-matrix33))
 (defun make-matrix33 (&key (initial-element 0.0d0))
-  "make a 3x3 matrix. the matrix is a simple-aray of double-float.
+  "make a 3x3 matrix. the matrix is a simple-array of double-float.
 you can use :initial-element keyword to specify the contents of the matrix.
 values of :initial-element must be a double-float.
 
@@ -211,7 +212,6 @@ A and B must be a (simple-array double-float) and have the same dimensions."
   (the (simple-array double-float) b))
 
 ;; matrix operators
-;; add
 (defun m+ (a b &optional (c nil))
   "add two matrix, A and B, put the result into C and return C.
 If you does not specify C, M+ will allocate another matrix in the heap.
@@ -226,7 +226,6 @@ A, B and C must have the same dimensions and be (simple-array double-float)."
           (setf [c i j] (+ [a i j] [b i j]))))
       (the (simple-array double-float) c))))
 
-;; sub
 (defun m- (a b &optional (c nil))
   "substitute B from A, put the result into C and return C.
 If you does not specify C, M- will allocate another matrix in the heap.
@@ -241,7 +240,6 @@ A, B and C must have the same dimensions and be (simple-array double-float)."
           (setf [c i j] (- [a i j] [b i j]))))
       (the (simple-array double-float) c))))
 
-;; multiply
 (defun m* (a b &optional (c nil))
   "multiply two matrix, A and B, put the result into C and return C.
 If you does not specify C, M+ will allocate another matrix in the heap.
@@ -282,8 +280,7 @@ A, B and C must have the same dimensions and be (simple-array double-float).
                   (setf [tmpv j] tmp)))
               (dotimes (k dims-b-column)
                 ;; copy tmpv -> c[i, *]
-                (setf [c k i] [tmpv k]))))
-          )                      ;end of if
+                (setf [c k i] [tmpv k]))))) ;end of if
       (the (simple-array double-float) c))))
 
 ;; multiply with vector
@@ -371,11 +368,11 @@ M must equal to N'."
                  (return-from lu-decompose 0.0d0))         ;goto EXIT;
              (setf [weight i] (/ 1.0d0 u)))) ;weight[k] = 1 / u;
     ;; finish initializing weight vector
-    (let ((det 1.0d0))                   ;det = 1
+    (let ((det 1.0d0))                  ;det = 1
       (declare (type double-float det))
       ;; k: 0 ... dimension
       (dotimes (k dimension)            ;for ( k = 0; k < n; k++)
-        (let ((u (- 1.0d0))              ;u = -1
+        (let ((u (- 1.0d0))             ;u = -1
               (ii 0)
               (j 0))
           (declare (type double-float u)
@@ -423,6 +420,14 @@ M must equal to N'."
       (the double-float det)))))        ;return determination
 
 (defun m-1 (mat &optional (result nil) (lu-mat nil))
+  "calculate an inverse matrix of MAT, put the result into RESULT
+and return RESULT.
+
+you can specify RESULT and LU-MAT in order to reduce heap allocation.
+
+MAT, RESULT and LU-MAT must be (simple-array double-float) and have the
+same dimensions."
+  (declare (type (simple-array double-float) mat))
   (with-square-matrix-bind-and-check (dim mat)
     (let* ((pivot (make-array dim :element-type 'fixnum)))
       (declare (type (simple-array fixnum) pivot))
@@ -468,9 +473,14 @@ M must equal to N'."
 
 (declaim (inline inverse-matrix))
 (defun inverse-matrix (&rest args)
+  "alias function of M-1"
   (apply #'m-1 args))
 
 (defun matrix-row (mat id)
+  "return the ID-th row of MAT.
+
+for optimization,
+MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
   (let ((size (matrix-column-dimension mat)))
@@ -536,7 +546,6 @@ M must equal to N'."
        (dotimes (i dim)
          (+== ret [mat i i])))
     (the double-float ret)))
-  
 
 (defun matrix-determinant (mat &optional (lu-mat nil))
   (declare (type (simple-array double-float) mat))
