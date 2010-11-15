@@ -29,7 +29,3 @@
         (dotimes (j c)
           (lisp-unit:assert-float-equal init-element (aref mat i j))))
       )))
-
-
-
-
