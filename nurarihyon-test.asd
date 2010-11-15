@@ -31,6 +31,7 @@
                (:file "vector-sum")
                ;; matrix operations
                (:file "matrix-create")
+               (:file "matrix-row")
                (:file "matrix-add")
                (:file "matrix-sub")
                (:file "matrix-add-and-sub")
