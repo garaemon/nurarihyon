@@ -5,6 +5,18 @@
 ;;================================================
 (declaim (optimize (speed 3) (safety 0) (debug 1) (space 0)))
 
+;; in nurarihyon, matrix are represented in column major way.
+;; if i say matrix A is NxM matrix, the matrix has N rows and M columns.
+;;
+;; let A(aij) 3x4 matrix:
+;;              4
+;;     | a11 a12 a13 a14 |
+;;  3  | a21 a22 a23 a24 |
+;;     | a31 a32 a33 a34 |
+;; and it is represented as #((a11 a12 a13 a14)
+;;                            (a21 a22 a23 a24)
+;;                            (a31 a32 a33 a34))
+
 (in-package :nurarihyon)
 (eval-when (:compile-toplevel)
   (enable-nurarihyon-reader-syntax))
@@ -344,6 +356,7 @@ M must equal to N'."
 
 ;; destructive function!!
 (defun lu-decompose (result pivot)
+  ;; TODO: documentation
   (declare (type (simple-array double-float) result)
            (type (simple-array fixnum) pivot))
      (let ((dimension (matrix-row-dimension result)))
@@ -483,27 +496,6 @@ for optimization,
 MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
-  (let ((size (matrix-column-dimension mat)))
-    (declare (type fixnum size))
-    (let ((ret (make-vector size)))
-      (declare (type (simple-array double-float) ret))
-      (dotimes (i size)
-        (setf [ret i] [mat id i]))
-      (the (simple-array double-float) ret))))
-
-(defun (setf matrix-row) (val mat id)
-  (declare (type (simple-array double-float) mat val)
-           (type fixnum id))
-  (let ((size (matrix-column-dimension mat)))
-    (declare (type fixnum size))
-    (dotimes (i size)
-      (declare (type fixnum i))
-      (setf [mat id i] [val i]))
-    (the (simple-array double-float) val)))
-
-(defun matrix-column (mat id)
-  (declare (type (simple-array double-float) mat)
-           (type fixnum id))
   (let ((size (matrix-row-dimension mat)))
     (declare (type fixnum size))
     (let ((ret (make-vector size)))
@@ -512,7 +504,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
         (setf [ret i] [mat i id]))
       (the (simple-array double-float) ret))))
 
-(defun (setf matrix-column) (val mat id)
+(defun (setf matrix-row) (val mat id)
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
   (let ((size (matrix-row-dimension mat)))
@@ -520,6 +512,27 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
     (dotimes (i size)
       (declare (type fixnum i))
       (setf [mat i id] [val i]))
+    (the (simple-array double-float) val)))
+
+(defun matrix-column (mat id)
+  (declare (type (simple-array double-float) mat)
+           (type fixnum id))
+  (let ((size (matrix-column-dimension mat)))
+    (declare (type fixnum size))
+    (let ((ret (make-vector size)))
+      (declare (type (simple-array double-float) ret))
+      (dotimes (i size)
+        (setf [ret i] [mat id i]))
+      (the (simple-array double-float) ret))))
+
+(defun (setf matrix-column) (val mat id)
+  (declare (type (simple-array double-float) mat val)
+           (type fixnum id))
+  (let ((size (matrix-column-dimension mat)))
+    (declare (type fixnum size))
+    (dotimes (i size)
+      (declare (type fixnum i))
+      (setf [mat id i] [val i]))
     (the (simple-array double-float) val)))
 
 (defun matrix-diagonal (mat)
