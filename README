@@ -2,3 +2,5 @@ nurarihyon is a CL math library.
 
 nurarihyon implments vector and matrix operations, for example cross product
 and dot product and so on.
+
+nurarihyon is licensed under New BSD License.
