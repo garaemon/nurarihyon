@@ -181,7 +181,7 @@ create the vector which has ARGS as contents.
 
 (defun make-identity-matrix4 ()
   "make an 4x4 identity matrix"
-  (let ((mat (make-matrix33)))
+  (let ((mat (make-matrix44)))
     (declare (type (simple-array double-float (4 4)) mat))
     (setf [mat 0 0] 1.0d0)
     (setf [mat 1 1] 1.0d0)
