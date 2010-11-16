@@ -257,6 +257,7 @@ A, B and C must have the same dimensions and be (simple-array double-float)."
 If you does not specify C, M+ will allocate another matrix in the heap.
 
 A, B and C must have the same dimensions and be (simple-array double-float).
+
 .. math::
 
      C = AB"
@@ -432,17 +433,19 @@ M must equal to N'."
                       (-== [result ii j] (* tmp [result ik j]))))))))))
       (the double-float det)))))        ;return determination
 
-(defun m-1 (mat &optional (result nil) (lu-mat nil))
+(defun m-1 (mat &optional (result nil) (lu-mat nil) (pivot nil))
   "calculate an inverse matrix of MAT, put the result into RESULT
 and return RESULT.
 
-you can specify RESULT and LU-MAT in order to reduce heap allocation.
+you can specify RESULT, PIVOT and  LU-MAT in order to reduce heap allocation.
 
 MAT, RESULT and LU-MAT must be (simple-array double-float) and have the
-same dimensions."
+same dimensions.
+
+PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
   (declare (type (simple-array double-float) mat))
   (with-square-matrix-bind-and-check (dim mat)
-    (let* ((pivot (make-array dim :element-type 'fixnum)))
+    (let* ((pivot (or pivot (make-array dim :element-type 'fixnum))))
       (declare (type (simple-array fixnum) pivot))
       (let ((lu-mat (or lu-mat (make-matrix dim dim)))
             (result (or result (make-matrix dim dim))))
@@ -515,6 +518,10 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
     (the (simple-array double-float) val)))
 
 (defun matrix-column (mat id)
+    "return the ID-th column of MAT.
+
+for optimization,
+MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
   (let ((size (matrix-column-dimension mat)))
@@ -536,6 +543,10 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
     (the (simple-array double-float) val)))
 
 (defun matrix-diagonal (mat)
+  "return the diagonal of MAT as a vector. the type of return value is
+(simple-array double-float).
+
+MAT must be (simple-array double-float) and a square matrix"
   (declare (type (simple-array double-float) mat))
   (with-square-matrix-bind-and-check (dim mat)
     (let ((ret (make-vector dim)))
@@ -552,6 +563,11 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
     val))
 
 (defun matrix-trace (mat)
+  "return the trace of MAT.
+
+.. math::
+
+     tr = \sigma_{i} M(i, i)"
   (declare (type (simple-array double-float) mat))
   (let ((ret 0.0d0))
     (declaim (type double-float ret))
