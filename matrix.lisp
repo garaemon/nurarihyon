@@ -499,13 +499,16 @@ for optimization,
 MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
-  (let ((size (matrix-row-dimension mat)))
-    (declare (type fixnum size))
-    (let ((ret (make-vector size)))
-      (declare (type (simple-array double-float) ret))
-      (dotimes (i size)
-        (setf [ret i] [mat i id]))
-      (the (simple-array double-float) ret))))
+  (let ((size (matrix-row-dimension mat))
+        (csize (matrix-column-dimension mat)))
+    (declare (type fixnum size csize))
+    (if (>= id csize)
+        (error "%s is out of index" id)
+        (let ((ret (make-vector size)))
+          (declare (type (simple-array double-float) ret))
+          (dotimes (i size)
+            (setf [ret i] [mat i id]))
+          (the (simple-array double-float) ret)))))
 
 (defun (setf matrix-row) (val mat id)
   "put VAL into ID-th row of MAT."
@@ -525,13 +528,16 @@ for optimization,
 MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
-  (let ((size (matrix-column-dimension mat)))
-    (declare (type fixnum size))
-    (let ((ret (make-vector size)))
-      (declare (type (simple-array double-float) ret))
-      (dotimes (i size)
-        (setf [ret i] [mat id i]))
-      (the (simple-array double-float) ret))))
+  (let ((size (matrix-column-dimension mat))
+        (rsize (matrix-row-dimension mat)))
+    (declare (type fixnum size rsize))
+    (if (>= id rsize)
+        (error "%s is out of index" id)
+        (let ((ret (make-vector size)))
+          (declare (type (simple-array double-float) ret))
+          (dotimes (i size)
+            (setf [ret i] [mat id i]))
+          (the (simple-array double-float) ret)))))
 
 (defun (setf matrix-column) (val mat id)
   "put VAL into ID-th column of MAT."
@@ -558,6 +564,11 @@ MAT must be (simple-array double-float) and a square matrix"
       ret)))
 
 (defun (setf matrix-diagonal) (val mat)
+  "put VAL into diagonal of MAT.
+
+VAL must be a double vector, the type is (simple-array double-float) and
+MAT must be a double matrix, the type is (simple-array double-float) and
+a square matrix."
   (declare (type (simple-array double-float) val mat))
   (with-square-matrix-bind-and-check (dim mat)
     (dotimes (i dim)
