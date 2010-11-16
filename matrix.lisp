@@ -503,7 +503,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
         (csize (matrix-column-dimension mat)))
     (declare (type fixnum size csize))
     (if (>= id csize)
-        (error "%s is out of index" id)
+        (error "~a is out of index" id)
         (let ((ret (make-vector size)))
           (declare (type (simple-array double-float) ret))
           (dotimes (i size)
@@ -514,12 +514,16 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
   "put VAL into ID-th row of MAT."
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
-  (let ((size (matrix-row-dimension mat)))
-    (declare (type fixnum size))
-    (dotimes (i size)
-      (declare (type fixnum i))
-      (setf [mat i id] [val i]))
-    (the (simple-array double-float) val)))
+  (let ((size (matrix-row-dimension mat))
+        (csize (matrix-column-dimension mat)))
+    (declare (type fixnum size csize))
+    (if (>= id vsize)
+        (error "~a is out of index" id)
+        (progn
+          (dotimes (i size)
+            (declare (type fixnum i))
+            (setf [mat i id] [val i]))
+          (the (simple-array double-float) val)))))
 
 (defun matrix-column (mat id)
     "return the ID-th column of MAT.
@@ -532,7 +536,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
         (rsize (matrix-row-dimension mat)))
     (declare (type fixnum size rsize))
     (if (>= id rsize)
-        (error "%s is out of index" id)
+        (error "~A is out of index" id)
         (let ((ret (make-vector size)))
           (declare (type (simple-array double-float) ret))
           (dotimes (i size)
@@ -543,12 +547,16 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
   "put VAL into ID-th column of MAT."
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
-  (let ((size (matrix-column-dimension mat)))
-    (declare (type fixnum size))
-    (dotimes (i size)
-      (declare (type fixnum i))
-      (setf [mat id i] [val i]))
-    (the (simple-array double-float) val)))
+  (let ((size (matrix-column-dimension mat))
+        (rsize (matrix-row-dimension mat)))
+    (declare (type fixnum size rsize))
+    (if (>= id rsize)
+        (error "~A is out of index" id)
+        (progn
+          (dotimes (i size)
+            (declare (type fixnum i))
+            (setf [mat id i] [val i]))
+          (the (simple-array double-float) val)))))
 
 (defun matrix-diagonal (mat)
   "return the diagonal of MAT as a vector. the type of return value is
