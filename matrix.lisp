@@ -562,7 +562,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
   "return the diagonal of MAT as a vector. the type of return value is
 (simple-array double-float).
 
-MAT must be (simple-array double-float) and a square matrix"
+MAT must be (simple-array double-float) and a square matrix."
   (declare (type (simple-array double-float) mat))
   (with-square-matrix-bind-and-check (dim mat)
     (let ((ret (make-vector dim)))
@@ -584,7 +584,7 @@ a square matrix."
     val))
 
 (defun matrix-trace (mat)
-  "return the trace of MAT.
+  "return trace of MAT.
 
 .. math::
 
@@ -598,6 +598,13 @@ a square matrix."
     (the double-float ret)))
 
 (defun matrix-determinant (mat &optional (lu-mat nil) (pivot nil))
+  "return determinant of MAT. in MATRIX-DETERMINANT, LU-DECOMPOSE is called.
+
+MAT must be (simple-array double-float) and a square matrix.
+
+you can use LU-MAT or PIVOT to reduce heap allocation.
+LU-MAT must be (simple-array double-float) and have the same dimensions to MAT.
+PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
   (declare (type (simple-array double-float) mat))
   (with-square-matrix-bind-and-check (dim mat)
     (let* ((pivot (or pivot (make-array dim :element-type 'fixnum))))
@@ -627,7 +634,6 @@ a square matrix."
 	      ))
           t)                            ;if passed
 	nil)))
-
 
 (eval-when (:compile-toplevel)
   (disable-nurarihyon-reader-syntax))
