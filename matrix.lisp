@@ -597,10 +597,10 @@ a square matrix."
          (+== ret [mat i i])))
     (the double-float ret)))
 
-(defun matrix-determinant (mat &optional (lu-mat nil))
+(defun matrix-determinant (mat &optional (lu-mat nil) (pivot nil))
   (declare (type (simple-array double-float) mat))
   (with-square-matrix-bind-and-check (dim mat)
-    (let* ((pivot (make-array dim :element-type 'fixnum)))
+    (let* ((pivot (or pivot (make-array dim :element-type 'fixnum))))
       (declare (type (simple-array fixnum) pivot))
       (let ((lu-mat (or lu-mat (make-matrix dim dim))))
         (declare (type (simple-array double-float) lu-mat))
