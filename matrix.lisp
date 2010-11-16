@@ -517,7 +517,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
   (let ((size (matrix-row-dimension mat))
         (csize (matrix-column-dimension mat)))
     (declare (type fixnum size csize))
-    (if (>= id vsize)
+    (if (>= id csize)
         (error "~a is out of index" id)
         (progn
           (dotimes (i size)
