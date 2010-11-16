@@ -508,6 +508,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
       (the (simple-array double-float) ret))))
 
 (defun (setf matrix-row) (val mat id)
+  "put VAL into ID-th row of MAT."
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
   (let ((size (matrix-row-dimension mat)))
@@ -533,6 +534,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
       (the (simple-array double-float) ret))))
 
 (defun (setf matrix-column) (val mat id)
+  "put VAL into ID-th column of MAT."
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
   (let ((size (matrix-column-dimension mat)))
