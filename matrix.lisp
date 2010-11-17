@@ -614,6 +614,17 @@ PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
         (copy-matrix mat lu-mat)
         (the double-float (lu-decompose lu-mat pivot))))))
 
+(declaim (inline matrix22-determinant))
+(defun matrix22-determinant (mat)
+  "return determinant of MAT, 2x2 matrix. this function utilize the formula:
+
+.. math::
+
+  |M| = ad - bc"
+  (declare (type (simple-array double-float (2 2)) mat))
+  (the double-float (- (* [mat 0 0] [mat 1 1]) (* [mat 0 1] [mat 1 0]))))
+  
+
 (defun eps-matrix= (a b &optional (diff +eps+))
   "returns t if matrix a and b is near enough."
   (declare (type (simple-array double-float) a b)

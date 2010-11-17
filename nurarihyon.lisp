@@ -52,7 +52,7 @@
    #:transpose
    #:lu-decompose
    #:inverse-matrix #:m-1
-   #:matrix-determinant
+   #:matrix-determinant #:matrix22-determinant
    #:matrix-column #:matrix-row #:matrix-diagonal
    #:eps-matrix=
    ;; quaternion.lisp
