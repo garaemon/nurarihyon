@@ -268,6 +268,7 @@ same length."
   (declare (type (simple-array double-float) a b))
   (the double-float (norm (v- a b))))
 
+(declaim (inline eps-vector=))
 (defun eps-vector= (a b &optional (diff +eps+))
   "returns T if the vectors A and B is near enough."
   (declare (type (simple-array double-float) a b)
