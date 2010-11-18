@@ -47,16 +47,16 @@ if M does not equals to N', this macro will raise a condition."
   "let MAT NxM matrix. ARGS will be evaluated only when N equals to M,
 it means MAT is a square matrix. before evaluate ARGS, this macro binds
 the dimension of MAT (N) to DIM."
-  (let ((dim2 (gensym)))
-    (let ((dims (gensym)))
-      `(let ((,dims (array-dimensions ,mat)))
-         (declare (type list ,dims))
-         (let ((,dim (car ,dims))
-               (,dim2 (cadr ,dims)))
-           (declare (type fixnum ,dim ,dim2))
-           (if (= ,dim ,dim2)
-               (progn ,@args)
-               (error "array is not identity matrix")))))))
+  (let ((dim2 (gensym))
+        (dims (gensym)))
+    `(let ((,dims (array-dimensions ,mat)))
+       (declare (type list ,dims))
+       (let ((,dim (car ,dims))
+             (,dim2 (cadr ,dims)))
+         (declare (type fixnum ,dim ,dim2))
+         (if (= ,dim ,dim2)
+             (progn ,@args)
+             (error "array is not identity matrix"))))))
 
 (defmacro with-matrix-dimension-bind-and-check ((row column a b) &rest args)
   "let A NxM matrix and B N'xM' matrix, and ARGS will be evaluated when
