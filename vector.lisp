@@ -106,8 +106,7 @@ vector-dimension-mismatch."
      (if (= ,dim (vector-dimension ,b))
          (progn ,@args)
          (error 'vector-dimension-mismatch
-                :vector ,b
-                :required-dimension ,dim))))
+                :vector ,b :required-dimension ,dim))))
 
 (declaim (inline copy-vector))
 (defun copy-vector (a &optional (b (make-vector (vector-dimension a))))
