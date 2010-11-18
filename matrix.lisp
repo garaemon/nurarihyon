@@ -57,7 +57,8 @@ the dimension of MAT (N) to DIM."
          (declare (type fixnum ,dim ,dim2))
          (if (= ,dim ,dim2)
              (progn ,@args)
-             (error "array is not a square matrix"))))))
+             (error 'matrix-dimensions-mismatch
+                    :required-dimensions (list ,dim ,dim) :matrix ,mat))))))
 
 (defmacro with-matrix-dimension-bind-and-check ((row column a b) &rest args)
   "let A NxM matrix and B N'xM' matrix, and ARGS will be evaluated when

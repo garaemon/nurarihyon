@@ -120,8 +120,8 @@ condition."
                  :vector ,a :required-dimension ,_dim))
          ((not (= (vector-dimension ,b) ,_dim))
           (error 'vector-dimension-mismatch
-                 :vector ,b :required-dimension ,_dim)))
-       (progn ,@form))))
+                 :vector ,b :required-dimension ,_dim))
+         (t ,@form)))))
 
 (declaim (inline copy-vector))
 (defun copy-vector (a &optional (b (make-vector (vector-dimension a))))
