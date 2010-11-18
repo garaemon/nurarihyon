@@ -254,6 +254,7 @@ A is required to be a (simple-array double-float)."
   (declare (type (simple-array double-float) a))
   (the double-float (sqrt (v. a a))))
 
+(declaim (inline distance))
 (defun distance (a b)
   "calculate th distance between A and B.
 
