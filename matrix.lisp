@@ -41,7 +41,8 @@ if M does not equals to N', this macro will raise a condition."
          (declare (type fixnum ,n ,m ,n-dash ,m-dash))
          (if (= ,m ,n-dash)
              (progn ,@args)
-             (error "matrix dimensions mismatch"))))))
+             (error 'matrix-dimensions-mismatch
+                    :required-dimensions ,a-dims :matrix ,b))))))
 
 (defmacro with-square-matrix-bind-and-check ((dim mat) &rest args)
   "let MAT NxM matrix. ARGS will be evaluated only when N equals to M,
@@ -56,7 +57,7 @@ the dimension of MAT (N) to DIM."
          (declare (type fixnum ,dim ,dim2))
          (if (= ,dim ,dim2)
              (progn ,@args)
-             (error "array is not identity matrix"))))))
+             (error "array is not a square matrix"))))))
 
 (defmacro with-matrix-dimension-bind-and-check ((row column a b) &rest args)
   "let A NxM matrix and B N'xM' matrix, and ARGS will be evaluated when
@@ -77,7 +78,8 @@ N to ROW and M to COLUMN."
          (declare (type fixnum ,row ,column ,b-row ,b-column))
          (if (and (= ,row ,b-row) (= ,column ,b-column))
              (progn ,@args)
-             (error "matrix dimensions mismatch"))))))
+             (error 'matrix-dimensions-mismatch
+                    :required-dimensions ,a-dims :matrix ,b))))))
 
 (declaim (inline matrix-dimensions))
 (defun matrix-dimensions (a)

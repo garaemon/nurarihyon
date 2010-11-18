@@ -20,6 +20,7 @@ on CommonLisp. ")
   (:export
    ;; conditions.lisp
    #:vector-dimension-mismatch
+   #:matrix-dimensions-mismatch
    ;; syntax.lisp
    #:enable-nurarihyon-reader-syntax #:disable-nurarihyon-reader-syntax
    ;; base.lisp
