@@ -22,3 +22,17 @@
      (format s "vector dimension mismatch: ~A is required to be ~D dimension"
              (vector-dimension-mismatch-vector c)
              (vector-dimension-mismatch-required-dimension c)))))
+
+(define-condition matrix-dimensions-mismatch
+    (simple-error)
+  ((required-dimensions :initarg :required-dimensions
+                        :reader matrix-dimensions-mismatch-required-dimensions)
+   (matrix :initarg :matrix
+           :reader matrix-dimensions-mismatch-matrix))
+  (:report
+   (lambda (c s)
+     (format
+      s "matrix dimension mismatch: ~A is required to be (~D, ~D) dimensions"
+      (matrix-dimensions-mismatch-matrix c)
+      (car (matrix-dimensions-mismatch-required-dimensions c))
+      (cadr (matrix-dimensions-mismatch-required-dimensions c))))))

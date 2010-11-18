@@ -15,6 +15,8 @@
   (:shadow #:norm)
   (:nicknames :nh)
   (:export
+   ;; conditions.lisp
+   #:vector-dimension-mismatch
    ;; syntax.lisp
    #:enable-nurarihyon-reader-syntax #:disable-nurarihyon-reader-syntax
    ;; base.lisp
@@ -29,7 +31,6 @@
    #:->double-float #:->single-float
    #:eps= #:mean
    ;; vector.lisp
-   #:vector-dimension-mismatch
    #:vector-dimension
    #:make-vector #:double-vector
    #:make-vector3 #:make-vector4
