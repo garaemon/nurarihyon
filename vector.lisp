@@ -192,7 +192,7 @@ length.
 
 .. math::
 
-    \sigma_{i} A_{i}B_{i}"
+    v.(A, B) = \sigma_{i} A_{i}B_{i}"
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
     (let ((ret 0.0d0))
@@ -269,6 +269,7 @@ same length."
            (type double-float diff))
   (eps= (distance a b) 0.0d0 diff))
 
+(declaim (inline normalize-vector))
 (defun normalize-vector (a
                          &optional (result (make-vector (vector-dimension a))))
   "scale a vector A into a unit vector.
