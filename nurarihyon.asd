@@ -5,9 +5,10 @@
     :depends-on (alexandria)
     :components
     ((:file "nurarihyon")
-     (:file "util" :depends-on ("nurarihyon"))
-     (:file "syntax" :depends-on ("nurarihyon" "util"))
-     (:file "base" :depends-on ("nurarihyon" "syntax"))
+     (:file "conditions" :depends-on ("nurarihyon"))
+     (:file "util" :depends-on ("nurarihyon" "conditions"))
+     (:file "syntax" :depends-on ("nurarihyon" "util" "conditions"))
+     (:file "base" :depends-on ("nurarihyon" "syntax" "conditions"))
      (:file "vector" :depends-on ("nurarihyon" "syntax" "base"))
      (:file "matrix" :depends-on ("nurarihyon" "syntax"
                                   "base" "vector"))

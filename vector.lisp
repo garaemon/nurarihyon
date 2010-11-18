@@ -14,19 +14,6 @@
 (eval-when (:compile-toplevel)
   (enable-nurarihyon-reader-syntax))
 
-;; condition
-(define-condition vector-dimension-mismatch
-    (simple-error)
-  ((required-dimension :initarg :required-dimension
-                       :reader vector-dimension-mismatch-required-dimension)
-   (vector :initarg :vector
-           :reader vector-dimension-mismatch-vector))
-  (:report
-   (lambda (c s)
-     (format s "vector dimension mismatch: ~A is required to be ~D dimension"
-             (vector-dimension-mismatch-vector c)
-             (vector-dimension-mismatch-required-dimension c)))))
-
 ;;==================================
 ;; in-package utility
 (defmacro x (a)
