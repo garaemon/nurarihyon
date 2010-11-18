@@ -246,6 +246,7 @@ You can use BUF, the third argument, to reduce heap allocation.
         (setf [buf i] (the double-float (* k [vec i]))))
       (the (simple-array double-float) buf))))
 
+(declaim (inline norm))
 (defun norm (a)
   "calculate norm of the vector A.
 
