@@ -321,7 +321,8 @@ where R is RESULT."
            (mat-column (cadr mat-dimensions)))
        (declare (type fixnum mat-row mat-column))
        (when (not (= vec-dimension mat-column)) ; error check for dimension
-         (error "dimension mismatch"))
+         (error 'vector-dimension-mismatch
+                :required-dimension mat-column :vector vec))
        (let ((fv (or result (make-vector mat-column))))
          (declare (type (simple-array double-float) fv))
          (dotimes (n mat-column)
