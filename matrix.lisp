@@ -49,7 +49,7 @@ it means MAT is a square matrix. before evaluate ARGS, this macro binds
 the dimension of MAT (N) to DIM."
   (let ((dim2 (gensym))
         (dims (gensym)))
-    `(let ((,dims (array-dimensions ,mat)))
+    `(let ((,dims (matrix-dimensions ,mat)))
        (declare (type list ,dims))
        (let ((,dim (car ,dims))
              (,dim2 (cadr ,dims)))
