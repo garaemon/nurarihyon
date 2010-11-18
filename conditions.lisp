@@ -21,7 +21,10 @@
    (lambda (c s)
      (format s "vector dimension mismatch: ~A is required to be ~D dimension"
              (vector-dimension-mismatch-vector c)
-             (vector-dimension-mismatch-required-dimension c)))))
+             (vector-dimension-mismatch-required-dimension c))))
+  (:documentation
+   "this is a condition to be raisen when calculation cannot be continued
+because vector dimension is not suitable."))
 
 (define-condition matrix-dimensions-mismatch
     (simple-error)
@@ -35,4 +38,7 @@
       s "matrix dimension mismatch: ~A is required to be (~D, ~D) dimensions"
       (matrix-dimensions-mismatch-matrix c)
       (car (matrix-dimensions-mismatch-required-dimensions c))
-      (cadr (matrix-dimensions-mismatch-required-dimensions c))))))
+      (cadr (matrix-dimensions-mismatch-required-dimensions c)))))
+  (:documentation
+   "this is a condition to be raisen when calculation cannot be continued
+because matrix dimension is not suitable."))
