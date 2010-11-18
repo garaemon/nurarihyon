@@ -33,41 +33,6 @@
 (eval-when (:compile-toplevel)
   (enable-nurarihyon-reader-syntax))
 
-;; operator utility
-(defmacro with-array-dimension-check ((a b) &rest args)
-  ;;  check dimensions of vecs are equal or not
-  `(if (equal (array-dimensions ,a) (array-dimensions ,b))
-       (progn ,@args)
-       (error "vector dimension mismatch")))
-
-(defmacro with-array-dimensions-bind-and-check ((dims a b) &rest args)
-  ;;  check dimensions of vecs are equal or not
-  `(let ((,dims (array-dimensions ,a)))
-     (if (equal ,dims (array-dimensions ,b))
-         (progn ,@args)
-         (error "vector dimension mismatch"))))
-
-(defmacro with-array-dimension-check* ((vecs dim) &rest args)
-  ;;  check dimensions of vecs are equal to dim or not
-  `(if (and (equal (array-dimensions ,(car vecs)) ,dim)
-            (equal (array-dimensions ,(cadr vecs)) ,dim))
-       (progn ,@args)
-       (error "vector dimension mismatch")))
-
-(defmacro with-array-dimension-check-trans ((a b) &rest args)
-  ;;  The number of vecs must be two.
-  `(if (= (cadr (array-dimensions ,a))
-	  (car (array-dimensions ,b)))
-       (progn ,@args)
-       (error "vector dimension mismatch")))
-
-(defmacro with-array-dimension-check-trans* ((a b) dim &rest args)
-  ;;  The number of vecs must be two.
-  `(if (and (equal (array-dimensions ,a) ,dim)
-            (equal (reverse (array-dimensions ,b)) ,dim))
-       (progn ,@args)
-       (error "vector dimension mismatch")))
-
 ;; for utility functions
 (defmacro -== (a b)
   `(setf ,a (- ,a ,b)))

@@ -108,6 +108,21 @@ vector-dimension-mismatch."
          (error 'vector-dimension-mismatch
                 :vector ,b :required-dimension ,dim))))
 
+(defmacro with-2vectors-dimension-check (((a b) dim) &rest form)
+  "verificate two double vectors, A and B, have DIM dimension.
+if not, WITH-VECTORS-DIMENSION-CHECK raises VECTOR-DIMENSION-MISMATCH
+condition."
+  (let ((_dim (gensym)))
+    `(let ((,_dim ,dim))
+       (cond
+         ((not (= (vector-dimension ,a) ,_dim))
+          (error 'vector-dimension-mismatch
+                 :vector ,a :required-dimension ,_dim))
+         ((not (= (vector-dimension ,b) ,_dim))
+          (error 'vector-dimension-mismatch
+                 :vector ,b :required-dimension ,_dim)))
+       (progn ,@form))))
+
 (declaim (inline copy-vector))
 (defun copy-vector (a &optional (b (make-vector (vector-dimension a))))
   "copy the double vector A to B and return B.
@@ -203,8 +218,8 @@ You can use C, the third argument, to reduce heap allocation.
 
    \bold{C} = \bold{A} \times \bold{B}"
   (declare (type (simple-array double-float (3)) a b))
-  (with-array-dimension-check*
-      ((a b) '(3))                      ;dimension must be 3
+  (with-2vectors-dimension-check
+      ((a b) 3)                      ;dimension must be 3
     (let ((c (or c (make-vector 3))))
       (declare (type (simple-array double-float (3)) c))
       (let ((xa (x a)) (xb (x b))
@@ -276,7 +291,7 @@ same length to A.
     (the (simple-array double-float) (vscale (/ 1.0d0 len) a result))))
 
 (defun vector-sum (vec)
-  "calculate summation of a vector like.
+  "calculate summation of a vector.
 
  example::
 
