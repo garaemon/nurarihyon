@@ -47,7 +47,7 @@ keyword to specify the value of the vector.
  example::
 
    (make-vector 3) => #d(0.0d0 0.0d0 0.0d0)
-   (make-vector 2 :initial-element 2.0d0) => #d(2.0d0 2.0d0)"
+   (make-vector 2 :initial-element 2.0d0) => #(2.0d0 2.0d0)"
   (declare (type fixnum dim)
            (type double-float initial-element))
   (the (simple-array double-float)
@@ -61,8 +61,8 @@ keyword to specify the value of the vector.
 
  example::
 
-   (make-vector3) => #d(0.0d0 0.0d0 0.0d0)
-   (make-vector3 :initial-element 2.0d0) => #d(2.0d0 2.0d0 2.0d0)"
+   (make-vector3) => #(0.0d0 0.0d0 0.0d0)
+   (make-vector3 :initial-element 2.0d0) => #(2.0d0 2.0d0 2.0d0)"
   (declare (type double-float initial-element))
   (the (simple-array double-float (3))
     (make-array 3 :element-type 'double-float
@@ -75,8 +75,8 @@ keyword to specify the value of the vector.
 
  example::
 
-   (make-vector4) => #d(0.0d0 0.0d0 0.0d0 0.0d0)
-   (make-vector4 :initial-element 2.0d0) => #d(2.0d0 2.0d0 2.0d0 2.0d0)"
+   (make-vector4) => #(0.0d0 0.0d0 0.0d0 0.0d0)
+   (make-vector4 :initial-element 2.0d0) => #(2.0d0 2.0d0 2.0d0 2.0d0)"
   (declare (type double-float initial-element))
   (the (simple-array double-float (4))
     (make-array 4 :element-type 'double-float
@@ -89,7 +89,7 @@ create the vector which has ARGS as contents.
 
  example::
 
-   (double-vector 1 2 3) => #d(1.0d0 2.0d0 3.0d0)"
+   (double-vector 1 2 3) => #(1.0d0 2.0d0 3.0d0)"
   (the (simple-array double-float)
     (make-array (length args) :element-type 'double-float
                    :initial-contents
@@ -155,9 +155,9 @@ You can use C, the third argument, to reduce heap allocation.
 
  example::
 
-  (v+ #d(1 2) #d(3 4)) => #d(4 6)
+  (v+ #d(1 2) #d(3 4)) => #(4 6)
   (let ((buf (make-vector 2)))
-    (v+ #d(1 2) #d(3 4) buf)            ;=> #d(4 6)
+    (v+ #d(1 2) #d(3 4) buf)            ;=> #(4 6)
     ...)"
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
@@ -177,9 +177,9 @@ You can use C, the third argument, to reduce heap allocation.
 
  example::
 
-   (v- #d(3 4) #d(1 2)) => #d(2 2)
+   (v- #d(3 4) #d(1 2)) => #(2 2)
    (let ((buf (make-vector 2)))
-    (v- #d(1 2) #d(3 4) buf)            ;=> #d(-2 -2)
+    (v- #d(1 2) #d(3 4) buf)            ;=> #(-2 -2)
     ...)"
   (declare (type (simple-array double-float) a b))
   (with-vector-dimension-bind-and-check (dim a b)
@@ -240,7 +240,7 @@ You can use BUF, the third argument, to reduce heap allocation.
 
  example::
 
-   (vscale -1.0 #d(1 2 3)) => #d(-1 -2 -3)"
+   (vscale -1.0 #d(1 2 3)) => #(-1 -2 -3)"
   (declare (type double-float k)
            (type (simple-array double-float) vec))
   (let ((dim (vector-dimension vec)))
