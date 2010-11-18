@@ -11,6 +11,18 @@
 
 (in-package :nurarihyon)
 
+(define-condition devided-by-zero
+    (simple-error)
+  ()                                    ;no slots
+  (:report
+   (lambda (c s)
+     (format s "a denominator equals to 0.")))
+  (:documentation
+   "this is a condition to be raise when a denominator equals to 0.
+
+CommonLisp Specification does not provide a condition for deviding-by-zero.
+So, nurarihyon defines its own condition for that."))
+
 (define-condition vector-dimension-mismatch
     (simple-error)
   ((required-dimension :initarg :required-dimension
