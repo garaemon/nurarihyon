@@ -33,7 +33,7 @@
 (eval-when (:compile-toplevel)
   (enable-nurarihyon-reader-syntax))
 
-;; for utility functions
+;; for utility functions, not exported
 (defmacro -== (a b)
   `(setf ,a (- ,a ,b)))
 
@@ -47,11 +47,13 @@
   `(setf ,a (/ ,a ,b)))
 
 ;; utility
+(declaim (inline rad2deg))
 (defun rad2deg (rad)
   "convert from radian to degree"
   (declare (type double-float rad))
   (the double-float (* rad (/ 360.0d0 +2pi+))))
 
+(declaim (inline deg2rad))
 (defun deg2rad (deg)
   "convert from degree to radian"
   (declare (type double-float deg))
