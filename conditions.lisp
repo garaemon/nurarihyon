@@ -18,7 +18,7 @@
    (lambda (c s)
      (format s "a denominator equals to 0.")))
   (:documentation
-   "this is a condition to be raise when a denominator equals to 0.
+   "this is a condition to be signaled if a denominator equals to 0.
 
 CommonLisp Specification does not provide a condition for deviding-by-zero.
 So, nurarihyon defines its own condition for that."))
@@ -35,7 +35,7 @@ So, nurarihyon defines its own condition for that."))
              (vector-dimension-mismatch-vector c)
              (vector-dimension-mismatch-required-dimension c))))
   (:documentation
-   "this is a condition to be raisen when calculation cannot be continued
+   "this is a condition to be signaled when calculation cannot be continued
 because vector dimension is not suitable."))
 
 (define-condition matrix-dimensions-mismatch
@@ -52,5 +52,5 @@ because vector dimension is not suitable."))
       (car (matrix-dimensions-mismatch-required-dimensions c))
       (cadr (matrix-dimensions-mismatch-required-dimensions c)))))
   (:documentation
-   "this is a condition to be raisen when calculation cannot be continued
+   "this is a condition to be signaled when calculation cannot be continued
 because matrix dimension is not suitable."))
