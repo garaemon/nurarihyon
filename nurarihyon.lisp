@@ -29,6 +29,7 @@
    #:->double-float #:->single-float
    #:eps= #:mean
    ;; vector.lisp
+   #:vector-dimension-mismatch
    #:vector-dimension
    #:make-vector #:double-vector
    #:make-vector3 #:make-vector4

@@ -559,8 +559,8 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
           (the (simple-array double-float) val)))))
 
 (defun matrix-diagonal (mat)
-  "return the diagonal of MAT as a vector. the type of return value is
-(simple-array double-float).
+  "return the diagonal of MAT as a vector.
+the type of return value is (simple-array double-float).
 
 MAT must be (simple-array double-float) and a square matrix."
   (declare (type (simple-array double-float) mat))
@@ -620,10 +620,12 @@ PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
 
 .. math::
 
-  |M| = ad - bc"
+  |M| = ad - bc
+
+MATRIX22-DETERMINANT does not check dimensions of MAT,
+it belieaves MAT 2x2 MATRIX."
   (declare (type (simple-array double-float (2 2)) mat))
   (the double-float (- (* [mat 0 0] [mat 1 1]) (* [mat 0 1] [mat 1 0]))))
-  
 
 (defun eps-matrix= (a b &optional (diff +eps+))
   "returns t if matrix a and b is near enough."

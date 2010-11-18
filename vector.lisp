@@ -14,6 +14,16 @@
 (eval-when (:compile-toplevel)
   (enable-nurarihyon-reader-syntax))
 
+;; condition
+(define-condition vector-dimension-mismatch
+    (simple-error)
+  (required-dimension vector)
+  (:report
+   (lambda (c s)
+     (format s "vector dimension mismatch: ~A is required to be ~D dimension"
+             vector
+             required-dimension))))
+
 ;;==================================
 ;; in-package utility
 (defmacro x (a)
@@ -104,7 +114,9 @@ If they does not have the save dimension, this macro will raise an error."
      (declare (type fixnum ,dim))
      (if (= ,dim (vector-dimension ,b))
          (progn ,@args)
-         (error "vector dimension mismatch"))))
+         (error (make-condition 'vector-dimension-mismatch
+                                :vector ,b
+                                :required-dimension ,dim)))))
 
 (declaim (inline copy-vector))
 (defun copy-vector (a &optional (b (make-vector (vector-dimension a))))
