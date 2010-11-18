@@ -38,19 +38,6 @@ So, nurarihyon defines its own condition for that."))
    "this is a condition to be signaled when calculation cannot be continued
 because vector dimension is not suitable."))
 
-(define-condition index-out-of-vector
-    (simple-error)
-  ((required-index :initarg :required-index
-                   :reader index-out-of-vector-required-index)
-   (vector :initarg :vector
-           :reader index-out-of-vector-vector))
-  (:report
-   (lambda (c s)
-     (format s "index ~A is out of vector ~A"
-             (index-out-of-vector-required-index c)
-             (index-out-of-vector-vector c))))
-  (:documentation ""))
-
 
 (define-condition matrix-dimensions-mismatch
     (simple-error)
