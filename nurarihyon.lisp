@@ -14,6 +14,9 @@
   (:use #:common-lisp)
   (:shadow #:norm)
   (:nicknames :nh)
+  (:documentation
+   "nurarihyon is a mathematical computation library fully written
+on CommonLisp. ")
   (:export
    ;; conditions.lisp
    #:vector-dimension-mismatch
