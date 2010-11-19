@@ -133,6 +133,24 @@ if *nurarihyon-optimization* is T, no check is done and just evaluate FORM."
                (error 'matrix-dimensions-mismatch
                       :matrix b :required-dimensions ,dims-a))))))
 
+(define-compiler-macro with-ensure-matrix-dimensions ((mat row column)
+                                                      &rest form)
+  "ensure MAT is a ROWxCOLUMN matrix. if not, matrix-dimensions-mismatch
+condition is signaled.
+
+if *NURARIHYON-OPTIMIZATION* is T, WITH-ENSURE-MATRIX-DIMENSIONS do nothing
+and is expanded into progn"
+  (if *nurarihyon-optimization*
+      `(progn ,@form)
+      (let ((dims (gensym)))
+        `(let ((,dims ($matrix-dimensions ,mat)))
+           (if (and (= (car ,dims) ,row)
+                    (= (cadr ,dims) ,column))
+               (progn ,@form)
+               (error 'matrix-dimensions-mismatch
+                      :matrix ,mat
+                      :required-dimension (list ,row ,column)))))))
+
 (declaim-inline-nhfun matrix-dimensions)
 (define-nhfun matrix-dimensions (a)
   "let A NxM matrix. matrix-dimensions returns (N M).
@@ -415,11 +433,12 @@ M must equal to N'."
       (declare (type fixnum row column))
       (let ((result (or result ($make-matrix column row))))
         (declare (type (simple-array double-float) result))
-        ;; TODO: here we want to check the size of RESULT
-        (dotimes (i row)
-          (dotimes (j column)
-            (setf [result j i] [mat i j])))
-        (the (simple-array double-float) result)))))
+        (with-ensure-matrix-dimensions
+            (result row column)
+          (dotimes (i row)
+            (dotimes (j column)
+              (setf [result j i] [mat i j])))
+          (the (simple-array double-float) result))))))
 
 ;; destructive function!!
 (define-nhfun lu-decompose (result pivot)
