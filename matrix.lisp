@@ -611,7 +611,8 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
         (csize ($matrix-column-dimension mat)))
     (declare (type fixnum size csize))
     (if (>= id csize)
-        (error "~a is out of index" id)
+        (error 'index-out-of-matrix-row-range
+               :matrix mat :index id)
         (let ((ret ($make-vector size)))
           (declare (type (simple-array double-float) ret))
           (dotimes (i size)
@@ -627,7 +628,8 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
         (csize (matrix-column-dimension mat)))
     (declare (type fixnum size csize))
     (if (>= id csize)
-        (error "~a is out of index" id)
+        (error 'index-out-of-matrix-row-range
+               :matrix mat :index id)
         (progn
           (dotimes (i size)
             (declare (type fixnum i))
@@ -645,7 +647,8 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
         (rsize ($matrix-row-dimension mat)))
     (declare (type fixnum size rsize))
     (if (>= id rsize)
-        (error "~A is out of index" id)
+        (error 'index-out-of-matrix-column-range
+               :matrix mat :index id)
         (let ((ret ($make-vector size)))
           (declare (type (simple-array double-float) ret))
           (dotimes (i size)
@@ -661,7 +664,8 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
         (rsize (matrix-row-dimension mat)))
     (declare (type fixnum size rsize))
     (if (>= id rsize)
-        (error "~A is out of index" id)
+        (error 'index-out-of-matrix-column-range
+               :matrix mat :index id)
         (progn
           (dotimes (i size)
             (declare (type fixnum i))
