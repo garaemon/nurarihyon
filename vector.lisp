@@ -295,7 +295,7 @@ A is required to be a (simple-array double-float)."
 A and B are required to be a (simple-array double-float) and have the
 same length."
   (declare (type (simple-array double-float) a b))
-  (with-ensure-vector-dimension (a b)
+  (with-ensure-2vectors-dimension (a b)
     (the double-float ($norm ($v- a b)))))
 
 (declaim-inline-nhfun eps-vector=)
@@ -308,7 +308,6 @@ same length."
 
 (declaim-inline-nhfun normalize-vector)
 (define-nhfun normalize-vector (a &optional (result nil))
-                                ;;(result (make-vector (vector-dimension a))))
   "scale a vector A into a unit vector.
 
 You can use the second argument, RESULT, to reduce heap allocation.
@@ -341,7 +340,6 @@ same length to A.
       (+== ret [vec i]))
     (the double-float ret)))
 
-;; utility, not fast
 (define-nhfun make-random-vector (dim &key (min -10000.0d0) (max 10000.0d0))
   "make a double vector whose dimension equals to DIM, and fill the vector
 with the random values between MIN and MAX."
