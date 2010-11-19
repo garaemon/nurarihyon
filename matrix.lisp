@@ -21,40 +21,26 @@
   (enable-nurarihyon-reader-syntax))
 
 ;; util
-(define-compiler-macro with-matrix-trans-dimension-bind-and-check
-    ((n m n-dash m-dash a b) &rest args)
-  "let A NxM matrix and B N'xM'. ARGS will be evaluated
-only when M equals to N'. before evaluating ARGS, this macro binds
-the length of column of A to N and row to M.
+(define-compiler-macro with-ensure-2matrices-transpose-dimension
+    ((a b) &rest form)
+  "let A NxM matrix and B N'xM'. FORM will be evaluated
+only when M equals to N'.
 
 if M does not equals to N', this macro will raise a condition.
 
-if *NURARIHYON-OPTIMIZATION* is T, it does not check anything and just binds
-symbols."
-  (let ((a-dims (gensym))
-        (b-dims (gensym)))
-    (if *nurarihyon-optimization*
-        `(let ((,a-dims (matrix-dimensions ,a))
-               (,b-dims (matrix-dimensions ,b)))
-           (declare (type list ,a-dims ,b-dims))
-           (let ((,n (car ,a-dims))
-                 (,m (cadr ,a-dims))
-                 (,n-dash (car ,b-dims))
-                 (,m-dash (cadr ,b-dims)))
-             (declare (type fixnum ,n ,m ,n-dash ,m-dash))
-             ,@args))
-        `(let ((,a-dims (matrix-dimensions ,a))
-               (,b-dims (matrix-dimensions ,b)))
-           (declare (type list ,a-dims ,b-dims))
-           (let ((,n (car ,a-dims))
-                 (,m (cadr ,a-dims))
-                 (,n-dash (car ,b-dims))
-                 (,m-dash (cadr ,b-dims)))
-             (declare (type fixnum ,n ,m ,n-dash ,m-dash))
-             (if (= ,m ,n-dash)
-                 (progn ,@args)
-                 (error 'matrix-dimensions-mismatch
-                        :required-dimensions ,a-dims :matrix ,b)))))))
+if *NURARIHYON-OPTIMIZATION* is T, it does not check anything and is
+expanded into progn."
+  (if *nurarihyon-optimization*
+      `(progn ,@form)
+      (let ((dims (gensym))
+            (row (gensym))
+            (column (gensym)))
+        `(let ((,dims ($matrix-dimensions ,a)))
+           (let ((,row (car ,dims))
+                 (,column (cadr ,dims)))
+             (with-ensure-matrix-dimensions
+                 (,b ,column ,row)      ;transpose!
+               ,@form))))))
 
 (define-compiler-macro with-square-matrix-bind-and-check ((dim mat) &rest args)
   "let MAT NxM matrix. ARGS will be evaluated only when N equals to M,
@@ -115,6 +101,41 @@ just binds symbol."
                         :required-dimensions ,a-dims :matrix ,b)))))))
 
 ;; stable API?
+(define-compiler-macro with-ensure-and-bind-2matrices-transpose-dimension
+    ((n m n-dash m-dash a b) &rest args)
+  "let A NxM matrix and B N'xM'. ARGS will be evaluated
+only when M equals to N'. before evaluating ARGS, this macro binds
+the length of column of A to N and row to M.
+
+if M does not equals to N', this macro will raise a condition.
+
+if *NURARIHYON-OPTIMIZATION* is T, it does not check anything and just binds
+symbols."
+  (let ((a-dims (gensym))
+        (b-dims (gensym)))
+    (if *nurarihyon-optimization*
+        `(let ((,a-dims (matrix-dimensions ,a))
+               (,b-dims (matrix-dimensions ,b)))
+           (declare (type list ,a-dims ,b-dims))
+           (let ((,n (car ,a-dims))
+                 (,m (cadr ,a-dims))
+                 (,n-dash (car ,b-dims))
+                 (,m-dash (cadr ,b-dims)))
+             (declare (type fixnum ,n ,m ,n-dash ,m-dash))
+             ,@args))
+        `(let ((,a-dims (matrix-dimensions ,a))
+               (,b-dims (matrix-dimensions ,b)))
+           (declare (type list ,a-dims ,b-dims))
+           (let ((,n (car ,a-dims))
+                 (,m (cadr ,a-dims))
+                 (,n-dash (car ,b-dims))
+                 (,m-dash (cadr ,b-dims)))
+             (declare (type fixnum ,n ,m ,n-dash ,m-dash))
+             (if (= ,m ,n-dash)
+                 (progn ,@args)
+                 (error 'matrix-dimensions-mismatch
+                        :required-dimensions ,a-dims :matrix ,b)))))))
+
 (define-compiler-macro with-ensure-2matrices-dimensions ((a b) &rest form)
   "ensure A and B has the same dimension before evaluating FORM. if not,
 matrix-dimension-mismatch condition is signaled.
@@ -345,7 +366,7 @@ A, B and C must have the same dimensions and be (simple-array double-float).
 
      C = AB"
   (declare (type (simple-array double-float) a b))
-  (with-matrix-trans-dimension-bind-and-check
+  (with-ensure-and-bind-2matrices-transpose-dimension
       (dims-a-row dims-a-column dims-b-row dims-b-column a b)
     (let ((c (or c ($make-matrix dims-a-row dims-b-column))))
       (declare (type (simple-array double-float) c))
