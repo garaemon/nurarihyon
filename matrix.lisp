@@ -42,7 +42,7 @@ expanded into progn."
                  (,b ,column ,row)      ;transpose!
                ,@form))))))
 
-(define-compiler-macro with-square-matrix-bind-and-check ((dim mat) &rest args)
+(define-compiler-macro with-ensure-and-bind-square-matrix ((dim mat) &rest args)
   "let MAT NxM matrix. ARGS will be evaluated only when N equals to M,
 it means MAT is a square matrix. before evaluate ARGS, this macro binds
 the dimension of MAT (N) to DIM.
@@ -551,7 +551,7 @@ same dimensions.
 
 PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
   (declare (type (simple-array double-float) mat))
-  (with-square-matrix-bind-and-check (dim mat)
+  (with-ensure-and-bind-square-matrix (dim mat)
     (let* ((pivot (or pivot (make-array dim :element-type 'fixnum))))
       (declare (type (simple-array fixnum) pivot))
       (let ((lu-mat (or lu-mat ($make-matrix dim dim)))
@@ -673,7 +673,7 @@ the type of return value is (simple-array double-float).
 
 MAT must be (simple-array double-float) and a square matrix."
   (declare (type (simple-array double-float) mat))
-  (with-square-matrix-bind-and-check (dim mat)
+  (with-ensure-and-bind-square-matrix (dim mat)
     (let ((ret ($make-vector dim)))
       (declare (type (simple-array double-float) ret))
       (dotimes (i dim)
@@ -688,7 +688,7 @@ VAL must be a double vector, the type is (simple-array double-float) and
 MAT must be a double matrix, the type is (simple-array double-float) and
 a square matrix."
   (declare (type (simple-array double-float) val mat))
-  (with-square-matrix-bind-and-check (dim mat)
+  (with-ensure-and-bind-square-matrix (dim mat)
     (dotimes (i dim)
       (setf [mat i i] [val i]))
     val))
@@ -702,7 +702,7 @@ a square matrix."
   (declare (type (simple-array double-float) mat))
   (let ((ret 0.0d0))
     (declaim (type double-float ret))
-    (with-square-matrix-bind-and-check (dim mat)
+    (with-ensure-and-bind-square-matrix (dim mat)
        (dotimes (i dim)
          (+== ret [mat i i])))
     (the double-float ret)))
@@ -716,7 +716,7 @@ you can use LU-MAT or PIVOT to reduce heap allocation.
 LU-MAT must be (simple-array double-float) and have the same dimensions to MAT.
 PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
   (declare (type (simple-array double-float) mat))
-  (with-square-matrix-bind-and-check (dim mat)
+  (with-ensure-and-bind-square-matrix (dim mat)
     (let* ((pivot (or pivot ($make-array dim :element-type 'fixnum))))
       (declare (type (simple-array fixnum) pivot))
       (let ((lu-mat (or lu-mat ($make-matrix dim dim))))
