@@ -384,7 +384,7 @@ where R is RESULT."
            (mat-column (cadr mat-dimensions)))
        (declare (type fixnum mat-row mat-column))
        (with-ensure-vector-dimension
-           (mat-column vec)
+           (vec mat-column)
          (let ((fv (or result ($make-vector mat-column))))
            (declare (type (simple-array double-float) fv))
            (dotimes (n mat-column)
