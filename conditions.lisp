@@ -55,3 +55,39 @@ because vector dimension is not suitable."))
   (:documentation
    "this is a condition to be signaled when calculation cannot be continued
 because matrix dimension is not suitable."))
+
+(define-condition index-out-of-matrix-range
+    (simple-error)
+  ((index :initarg :index
+          :reader index-out-of-matrix-range-index)
+   (matrix :initarg :matrix
+           :reader index-out-of-matrix-range-matrix)
+   (formatter :initarg :formatter
+              :reader index-out-of-matrix-range-formatter))
+  (:report
+   (lambda (c s)
+     (format
+      s "~A is out of ~A range of ~A"
+      (index-out-of-matrix-range-index c)
+      (index-out-of-matrix-range-formatter c)
+      (index-out-of-matrix-range-matrix c))))
+  (:documentation
+   "INDEX-OUT-OF-MATRIX-RANGE is defined as super class of
+INDEX-OUT-OF-MATRIX-ROW-RANGE and INDEX-OUT-OF-MATRIX-COLUMN-RANGE."))
+
+(define-condition index-out-of-matrix-row-range
+    (index-out-of-matrix-range)
+  ()
+  (:default-initargs :formatter "row")
+  (:documentation
+   "this is a condition to be signaled when the index which
+a user try to access is out of row range of a matrix"))
+
+(define-condition index-out-of-matrix-column-range
+    (index-out-of-matrix-range)
+  ()
+  (:default-initargs :formatter "column")
+  (:documentation
+   "this is a condition to be signaled when the index which
+a user try to access is out of column range of a matrix"))
+     
