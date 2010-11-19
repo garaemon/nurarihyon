@@ -463,7 +463,8 @@ M must equal to N'."
 
 ;; destructive function!!
 (define-nhfun lu-decompose (result pivot)
-  ;; TODO: documentation
+  "LU decompose RESULT and put the result into RESULT. PIVOT is used for
+storing pivoting information required in lu decomposition."
   (block :lu-decompose-top
     (declare (type (simple-array double-float) result)
            (type (simple-array fixnum) pivot))
