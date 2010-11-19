@@ -8,13 +8,13 @@
      (:file "conditions" :depends-on ("nurarihyon"))
      (:file "util" :depends-on ("nurarihyon" "conditions"))
      (:file "syntax" :depends-on ("nurarihyon" "util" "conditions"))
-     (:file "base" :depends-on ("nurarihyon" "syntax" "conditions"))
-     (:file "vector" :depends-on ("nurarihyon" "syntax" "base"))
+     (:file "base" :depends-on ("nurarihyon" "syntax" "conditions" "util"))
+     (:file "vector" :depends-on ("nurarihyon" "syntax" "base" "util"))
      (:file "matrix" :depends-on ("nurarihyon" "syntax"
-                                  "base" "vector"))
+                                  "base" "vector" "util"))
      (:file "quaternion" :depends-on ("nurarihyon" "syntax"
                                       "base" "vector"
-                                      "matrix"))
+                                      "matrix" "util"))
      ;;(:file "geometry" :depends-on ("nurarihyon" "syntax"
      ;;                               "base" "vector"
      ;;                               "matrix"))
