@@ -37,18 +37,6 @@ on CommonLisp. ")
    #:with-ensure-2vectors-dimension #:with-ensure-2vectors-dimension*
    #:with-2vector-dimension-bind-and-check #:with-ensure-vector-dimension
    ;; matrix.lisp
-   #:make-matrix #:double-matrix
-   #:make-matrix33 #:make-identity-matrix3
-   #:make-matrix44 #:make-identity-matrix4
-   #:make-identity-matrix
-   #:matrix-dimensions #:matrix-row-dimension #:matrix-column-dimension
-   #:copy-matrix #:copy-matrix*
-   #:m+ #:m- #:m* #:mv*
-   #:transpose
-   #:lu-decompose
-   #:inverse-matrix #:m-1
-   #:matrix-determinant #:matrix22-determinant
-   #:matrix-column #:matrix-row #:matrix-diagonal
    #:eps-matrix=
    ;; quaternion.lisp
    #:matrix33->quaternion

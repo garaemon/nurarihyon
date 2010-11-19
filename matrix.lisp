@@ -383,19 +383,18 @@ where R is RESULT."
      (let ((mat-row (car mat-dimensions))
            (mat-column (cadr mat-dimensions)))
        (declare (type fixnum mat-row mat-column))
-       (when (not (= vec-dimension mat-column)) ; error check for dimension
-         (error 'vector-dimension-mismatch
-                :required-dimension mat-column :vector vec))
-       (let ((fv (or result ($make-vector mat-column))))
-         (declare (type (simple-array double-float) fv))
-         (dotimes (n mat-column)
-           (let ((element 0.0d0))
-             (declare (type double-float element))
-             (dotimes (m vec-dimension)
-               (declare (type fixnum m))
-               (+== element (* [mat n m] [vec m])))
-             (setf [fv n] element)))
-         (the (simple-array double-float) fv)))))
+       (with-ensure-vector-dimension
+           (mat-column vec)
+         (let ((fv (or result ($make-vector mat-column))))
+           (declare (type (simple-array double-float) fv))
+           (dotimes (n mat-column)
+             (let ((element 0.0d0))
+               (declare (type double-float element))
+               (dotimes (m vec-dimension)
+                 (declare (type fixnum m))
+                 (+== element (* [mat n m] [vec m])))
+               (setf [fv n] element)))
+           (the (simple-array double-float) fv))))))
 
 ;; transpose
 (define-nhfun transpose (mat &optional (result nil))
