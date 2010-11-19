@@ -349,7 +349,7 @@ with the random values between MIN and MAX."
     (declare (type (simple-array double-float) v))
     (dotimes (i dim)
       (declare (type fixnum i))
-      (let ((r (random-range min max)))
+      (let ((r ($random-range min max)))
         (declare (type double-float r))
         (setf [v i] r)))
     v))
