@@ -30,23 +30,12 @@ on CommonLisp. ")
    #:+-pi+ #:+-2pi+ #:+-pi/2+ #:+-pi/4+
    #:+eps+
    ;; functions
-   #:rad2deg #:deg2rad
-   #:random-range
    #:->double-float #:->single-float
    #:eps= #:mean
-   ;; vector.lisp
-   #:vector-dimension
-   #:make-vector #:double-vector
-   #:make-vector3 #:make-vector4
-   #:copy-vector #:copy-vector*
-   #:v+ #:v- #:v. #:v*
-   #:vscale
-   #:norm #:distance
-   #:normalize-vector
-   #:eps-vector=
-   #:vector-sum
-   #:make-random-vector
-   #:with-vector-dimension-bind-and-check
+   ;; in vector.lisp, only export macros here, because 
+   ;; functions are exported by define-nhfun macro.
+   #:with-ensure-2vectors-dimension #:with-ensure-2vectors-dimension*
+   #:with-2vector-dimension-bind-and-check #:with-ensure-vector-dimension
    ;; matrix.lisp
    #:make-matrix #:double-matrix
    #:make-matrix33 #:make-identity-matrix3

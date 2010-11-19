@@ -67,12 +67,3 @@ another is the function which has $FUCNAME as its own name and compiled with
        (declaim (inline ,funcname))
        (declaim (inline ,fast-funcname)))))
 
-(defmacro define-nh-with-macro (macroname args form documentation &rest body)
-  `(define-compiler-macro ,macroname ,args
-     ,documentation
-     (cond (*nurarihyon-optimization*
-            `(progn ,@,form)) 
-           (t
-            ,@body))))
-           
-

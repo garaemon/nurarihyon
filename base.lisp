@@ -7,10 +7,6 @@
 ;;
 ;; written by R.Ueda (garaemon)
 ;;================================================
-(declaim (optimize (speed 3)
-		   (safety 0)
-		   (debug 1)
-		   (space 0)))
 
 (in-package :nurarihyon)
 
@@ -47,19 +43,20 @@
   `(setf ,a (/ ,a ,b)))
 
 ;; utility
-(declaim (inline rad2deg))
-(defun rad2deg (rad)
+(declaim-inline-nhfun rad2deg)
+(define-nhfun rad2deg (rad)
   "convert from radian to degree"
   (declare (type double-float rad))
   (the double-float (* rad (/ 360.0d0 +2pi+))))
 
-(declaim (inline deg2rad))
-(defun deg2rad (deg)
+(declaim-inline-nhfun deg2rad)
+(define-nhfun deg2rad (deg)
   "convert from degree to radian"
   (declare (type double-float deg))
   (the double-float (* deg (/ +2pi+ 360.d0))))
 
-(defun random-range (min max)
+(declaim-inline-nhfun random-range)
+(define-nhfun random-range (min max)
   "return random value between min and max."
   (declare (type number min max))
   (let ((d (- max min)))
@@ -77,8 +74,8 @@
   (coerce val 'single-float))
 
 ;; eps=
-(declaim (inline eps=))
-(defun eps= (a b &optional (diff +eps+))
+(declaim-inline-nhfun eps=)
+(define-nhfun eps= (a b &optional (diff +eps+))
   "compare two double-float values , A and B, and if the difference between
 the two values within DIFF, return T.
 
@@ -86,8 +83,8 @@ the two values within DIFF, return T.
   (declare (type double-float a b diff))
   (the symbol (< (abs (- a b)) diff)))
 
-(declaim (inline mean))
-(defun mean (args)
+(declaim-inline-nhfun mean)
+(define-nhfun mean (args)
   "calculate the mean of ARGS."
   (declare (type list args))
   (/ (apply #'+ args) (length args)))
