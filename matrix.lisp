@@ -564,7 +564,7 @@ PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
           (if (eps= determinant 0.0d0)     ;if ( det != 0 )
               ;; if determinant equals to 0, inverse matrix
               ;; cannot be calculated.
-              nil
+              nil                       ;TODO: raise an error
               (progn
                 (dotimes (k dim)
                   ;; forward
@@ -718,7 +718,7 @@ LU-MAT must be (simple-array double-float) and have the same dimensions to MAT.
 PIVOT must be (simple-array fixnum) and have the same dimension to MAT."
   (declare (type (simple-array double-float) mat))
   (with-ensure-and-bind-square-matrix (dim mat)
-    (let* ((pivot (or pivot ($make-array dim :element-type 'fixnum))))
+    (let* ((pivot (or pivot (make-array dim :element-type 'fixnum))))
       (declare (type (simple-array fixnum) pivot))
       (let ((lu-mat (or lu-mat ($make-matrix dim dim))))
         (declare (type (simple-array double-float) lu-mat))
