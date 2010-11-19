@@ -101,7 +101,7 @@ just binds symbol."
                         :required-dimensions ,a-dims :matrix ,b)))))))
 
 ;; stable API?
-(define-compiler-macro with-ensure-and-bind-2matrices-transpose-dimension
+(define-compiler-macro with-ensure-and-bind-2matrices-multipable
     ((n m n-dash m-dash a b) &rest args)
   "let A NxM matrix and B N'xM'. ARGS will be evaluated
 only when M equals to N'. before evaluating ARGS, this macro binds
@@ -117,7 +117,7 @@ symbols."
         `(let ((,a-dims (matrix-dimensions ,a))
                (,b-dims (matrix-dimensions ,b)))
            (declare (type list ,a-dims ,b-dims))
-           (let ((,n (car ,a-dims))
+           (let ((,n (car ,a-dims))     ;binding
                  (,m (cadr ,a-dims))
                  (,n-dash (car ,b-dims))
                  (,m-dash (cadr ,b-dims)))
@@ -126,12 +126,12 @@ symbols."
         `(let ((,a-dims (matrix-dimensions ,a))
                (,b-dims (matrix-dimensions ,b)))
            (declare (type list ,a-dims ,b-dims))
-           (let ((,n (car ,a-dims))
+           (let ((,n (car ,a-dims))     ;binding
                  (,m (cadr ,a-dims))
                  (,n-dash (car ,b-dims))
                  (,m-dash (cadr ,b-dims)))
              (declare (type fixnum ,n ,m ,n-dash ,m-dash))
-             (if (= ,m ,n-dash)
+             (if (= ,m ,n-dash)         ;check
                  (progn ,@args)
                  (error 'matrix-dimensions-mismatch
                         :required-dimensions ,a-dims :matrix ,b)))))))
@@ -366,7 +366,7 @@ A, B and C must have the same dimensions and be (simple-array double-float).
 
      C = AB"
   (declare (type (simple-array double-float) a b))
-  (with-ensure-and-bind-2matrices-transpose-dimension
+  (with-ensure-and-bind-2matrices-multipable
       (dims-a-row dims-a-column dims-b-row dims-b-column a b)
     (let ((c (or c ($make-matrix dims-a-row dims-b-column))))
       (declare (type (simple-array double-float) c))
