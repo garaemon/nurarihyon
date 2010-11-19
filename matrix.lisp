@@ -65,7 +65,7 @@ just binds symbol."
                         :required-dimensions (list ,dim ,dim)
                         :matrix ,mat)))))))
 
-(define-compiler-macro with-matrix-dimension-bind-and-check
+(define-compiler-macro with-ensure-and-bind-2matrices-dimension
     ((row column a b) &rest args)
   "let A NxM matrix and B N'xM' matrix, and ARGS will be evaluated when
 N equals to N' and M equals to M'. and ARGS will be evaluated with binding
@@ -321,7 +321,7 @@ A and B must be a (simple-array double-float) and have the same length."
     "this is a low level api to copy the double matrix A to B and return B.
 A and B must be a (simple-array double-float) and have the same dimensions."
   (declare (type (simple-array double-float) a b))
-  (with-matrix-dimension-bind-and-check (row column a b)
+  (with-ensure-and-bind-2matrices-dimension (row column a b)
     (dotimes (i row)
       (dotimes (j column)
         (setf [b i j] [a i j]))))
@@ -334,7 +334,7 @@ If you does not specify C, M+ will allocate another matrix in the heap.
 
 A, B and C must have the same dimensions and be (simple-array double-float)."
   (declare (type (simple-array double-float) a b))
-  (with-matrix-dimension-bind-and-check (row column a b)
+  (with-ensure-and-bind-2matrices-dimension (row column a b)
     (let ((c (or c ($make-matrix row column))))
       (declare (type (simple-array double-float) c))
       (dotimes (i row)
@@ -348,7 +348,7 @@ If you does not specify C, M- will allocate another matrix in the heap.
 
 A, B and C must have the same dimensions and be (simple-array double-float)."
   (declare (type (simple-array double-float) a b))
-  (with-matrix-dimension-bind-and-check (row column a b)
+  (with-ensure-and-bind-2matrices-dimension (row column a b)
     (let ((c (or c ($make-matrix row column))))
       (declare (type (simple-array double-float) c))
       (dotimes (i row)
