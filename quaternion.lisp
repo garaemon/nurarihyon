@@ -5,7 +5,7 @@
 ;;================================================
 
 ;; in nurarihyon, quaternion is represented as  angle-axis quaternion.
-;; it means #(w x y z)
+;; it means [w; (x, y, z)] is represented as #(w x y z)
 
 (in-package :nurarihyon)
 
@@ -125,15 +125,15 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
               (setf (y buf) (/ (qy q) r1-qw^2))
               (setf (z buf) (/ (qz q) r1-qw^2))))
         (the (simple-array double-float (3)) buf)))))
-    
+
 (declaim-inline-nhfun quaternion-angle)
 (define-nhfun quaternion-angle (q)
   "return an angle of a quaternion in radian"
   (declare (type (simple-array double-float (4)) q))
   (let ((qw [q 0])
-        (sin (sqrt (+ (* [q 1] [q 1])
-                      (* [q 2] [q 2])
-                      (* [q 3] [q 3])))))
+        (sin (sqrt (+ (* (qx q) (qx q))
+                      (* (qy q) (qy q))
+                      (* (qz q) (qz q))))))
     (declare (type double-float qw))
     (the double-float (* 2.0d0 (atan sin qw)))))
 
