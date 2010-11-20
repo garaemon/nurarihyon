@@ -18,7 +18,7 @@ it means [1; #(0 0 0)]"
   (let ((ret ($make-vector4)))
     (declare (type (simple-array double-float (4)) ret))
     ;; in nurarihyon, we use angle-axis quaternion, not axis-angle
-    (setf [ret 0] 1.0d0)
+    (setf (qw ret) 1.0d0)
     (the (simple-array double-float (4)) ret)))
 
 (defmacro qx (q)
