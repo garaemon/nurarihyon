@@ -50,7 +50,7 @@ on CommonLisp. ")
    #:with-ensure-2matrices-dimensions
    #:with-ensure-matrix-dimensions
    ;; quaternion.lisp
-   #:matrix33->quaternion
+   #:qx #:qy #:qz #:qw
    #:quaternion->matrix33
    #:quaternion-axis
    #:quaternion-angle
