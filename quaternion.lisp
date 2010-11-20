@@ -4,71 +4,87 @@
 ;; written by R.Ueda (garaemon)
 ;;================================================
 
-(declaim (optimize (speed 3)
-		   (safety 0)
-		   (debug 1)
-		   (space 0)))
+;; in nurarihyon, quaternion is represented as  angle-axis quaternion.
+;; it means #(w x y z)
 
 (in-package :nurarihyon)
 
 (enable-nurarihyon-reader-syntax)
 
-(defun identity-quaternion ()
+(declaim-inline-nhfun identity-quaternion)
+(define-nhfun identity-quaternion ()
   "make an identity quaternion.
 it means [1; #(0 0 0)]"
-  (let ((ret (make-vector4)))
+  (let ((ret ($make-vector4)))
     (declare (type (simple-array double-float (4)) ret))
     ;; in nurarihyon, we use angle-axis quaternion, not axis-angle
     (setf [ret 0] 1.0d0)
     (the (simple-array double-float (4)) ret)))
 
-;; in nurarihyon, quaternion is represented as  angle-axis quaternion.
-(defun matrix33->quaternion (mat &optional (q (make-vector4)))
+(defmacro qx (q)
+  "accessor for x element of quaternion"
+  `(aref q 1))
+
+(defmacro qy (q)
+  "accessor for y element of quaternion"
+  `(aref q 2))
+
+(defmacro qz (q)
+  "accessor for z element of quaternion"
+  `(aref q 3))
+
+(defmacro qw (q)
+  "accessor for w element of quaternion"
+  `(aref q 0))
+
+(define-nhfun matrix33->quaternion (mat &optional (q (make-vector4)))
   "convert a 3x3 matrix to a quaternion.
-   reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm"
+   reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm.
+
+the return vector is always normalized."
   (declare (type (simple-array double-float (4)) q)
            (type (simple-array double-float (3 3)) mat))
-  (let ((trace (matrix-trace mat)))
+  (let ((trace ($matrix-trace mat)))
     (declare (type double-float trace))
     (cond
      ((> trace 0.0d0)
       (let ((s (/ 0.5d0 (sqrt (+ 1.0d0 trace)))))
         (declare (type double-float s))
-        (setf [q 0] (/ 0.25d0 s))
-        (setf [q 1] (* s (- [mat 2 1] [mat 1 2])))
-        (setf [q 2] (* s (- [mat 0 2] [mat 2 0])))
-        (setf [q 3] (* s (- [mat 1 0] [mat 0 1])))))
+        (setf (qw q) (/ 0.25d0 s))
+        (setf (qx q) (* s (- [mat 2 1] [mat 1 2])))
+        (setf (qy q) (* s (- [mat 0 2] [mat 2 0])))
+        (setf (qz q) (* s (- [mat 1 0] [mat 0 1])))))
      ((and (> [mat 0 0] [mat 1 1]) (> [mat 0 0] [mat 2 2]))
       (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 0 0]
                                  (- [mat 1 1]) (- [mat 2 2]))))))
         (declare (type double-float s))
-        (setf [q 0] (/ (- [mat 2 1] [mat 1 2]) s))
-        (setf [q 1] (* 0.25d0 s))
-        (setf [q 2] (/ (+ [mat 0 1] [mat 1 0]) s))
-        (setf [q 3] (/ (+ [mat 0 2] [mat 2 0]) s))))
+        (setf (qw q) (/ (- [mat 2 1] [mat 1 2]) s))
+        (setf (qx q) (* 0.25d0 s))
+        (setf (qy q) (/ (+ [mat 0 1] [mat 1 0]) s))
+        (setf (qz q) (/ (+ [mat 0 2] [mat 2 0]) s))))
      ((> [mat 1 1] [mat 2 2])
       (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 1 1]
                                  (- [mat 0 0]) (- [mat 2 2]))))))
         (declare (type double-float s))
-        (setf [q 0] (/ (- [mat 0 2] [mat 2 0]) s))
-        (setf [q 1] (/ (+ [mat 0 1] [mat 1 0]) s))
-        (setf [q 2] (* 0.25d0 s))
-        (setf [q 3] (/ (+ [mat 1 2] [mat 2 1]) s))))
+        (setf (qw q) (/ (- [mat 0 2] [mat 2 0]) s))
+        (setf (qx q) (/ (+ [mat 0 1] [mat 1 0]) s))
+        (setf (qy q) (* 0.25d0 s))
+        (setf (qz q) (/ (+ [mat 1 2] [mat 2 1]) s))))
      (t
       (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 2 2]
                                  (- [mat 0 0]) (- [mat 1 1]))))))
         (declare (type double-float s))
-        (setf [q 0] (/ (- [mat 1 0] [mat 0 1]) s))
-        (setf [q 1] (/ (+ [mat 0 2] [mat 2 0]) s))
-        (setf [q 2] (/ (+ [mat 1 2] [mat 2 1]) s))
-        (setf [q 3] (* 0.25d0 s))))))
-  (the (simple-array double-float (4)) (normalize-vector q q)))
+        (setf (qw q) (/ (- [mat 1 0] [mat 0 1]) s))
+        (setf (qx q) (/ (+ [mat 0 2] [mat 2 0]) s))
+        (setf (qy q) (/ (+ [mat 1 2] [mat 2 1]) s))
+        (setf (qz q) (* 0.25d0 s))))))
+  (the (simple-array double-float (4)) ($normalize-vector q q)))
 
-(defun quaternion->matrix33 (q &optional (mat (make-matrix33)))
+(define-nhfun quaternion->matrix33 (q &optional (mat (make-matrix33)))
   "convert a quaternion to 3x3 matrix"
   (declare (type (simple-array double-float (3 3)) mat)
            (type (simple-array double-float (4)) q))
-  (let ((qw [q 0]) (qx [q 1]) (qy [q 2]) (qz [q 3]))
+  (let ((qw (qw q)) (qx (qx q)) (qy (qy q)) (qz (qz q)))
     (declare (type double-float qw qx qy qz))
     (setf [mat 0 0] (- 1.0d0 (* 2.0d0 qy qy) (* 2.0d0 qz qz)))
     (setf [mat 0 1] (- (* 2.0d0 qx qy) (* 2.0d0 qz qw)))
@@ -81,14 +97,14 @@ it means [1; #(0 0 0)]"
     (setf [mat 2 2] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qy qy)))
     (the (simple-array double-float (3 3)) mat)))
 
-(declaim (inline quaternion-axis))
-(defun quaternion-axis (q &optional (buf (make-vector3)))
+(declaim-inline-nhfun quaternion-axis)
+(define-nhfun quaternion-axis (q &optional (buf (make-vector3)))
   "returns the axis of a quaternion.
 You can use the optional argument to avoid allocation.
 reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm"
   (declare (type (simple-array double-float (4)) q)
            (type (simple-array double-float (3)) buf))
-  (let ((qw [q 0]))
+  (let ((qw (qw q)))
     (declare (type double-float qw))
     (if (eps= qw 1.0d0)                 ;to avoid to devide by zero
         (progn
@@ -102,8 +118,8 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
         (setf [buf 2] (/ [q 3] r1-qw^2))))
   (the (simple-array double-float (3)) buf)))
 
-(declaim (inline quaternion-angle))
-(defun quaternion-angle (q)
+(declaim-inline-nhfun quaternion-angle)
+(define-nhfun quaternion-angle (q)
   "return an angle of a quaternion in radian"
   (declare (type (simple-array double-float (4)) q))
   (let ((qw [q 0])
@@ -113,8 +129,8 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
     (declare (type double-float qw))
     (the double-float (* 2.0d0 (atan sin qw)))))
 
-(declaim (inline quaternion-conjugate))
-(defun quaternion-conjugate (q &optional (buf (make-vector4)))
+(declaim-inline-nhfun quaternion-conjugate)
+(define-nhfun quaternion-conjugate (q &optional (buf (make-vector4)))
   "return a conjugate of a quaternion.
 You can use optional argument to avoid allocation."
   (declare (type (simple-array double-float (4)) q buf))
