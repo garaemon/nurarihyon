@@ -649,7 +649,6 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
           (setf [ret i] [mat id i]))
         (the (simple-array double-float) ret)))))
 
-;; DEFINE-NHFUN does not support SETF function!
 (define-nhfun-setf matrix-row (val mat id)
   "put VAL into ID-th row of MAT."
   (declare (type (simple-array double-float) mat val)
