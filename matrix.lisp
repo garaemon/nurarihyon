@@ -17,8 +17,7 @@
 ;;                            (a31 a32 a33 a34))
 
 (in-package :nurarihyon)
-(eval-when (:compile-toplevel)
-  (enable-nurarihyon-reader-syntax))
+(enable-nurarihyon-reader-syntax)
 
 ;; util
 (define-compiler-macro with-ensure-matrix-row-smaller-than
@@ -783,5 +782,4 @@ it belieaves MAT 2x2 MATRIX."
           t)                            ;if passed
 	nil)))
 
-(eval-when (:compile-toplevel)
-  (disable-nurarihyon-reader-syntax))
+(disable-nurarihyon-reader-syntax)

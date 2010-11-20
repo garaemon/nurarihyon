@@ -11,8 +11,7 @@
 
 (in-package :nurarihyon)
 
-(eval-when (:compile-toplevel)
-  (enable-nurarihyon-reader-syntax))
+(enable-nurarihyon-reader-syntax)
 
 (defun identity-quaternion ()
   "make an identity quaternion.
@@ -125,5 +124,4 @@ You can use optional argument to avoid allocation."
   (setf [buf 3] (- [q 3]))
   (the (simple-array double-float (4)) buf))
 
-(eval-when (:compile-toplevel)
-  (disable-nurarihyon-reader-syntax))
+(disable-nurarihyon-reader-syntax)

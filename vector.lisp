@@ -8,8 +8,7 @@
 
 (in-package :nurarihyon)
 
-(eval-when (:compile-toplevel)
-  (enable-nurarihyon-reader-syntax))
+(enable-nurarihyon-reader-syntax)
 
 ;;==================================
 ;; in-package utility
@@ -354,5 +353,4 @@ with the random values between MIN and MAX."
         (setf [v i] r)))
     v))
 
-(eval-when (:compile-toplevel)
-  (disable-nurarihyon-reader-syntax))
+(disable-nurarihyon-reader-syntax)
