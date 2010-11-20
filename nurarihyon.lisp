@@ -51,18 +51,5 @@ on CommonLisp. ")
    #:with-ensure-matrix-dimensions
    ;; quaternion.lisp
    #:qx #:qy #:qz #:qw
-   #:quaternion->matrix33
-   #:quaternion-axis
-   #:quaternion-angle
-   #:quaternion-conjugate
-   #:identity-quaternion
-   ;; geometry.lisp
-   #:+x-axis+ #:+y-axis+ #:+z-axis+
-   #:rotation-matrix
-   ;;#:rotate-matrix
-   #:rotate-matrix-local #:rotate-matrix-world
-   #:euler-matrix #:euler-angle
-   #:rpy-matrix #:rpy-angle
-   #:axis->vec
    )
   )

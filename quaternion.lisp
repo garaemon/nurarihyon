@@ -22,79 +22,86 @@ it means [1; #(0 0 0)]"
 
 (defmacro qx (q)
   "accessor for x element of quaternion"
-  `(aref q 1))
+  `(aref ,q 1))
 
 (defmacro qy (q)
   "accessor for y element of quaternion"
-  `(aref q 2))
+  `(aref ,q 2))
 
 (defmacro qz (q)
   "accessor for z element of quaternion"
-  `(aref q 3))
+  `(aref ,q 3))
 
 (defmacro qw (q)
   "accessor for w element of quaternion"
-  `(aref q 0))
+  `(aref ,q 0))
 
-(define-nhfun matrix33->quaternion (mat &optional (q (make-vector4)))
+(define-nhfun matrix33->quaternion (mat &optional (q nil))
   "convert a 3x3 matrix to a quaternion.
    reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm.
 
 the return vector is always normalized."
-  (declare (type (simple-array double-float (4)) q)
-           (type (simple-array double-float (3 3)) mat))
-  (let ((trace ($matrix-trace mat)))
-    (declare (type double-float trace))
-    (cond
-     ((> trace 0.0d0)
-      (let ((s (/ 0.5d0 (sqrt (+ 1.0d0 trace)))))
-        (declare (type double-float s))
-        (setf (qw q) (/ 0.25d0 s))
-        (setf (qx q) (* s (- [mat 2 1] [mat 1 2])))
-        (setf (qy q) (* s (- [mat 0 2] [mat 2 0])))
-        (setf (qz q) (* s (- [mat 1 0] [mat 0 1])))))
-     ((and (> [mat 0 0] [mat 1 1]) (> [mat 0 0] [mat 2 2]))
-      (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 0 0]
-                                 (- [mat 1 1]) (- [mat 2 2]))))))
-        (declare (type double-float s))
-        (setf (qw q) (/ (- [mat 2 1] [mat 1 2]) s))
-        (setf (qx q) (* 0.25d0 s))
-        (setf (qy q) (/ (+ [mat 0 1] [mat 1 0]) s))
-        (setf (qz q) (/ (+ [mat 0 2] [mat 2 0]) s))))
-     ((> [mat 1 1] [mat 2 2])
-      (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 1 1]
-                                 (- [mat 0 0]) (- [mat 2 2]))))))
-        (declare (type double-float s))
-        (setf (qw q) (/ (- [mat 0 2] [mat 2 0]) s))
-        (setf (qx q) (/ (+ [mat 0 1] [mat 1 0]) s))
-        (setf (qy q) (* 0.25d0 s))
-        (setf (qz q) (/ (+ [mat 1 2] [mat 2 1]) s))))
-     (t
-      (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 2 2]
-                                 (- [mat 0 0]) (- [mat 1 1]))))))
-        (declare (type double-float s))
-        (setf (qw q) (/ (- [mat 1 0] [mat 0 1]) s))
-        (setf (qx q) (/ (+ [mat 0 2] [mat 2 0]) s))
-        (setf (qy q) (/ (+ [mat 1 2] [mat 2 1]) s))
-        (setf (qz q) (* 0.25d0 s))))))
-  (the (simple-array double-float (4)) ($normalize-vector q q)))
+  (declare (type (simple-array double-float (3 3)) mat))
+  (let ((q (or q ($make-vector4))))
+    (declare (type (simple-array double-float (4)) q))
+    (with-ensure-vector-dimension
+        (q 4)
+      (let ((trace ($matrix-trace mat)))
+        (declare (type double-float trace))
+        (cond
+          ((> trace 0.0d0)
+           (let ((s (/ 0.5d0 (sqrt (+ 1.0d0 trace)))))
+             (declare (type double-float s))
+             (setf (qw q) (/ 0.25d0 s))
+             (setf (qx q) (* s (- [mat 2 1] [mat 1 2])))
+             (setf (qy q) (* s (- [mat 0 2] [mat 2 0])))
+             (setf (qz q) (* s (- [mat 1 0] [mat 0 1])))))
+          ((and (> [mat 0 0] [mat 1 1]) (> [mat 0 0] [mat 2 2]))
+           (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 0 0]
+                                      (- [mat 1 1]) (- [mat 2 2]))))))
+             (declare (type double-float s))
+             (setf (qw q) (/ (- [mat 2 1] [mat 1 2]) s))
+             (setf (qx q) (* 0.25d0 s))
+             (setf (qy q) (/ (+ [mat 0 1] [mat 1 0]) s))
+             (setf (qz q) (/ (+ [mat 0 2] [mat 2 0]) s))))
+          ((> [mat 1 1] [mat 2 2])
+           (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 1 1]
+                                      (- [mat 0 0]) (- [mat 2 2]))))))
+             (declare (type double-float s))
+             (setf (qw q) (/ (- [mat 0 2] [mat 2 0]) s))
+             (setf (qx q) (/ (+ [mat 0 1] [mat 1 0]) s))
+             (setf (qy q) (* 0.25d0 s))
+             (setf (qz q) (/ (+ [mat 1 2] [mat 2 1]) s))))
+          (t
+           (let ((s (* 2.0d0 (sqrt (+ 1.0d0 [mat 2 2]
+                                      (- [mat 0 0]) (- [mat 1 1]))))))
+             (declare (type double-float s))
+             (setf (qw q) (/ (- [mat 1 0] [mat 0 1]) s))
+             (setf (qx q) (/ (+ [mat 0 2] [mat 2 0]) s))
+             (setf (qy q) (/ (+ [mat 1 2] [mat 2 1]) s))
+             (setf (qz q) (* 0.25d0 s))))))
+      (the (simple-array double-float (4)) ($normalize-vector q q)))))
 
-(define-nhfun quaternion->matrix33 (q &optional (mat (make-matrix33)))
+;;(define-nhfun quaternion->matrix33 (q &optional (mat (make-matrix33)))
+(define-nhfun quaternion->matrix33 (q &optional (mat nil))
   "convert a quaternion to 3x3 matrix"
-  (declare (type (simple-array double-float (3 3)) mat)
-           (type (simple-array double-float (4)) q))
-  (let ((qw (qw q)) (qx (qx q)) (qy (qy q)) (qz (qz q)))
-    (declare (type double-float qw qx qy qz))
-    (setf [mat 0 0] (- 1.0d0 (* 2.0d0 qy qy) (* 2.0d0 qz qz)))
-    (setf [mat 0 1] (- (* 2.0d0 qx qy) (* 2.0d0 qz qw)))
-    (setf [mat 0 2] (+ (* 2.0d0 qx qz) (* 2.0d0 qy qw)))
-    (setf [mat 1 0] (+ (* 2.0d0 qx qy) (* 2.0d0 qz qw)))
-    (setf [mat 1 1] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qz qz)))
-    (setf [mat 1 2] (- (* 2.0d0 qy qz) (* 2.0d0 qx qw)))
-    (setf [mat 2 0] (- (* 2.0d0 qx qz) (* 2.0d0 qy qw)))
-    (setf [mat 2 1] (+ (* 2.0d0 qy qz) (* 2.0d0 qx qw)))
-    (setf [mat 2 2] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qy qy)))
-    (the (simple-array double-float (3 3)) mat)))
+  (declare (type (simple-array double-float (4)) q))
+  (let ((mat (or mat ($make-matrix33))))
+    (declare (type (simple-array double-float (3 3)) mat))
+    (with-ensure-matrix-dimensions
+        (mat 3 3)
+      (let ((qw (qw q)) (qx (qx q)) (qy (qy q)) (qz (qz q)))
+        (declare (type double-float qw qx qy qz))
+        (setf [mat 0 0] (- 1.0d0 (* 2.0d0 qy qy) (* 2.0d0 qz qz)))
+        (setf [mat 0 1] (- (* 2.0d0 qx qy) (* 2.0d0 qz qw)))
+        (setf [mat 0 2] (+ (* 2.0d0 qx qz) (* 2.0d0 qy qw)))
+        (setf [mat 1 0] (+ (* 2.0d0 qx qy) (* 2.0d0 qz qw)))
+        (setf [mat 1 1] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qz qz)))
+        (setf [mat 1 2] (- (* 2.0d0 qy qz) (* 2.0d0 qx qw)))
+        (setf [mat 2 0] (- (* 2.0d0 qx qz) (* 2.0d0 qy qw)))
+        (setf [mat 2 1] (+ (* 2.0d0 qy qz) (* 2.0d0 qx qw)))
+        (setf [mat 2 2] (- 1.0d0 (* 2.0d0 qx qx) (* 2.0d0 qy qy)))
+        (the (simple-array double-float (3 3)) mat)))))
 
 (declaim-inline-nhfun quaternion-axis)
 (define-nhfun quaternion-axis (q &optional (buf (make-vector3)))
