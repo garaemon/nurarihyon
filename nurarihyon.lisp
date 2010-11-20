@@ -18,6 +18,8 @@
    "nurarihyon is a mathematical computation library fully written
 on CommonLisp. ")
   (:export
+   ;; util.lisp
+   #:define-nhfun #:define-nhfun-setf #:optimize-function-name
    ;; conditions.lisp
    #:vector-dimension-mismatch
    #:matrix-dimensions-mismatch
