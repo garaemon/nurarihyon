@@ -114,7 +114,7 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
         (buf 3)
       (let ((qw (qw q)))
         (declare (type double-float qw))
-        (if (eps= qw 1.0d0)                 ;to avoid to devide by zero
+        (if (eps= qw 1.0d0)             ;to avoid to devide by zero
             (progn
               (setf (x buf) 0.0d0)
               (setf (y buf) 0.0d0)
@@ -130,12 +130,18 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
 (define-nhfun quaternion-angle (q)
   "return an angle of a quaternion in radian"
   (declare (type (simple-array double-float (4)) q))
-  (let ((qw [q 0])
-        (sin (sqrt (+ (* (qx q) (qx q))
-                      (* (qy q) (qy q))
-                      (* (qz q) (qz q))))))
-    (declare (type double-float qw sin))
-    (the double-float (* 2.0d0 (atan sin qw)))))
+  (let ((qw (qw q))
+        (qx (qx q))
+        (qy (qy q))
+        (qz (qz q)))
+    (declare (type double-float qw qx qy qz))
+    (let ((sin (sqrt (+ (* qx qx) (* qy qy) (* qz qz)))))
+      (declare (type double-float sin))
+      (let ((theta/2 (atan sin qw)))
+        (declare (type double-float theta/2))
+        (let ((ret (* 2.0d0 theta/2)))
+          (declare (type double-float ret))
+          (the double-float ret))))))
 
 (declaim-inline-nhfun quaternion-conjugate)
 (define-nhfun quaternion-conjugate (q &optional (buf nil))
