@@ -11,15 +11,6 @@
 
 (enable-nurarihyon-reader-syntax)
 
-(declaim-inline-nhfun identity-quaternion)
-(define-nhfun identity-quaternion ()
-  "make an identity quaternion.
-it means [1; #(0 0 0)]"
-  (let ((ret ($make-vector4)))
-    (declare (type (simple-array double-float (4)) ret))
-    (setf (qw ret) 1.0d0)
-    (the (simple-array double-float (4)) ret)))
-
 (defmacro qx (q)
   "accessor for x element of quaternion"
   `(aref ,q 1))
@@ -35,6 +26,15 @@ it means [1; #(0 0 0)]"
 (defmacro qw (q)
   "accessor for w element of quaternion"
   `(aref ,q 0))
+
+(declaim-inline-nhfun identity-quaternion)
+(define-nhfun identity-quaternion ()
+  "make an identity quaternion.
+it means [1; #(0 0 0)]"
+  (let ((ret ($make-vector4)))
+    (declare (type (simple-array double-float (4)) ret))
+    (setf (qw ret) 1.0d0)
+    (the (simple-array double-float (4)) ret)))
 
 (define-nhfun matrix33->quaternion (mat &optional (q nil))
   "convert a 3x3 matrix to a quaternion.
@@ -82,7 +82,6 @@ the return vector is always normalized."
              (setf (qz q) (* 0.25d0 s))))))
       (the (simple-array double-float (4)) ($normalize-vector q q)))))
 
-;;(define-nhfun quaternion->matrix33 (q &optional (mat (make-matrix33)))
 (define-nhfun quaternion->matrix33 (q &optional (mat nil))
   "convert a quaternion to 3x3 matrix"
   (declare (type (simple-array double-float (4)) q))
@@ -104,26 +103,29 @@ the return vector is always normalized."
         (the (simple-array double-float (3 3)) mat)))))
 
 (declaim-inline-nhfun quaternion-axis)
-(define-nhfun quaternion-axis (q &optional (buf (make-vector3)))
+(define-nhfun quaternion-axis (q &optional (buf nil))
   "returns the axis of a quaternion.
 You can use the optional argument to avoid allocation.
 reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm"
-  (declare (type (simple-array double-float (4)) q)
-           (type (simple-array double-float (3)) buf))
-  (let ((qw (qw q)))
-    (declare (type double-float qw))
-    (if (eps= qw 1.0d0)                 ;to avoid to devide by zero
-        (progn
-          (setf [buf 0] 0.0d0)
-          (setf [buf 1] 0.0d0)
-          (setf [buf 2] 0.0d0))
-      (let ((r1-qw^2 (sqrt (- 1.0d0 (* qw qw)))))
-        (declare (type double-float r1-qw^2))
-        (setf [buf 0] (/ [q 1] r1-qw^2))
-        (setf [buf 1] (/ [q 2] r1-qw^2))
-        (setf [buf 2] (/ [q 3] r1-qw^2))))
-  (the (simple-array double-float (3)) buf)))
-
+  (declare (type (simple-array double-float (4)) q))
+  (let ((buf (or buf ($make-vector3))))
+    (declare (type (simple-array double-float (3)) buf))
+    (with-ensure-vector-dimension
+        (buf 3)
+      (let ((qw (qw q)))
+        (declare (type double-float qw))
+        (if (eps= qw 1.0d0)                 ;to avoid to devide by zero
+            (progn
+              (setf (x buf) 0.0d0)
+              (setf (y buf) 0.0d0)
+              (setf (z buf) 0.0d0))
+            (let ((r1-qw^2 (sqrt (- 1.0d0 (* qw qw)))))
+              (declare (type double-float r1-qw^2))
+              (setf (x buf) (/ (qx q) r1-qw^2))
+              (setf (y buf) (/ (qy q) r1-qw^2))
+              (setf (z buf) (/ (qz q) r1-qw^2))))
+        (the (simple-array double-float (3)) buf)))))
+    
 (declaim-inline-nhfun quaternion-angle)
 (define-nhfun quaternion-angle (q)
   "return an angle of a quaternion in radian"
@@ -136,14 +138,17 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
     (the double-float (* 2.0d0 (atan sin qw)))))
 
 (declaim-inline-nhfun quaternion-conjugate)
-(define-nhfun quaternion-conjugate (q &optional (buf (make-vector4)))
+(define-nhfun quaternion-conjugate (q &optional (buf nil))
   "return a conjugate of a quaternion.
 You can use optional argument to avoid allocation."
-  (declare (type (simple-array double-float (4)) q buf))
-  (setf [buf 0] [q 0])
-  (setf [buf 1] (- [q 1]))
-  (setf [buf 2] (- [q 2]))
-  (setf [buf 3] (- [q 3]))
-  (the (simple-array double-float (4)) buf))
+  (let ((buf (or buf ($make-vector4))))
+    (declare (type (simple-array double-float (4)) q buf))
+    (with-ensure-vector-dimension
+        (buf 4)
+      (setf (qw buf) (qw q))
+      (setf (qx buf) (- (qx q)))
+      (setf (qy buf) (- (qy q)))
+      (setf (qz buf) (- (qz q)))
+      (the (simple-array double-float (4)) buf))))
 
 (disable-nurarihyon-reader-syntax)
