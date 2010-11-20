@@ -134,7 +134,7 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
         (sin (sqrt (+ (* (qx q) (qx q))
                       (* (qy q) (qy q))
                       (* (qz q) (qz q))))))
-    (declare (type double-float qw))
+    (declare (type double-float qw sin))
     (the double-float (* 2.0d0 (atan sin qw)))))
 
 (declaim-inline-nhfun quaternion-conjugate)
