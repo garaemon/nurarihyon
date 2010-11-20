@@ -60,6 +60,31 @@ another is the function which has $FUCNAME as its own name and compiled with
                             (debug 1) (space 0)))
          ,@form))))
 
+(defmacro define-nhfun-setf (funcname args documentation &rest form)
+  "DEFINE-NHFUN-SETF defines two functions and export them:
+
+one is the function which has (SETF FUCNAME) as its own name and compiled with
+(optimize (safety 3) (debug 3) (space 0)). this is compiled with
+*NURARIHYON-OPTIMIZATION* NIL.
+
+another is the function which has (SETF $FUCNAME) as its ownname and compiled
+with (optimize (safety 3) (debug 1) (space 0) (safety 0)). this is compiled with
+*NURARIHYON-OPTIMIZATION* T."
+  (let ((fast-funcname (optimize-function-name funcname)))
+    `(eval-when (:compile-toplevel :load-toplevel :execute)
+       (export (list ',funcname ',fast-funcname))
+       (setq *nurarihyon-optimization* nil) ;let cannot be used, why?
+       (defun (setf ,funcname) ,args
+         ,documentation
+         (declare (optimize (safety 3) (debug 3) (space 0)))
+         ,@form)
+       (setq *nurarihyon-optimization* t) ;let cannot be used, why?
+       (defun (setf ,fast-funcname) ,args
+         ,documentation
+         (declare (optimize (speed 3) (safety 0)
+                            (debug 1) (space 0)))
+         ,@form))))
+
 (defmacro declaim-inline-nhfun (funcname)
   "declaim FUCNAME and $FUNCNAME as inline functions."
   (let ((fast-funcname (optimize-function-name funcname)))

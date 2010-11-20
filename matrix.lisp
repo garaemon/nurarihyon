@@ -21,6 +21,38 @@
   (enable-nurarihyon-reader-syntax))
 
 ;; util
+(define-compiler-macro with-ensure-matrix-row-smaller-than
+    ((mat id) &rest form)
+    "ensure row dimension of MAT is smaller than ID before evaluating
+FORM.
+
+if *NURARIHYON-OPTIMIZATION* is T, nothing is checked and FORM is expanded
+into PROGN."
+    (if *nurarihyon-optimization*
+        `(progn ,@form)
+        (let ((row (gensym)))
+          `(let ((,row ($matrix-row-dimension ,mat)))
+             (if (>= ,id ,row)
+                 (error 'index-out-of-matrix-row-range
+                        :matrix ,mat :index ,id)
+                 (progn ,@form))))))
+
+(define-compiler-macro with-ensure-matrix-column-smaller-than
+    ((mat id) &rest form)
+    "ensure row dimension of MAT is smaller than ID before evaluating
+FORM.
+
+if *NURARIHYON-OPTIMIZATION* is T, nothing is checked and FORM is expanded
+into PROGN."
+    (if *nurarihyon-optimization*
+        `(progn ,@form)
+        (let ((column (gensym)))
+          `(let ((,column ($matrix-column-dimension ,mat)))
+             (if (>= ,id ,column)
+                 (error 'index-out-of-matrix-column-range
+                        :matrix ,mat :index ,id)
+                 (progn ,@form))))))
+
 (define-compiler-macro with-ensure-2matrices-transpose-dimension
     ((a b) &rest form)
   "let A NxM matrix and B N'xM'. FORM will be evaluated
@@ -607,34 +639,29 @@ for optimization,
 MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
-  (let ((size ($matrix-row-dimension mat))
-        (csize ($matrix-column-dimension mat)))
-    (declare (type fixnum size csize))
-    (if (>= id csize)
-        (error 'index-out-of-matrix-row-range
-               :matrix mat :index id)
-        (let ((ret ($make-vector size)))
-          (declare (type (simple-array double-float) ret))
-          (dotimes (i size)
-            (setf [ret i] [mat i id]))
-          (the (simple-array double-float) ret)))))
+  (let ((size ($matrix-column-dimension mat))) ; the size of vector equals to
+    (declare (type fixnum size))               ; the column dimension
+    (with-ensure-matrix-row-smaller-than
+        (mat id)
+      (let ((ret ($make-vector size)))
+        (declare (type (simple-array double-float) ret))
+        (dotimes (i size)
+          (setf [ret i] [mat id i]))
+        (the (simple-array double-float) ret)))))
 
 ;; DEFINE-NHFUN does not support SETF function!
-(defun (setf matrix-row) (val mat id)
+(define-nhfun-setf matrix-row (val mat id)
   "put VAL into ID-th row of MAT."
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
-  (let ((size (matrix-row-dimension mat))
-        (csize (matrix-column-dimension mat)))
-    (declare (type fixnum size csize))
-    (if (>= id csize)
-        (error 'index-out-of-matrix-row-range
-               :matrix mat :index id)
-        (progn
-          (dotimes (i size)
-            (declare (type fixnum i))
-            (setf [mat i id] [val i]))
-          (the (simple-array double-float) val)))))
+  (let ((size ($matrix-column-dimension mat))) ; the size of vector equals to
+    (declare (type fixnum size))               ; the column dimension
+    (with-ensure-matrix-row-smaller-than
+        (mat id)
+      (dotimes (i size)
+        (declare (type fixnum i))
+        (setf [mat id i] [val i]))
+      (the (simple-array double-float) val))))
 
 (define-nhfun matrix-column (mat id)
     "return the ID-th column of MAT.
@@ -643,34 +670,28 @@ for optimization,
 MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
-  (let ((size ($matrix-column-dimension mat))
-        (rsize ($matrix-row-dimension mat)))
-    (declare (type fixnum size rsize))
-    (if (>= id rsize)
-        (error 'index-out-of-matrix-column-range
-               :matrix mat :index id)
-        (let ((ret ($make-vector size)))
-          (declare (type (simple-array double-float) ret))
-          (dotimes (i size)
-            (setf [ret i] [mat id i]))
-          (the (simple-array double-float) ret)))))
+  (let ((size ($matrix-row-dimension mat))) ; the size of vector equals to
+    (declare (type fixnum size rsize))      ; the row dimension
+    (with-ensure-matrix-column-smaller-than
+        (mat id)
+      (let ((ret ($make-vector size)))
+        (declare (type (simple-array double-float) ret))
+        (dotimes (i size)
+          (setf [ret i] [mat i id]))
+        (the (simple-array double-float) ret)))))
 
-;; DEFINE-NHFUN does not support SETF function!
-(defun (setf matrix-column) (val mat id)
+(define-nhfun-setf matrix-column (val mat id)
   "put VAL into ID-th column of MAT."
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
-  (let ((size (matrix-column-dimension mat))
-        (rsize (matrix-row-dimension mat)))
-    (declare (type fixnum size rsize))
-    (if (>= id rsize)
-        (error 'index-out-of-matrix-column-range
-               :matrix mat :index id)
-        (progn
-          (dotimes (i size)
-            (declare (type fixnum i))
-            (setf [mat id i] [val i]))
-          (the (simple-array double-float) val)))))
+  (let ((size ($matrix-row-dimension mat))) ; the size of vector equals to
+    (declare (type fixnum size rsize))      ; the row dimension
+    (with-ensure-matrix-column-smaller-than
+        (mat id)
+      (dotimes (i size)
+        (declare (type fixnum i))
+        (setf [mat i id] [val i]))
+      (the (simple-array double-float) val))))
 
 (define-nhfun matrix-diagonal (mat)
   "return the diagonal of MAT as a vector.
@@ -683,10 +704,9 @@ MAT must be (simple-array double-float) and a square matrix."
       (declare (type (simple-array double-float) ret))
       (dotimes (i dim)
         (setf [ret i] [mat i i]))
-      ret)))
+      (the (simple-array double-float) ret))))
 
-;; DEFINE-NHFUN does not support SETF function!
-(defun (setf matrix-diagonal) (val mat)
+(define-nhfun-setf matrix-diagonal (val mat)
   "put VAL into diagonal of MAT.
 
 VAL must be a double vector, the type is (simple-array double-float) and
