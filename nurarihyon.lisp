@@ -38,8 +38,17 @@ on CommonLisp. ")
    ;; functions are exported by define-nhfun macro.
    #:with-ensure-2vectors-dimension #:with-ensure-2vectors-dimension*
    #:with-2vector-dimension-bind-and-check #:with-ensure-vector-dimension
-   ;; matrix.lisp
+   ;; in matrix.lisp, only export macros and fea functions here, because 
+   ;; functions are exported by define-nhfun macro.
    #:eps-matrix=
+   #:with-ensure-matrix-row-smaller-than
+   #:with-ensure-matrix-column-smaller-than
+   #:with-ensure-2matrices-transpose-dimension
+   #:with-ensure-and-bind-square-matrix
+   #:with-ensure-and-bind-2matrices-dimension
+   #:with-ensure-and-bind-2matrices-multipable
+   #:with-ensure-2matrices-dimensions
+   #:with-ensure-matrix-dimensions
    ;; quaternion.lisp
    #:matrix33->quaternion
    #:quaternion->matrix33
