@@ -147,8 +147,9 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
 (define-nhfun quaternion-conjugate (q &optional (buf nil))
   "return a conjugate of a quaternion.
 You can use optional argument to avoid allocation."
+  (declare (type (simple-array double-float (4)) q))
   (let ((buf (or buf ($make-vector4))))
-    (declare (type (simple-array double-float (4)) q buf))
+    (declare (type (simple-array double-float (4)) buf))
     (with-ensure-vector-dimension
         (buf 4)
       (setf (qw buf) (qw q))

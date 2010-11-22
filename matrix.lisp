@@ -83,9 +83,10 @@ just binds symbol."
   (let ((dim2 (gensym))
         (dims (gensym)))
     (if *nurarihyon-optimization*
-        `(let ((,dims (matrix-row-dimension ,mat)))
+        `(let ((,dim ($matrix-row-dimension ,mat)))
+           (declare (type fixnum ,dim))
            ,@args)
-        `(let ((,dims (matrix-dimensions ,mat)))
+        `(let ((,dims ($matrix-dimensions ,mat)))
            (declare (type list ,dims))
            (let ((,dim (car ,dims))
                  (,dim2 (cadr ,dims)))
@@ -496,9 +497,9 @@ M must equal to N'."
 (define-nhfun lu-decompose (result pivot)
   "LU decompose RESULT and put the result into RESULT. PIVOT is used for
 storing pivoting information required in lu decomposition."
-  (block :lu-decompose-top
-    (declare (type (simple-array double-float) result)
+  (declare (type (simple-array double-float) result)
            (type (simple-array fixnum) pivot))
+  (block :lu-decompose-top
   (let ((dimension ($matrix-row-dimension result)))
     (declare (type fixnum dimension))
     (let ((weight ($make-vector dimension))) ;weight = new_vector(n);
@@ -669,7 +670,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat)
            (type fixnum id))
   (let ((size ($matrix-row-dimension mat))) ; the size of vector equals to
-    (declare (type fixnum size rsize))      ; the row dimension
+    (declare (type fixnum size))      ; the row dimension
     (with-ensure-matrix-column-smaller-than
         (mat id)
       (let ((ret ($make-vector size)))
@@ -683,7 +684,7 @@ MAT must be a (simple-array double-float) and ID must be a fixnum."
   (declare (type (simple-array double-float) mat val)
            (type fixnum id))
   (let ((size ($matrix-row-dimension mat))) ; the size of vector equals to
-    (declare (type fixnum size rsize))      ; the row dimension
+    (declare (type fixnum size))      ; the row dimension
     (with-ensure-matrix-column-smaller-than
         (mat id)
       (dotimes (i size)

@@ -259,6 +259,21 @@ You can use C, the third argument, to reduce heap allocation.
         (setf [c 2] (- (* xa yb) (* ya xb))))
       (the (simple-array double-float (3)) c))))
 
+(declaim-inline-nhfun vector-angle)
+(define-nhfun vector-angle (a b)
+  "return the angle between A and B"
+  (declare (type (simple-array double-float) a b))
+  (with-ensure-2vectors-dimension (a b)
+    (let ((dot ($v. a b))               ; |a||b|cos(theta)
+          (|a| ($norm a))
+          (|b| ($norm b)))
+      (declare (type double-float dot |a| |b|))
+      (let ((|ab| (* |a| |b|)))
+        (declare (type double-float |ab|))
+        (if (= |ab| 0.0d0)
+            (error 'devided-by-zero)
+            (the double-float (acos (/ dot (* |ab|)))))))))
+
 ;; scale function
 (define-nhfun vscale (k vec &optional (buf nil))
   "scale a vector, VEC with K. K is a double-float and K is
@@ -285,7 +300,9 @@ You can use BUF, the third argument, to reduce heap allocation.
 
 A is required to be a (simple-array double-float)."
   (declare (type (simple-array double-float) a))
-  (the double-float (sqrt ($v. a a))))
+  (let ((s ($v. a a)))
+    (declare (type double-float s))
+    (the double-float (sqrt s))))
 
 (declaim-inline-nhfun distance)
 (define-nhfun distance (a b)
