@@ -41,4 +41,5 @@
                (:file "matrix-vector-multiply")
                ;; quaternion
                (:file "quaternion-accessors")
+               (:file "identity-quaternion")
                ))))
