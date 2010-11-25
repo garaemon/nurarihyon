@@ -39,4 +39,6 @@
                (:file "matrix-transpose")
                (:file "matrix-multiply")
                (:file "matrix-vector-multiply")
+               ;; quaternion
+               (:file "quaternion-accessors")
                ))))
