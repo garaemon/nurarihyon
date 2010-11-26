@@ -36,6 +36,19 @@ it means [1; #(0 0 0)]"
     (setf (qw ret) 1.0d0)
     (the (simple-array double-float (4)) ret)))
 
+(declaim-inline-nhfun q*)
+(define-nhfun q* (q1 q2 &optional (result ($make-vector4)))
+  "multiply two quaternions and put the result into RESULT"
+  (declare (type (simple-array double-float (4)) q1 q2 result))
+  (let ((q1x (qx q1)) (q1y (qy q1)) (q1z (qz q1)) (q1w (qw q1))
+        (q2x (qx q2)) (q2y (qy q2)) (q2z (qz q2)) (q2w (qw q2)))
+    (declare (type double-float q1x q1y q1z q1w q2x q2y q2z q2w))
+    (setf (qw result) (- (* q1w q2w) (* q1x q2x) (* q1y q2y) (* q1z q2z)))
+    (setf (qx result) (+ (- (* q1z q2y)) (* q1w q2x) (* q1x q2w) (* q1y q2z)))
+    (setf (qy result) (+ (- (* q1x q2z)) (* q1w q2y) (* q1y q2w) (* q1z q2x)))
+    (setf (qw result) (+ (- (* q1y q2x)) (* q1w q2z) (* q1z q2w) (* q1x q2y)))
+    (the (simple-array double-float (4)) result)))
+
 (define-nhfun matrix33->quaternion (mat &optional (q nil))
   "convert a 3x3 matrix to a quaternion.
    reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/matrixToQuaternion/index.htm.
