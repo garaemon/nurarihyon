@@ -119,6 +119,7 @@ the return vector is always normalized."
 (define-nhfun quaternion-axis (q &optional (buf nil))
   "returns the axis of a quaternion.
 You can use the optional argument to avoid allocation.
+
 reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/quaternionToAngle/index.htm"
   (declare (type (simple-array double-float (4)) q))
   (let ((buf (or buf ($make-vector3))))
@@ -159,7 +160,10 @@ reference is http://www.euclideanspace.com/maths/geometry/rotations/conversions/
 (declaim-inline-nhfun quaternion-conjugate)
 (define-nhfun quaternion-conjugate (q &optional (buf nil))
   "return a conjugate of a quaternion.
-You can use optional argument to avoid allocation."
+You can use optional argument to avoid allocation.
+
+if the given quaternion is Ai + Bj + Ck + D, the conjugate of it is
+-Ai -Bj -Ck + D."
   (declare (type (simple-array double-float (4)) q))
   (let ((buf (or buf ($make-vector4))))
     (declare (type (simple-array double-float (4)) buf))
