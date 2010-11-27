@@ -43,4 +43,5 @@
                (:file "quaternion-accessors")
                (:file "identity-quaternion")
                (:file "matrix-quaternion")
+               (:file "quaternion-matrix")
                ))))
