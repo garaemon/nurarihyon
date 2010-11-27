@@ -10,12 +10,12 @@
 
 ;; identity
 (lisp-unit:define-test identity-quaternion-matrix-conversion
-  (let ((q (nh:identity-quaternion)))
+  (let ((q (nh:make-identity-quaternion)))
     (let ((m (nh:quaternion->matrix33 q))
           (e (nh:make-identity-matrix 3)))
       (lisp-unit:assert-true (nh:eps-matrix= m e))))
   ;; 2nd argument
-  (let ((q (nh:identity-quaternion))
+  (let ((q (nh:make-identity-quaternion))
         (buf (nh:make-matrix 3 3)))
     (let ((m (nh:quaternion->matrix33 q buf))
           (e (nh:make-identity-matrix 3)))

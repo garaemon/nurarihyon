@@ -7,7 +7,7 @@
 (in-package :nurarihyon-test)
 
 (lisp-unit:define-test identity-quaternion-test
-  (let ((q (nh:identity-quaternion)))
+  (let ((q (nh:make-identity-quaternion)))
     (lisp-unit:assert-eq 4 (nh:vector-dimension q))
     (lisp-unit:assert-float-equal 0.0d0 (nh:qx q))
     (lisp-unit:assert-float-equal 0.0d0 (nh:qy q))

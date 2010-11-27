@@ -27,8 +27,8 @@
   "accessor for w element of quaternion"
   `(aref ,q 0))
 
-(declaim-inline-nhfun identity-quaternion)
-(define-nhfun identity-quaternion ()
+(declaim-inline-nhfun make-identity-quaternion)
+(define-nhfun make-identity-quaternion ()
   "make an identity quaternion.
 it means [1; #(0 0 0)]"
   (let ((ret ($make-vector4)))
